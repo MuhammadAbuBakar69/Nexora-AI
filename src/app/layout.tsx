@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { basePath } from "@/lib/asset";
 
 export const metadata: Metadata = {
   title: "NEXORA — Unified AI Infrastructure & Cloud Resource Platform",
@@ -16,11 +17,11 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
-      { url: "/favicon.png", type: "image/png" },
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: `${basePath}/favicon.png`, type: "image/png" },
+      { url: `${basePath}/favicon.svg`, type: "image/svg+xml" },
     ],
-    shortcut: "/favicon.png",
-    apple: "/logo.png",
+    shortcut: `${basePath}/favicon.png`,
+    apple: `${basePath}/logo.png`,
   },
 };
 

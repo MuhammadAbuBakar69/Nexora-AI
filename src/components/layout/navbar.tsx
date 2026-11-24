@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { asset } from "@/lib/asset";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight, Sparkles, Layers, Cpu, Shield, Key } from "lucide-react";
@@ -44,7 +45,7 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="w-8 h-8 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
             <img
-              src="/logo.png"
+              src={asset("/logo.png")}
               alt="NEXORA Logo"
               className="w-full h-full object-contain"
             />

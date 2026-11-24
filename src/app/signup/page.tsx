@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { asset } from "@/lib/asset";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
@@ -58,7 +59,7 @@ export default function SignupPage() {
         <Link href="/" className="inline-flex items-center gap-3 mb-6 group">
           <div className="w-10 h-10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
             <img
-              src="/logo.png"
+              src={asset("/logo.png")}
               alt="NEXORA Logo"
               className="w-full h-full object-contain"
             />

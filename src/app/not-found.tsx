@@ -1,4 +1,5 @@
 import React from "react";
+import { asset } from "@/lib/asset";
 import Link from "next/link";
 import { ArrowRight, Home, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ export default function NotFound() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[450px] bg-hero-glow blur-3xl pointer-events-none -z-10" />
 
       <div className="w-16 h-16 sm:w-20 sm:h-20 mb-6 group-hover:scale-105 transition-transform">
-        <img src="/logo.png" alt="NEXORA Logo" className="w-full h-full object-contain drop-shadow-[0_8px_20px_rgba(117,87,255,0.35)]" />
+        <img src={asset("/logo.png")} alt="NEXORA Logo" className="w-full h-full object-contain drop-shadow-[0_8px_20px_rgba(117,87,255,0.35)]" />
       </div>
 
       <span className="text-xs font-bold uppercase tracking-widest text-violet-primary bg-violet-light px-3.5 py-1 rounded-full border border-violet-soft/40 mb-4">
