@@ -32,6 +32,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          rel="preload"
+          href={`${basePath}/fonts/TheHeritageLegacy.otf`}
+          as="font"
+          type="font/otf"
+          crossOrigin="anonymous"
+        />
+        <link rel="stylesheet" href={`${basePath}/fonts/fonts.css`} />
+      </head>
       <body
         className="min-h-screen bg-white text-[#111111] antialiased selection:bg-violet-light selection:text-violet-primary font-sans"
         suppressHydrationWarning

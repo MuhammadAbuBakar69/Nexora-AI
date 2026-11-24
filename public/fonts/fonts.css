@@ -1,0 +1,9 @@
+/* Served as a static file so the font URL stays relative to this stylesheet
+   and keeps working under any deployment base path (e.g. /Nexora-AI). */
+@font-face {
+  font-family: 'TheHeritageLegacy';
+  src: url('TheHeritageLegacy.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
