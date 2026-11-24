@@ -19,6 +19,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 
 interface DashboardSidebarProps {
   onCloseMobile?: () => void;
@@ -124,9 +125,7 @@ export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
             </div>
             <span className="truncate text-foreground font-medium">Elena Rostova</span>
           </div>
-          <Link href="/login" className="hover:text-rose-600 transition-colors" title="Sign out">
-            <LogOut className="w-3.5 h-3.5" />
-          </Link>
+          <SignOutButton />
         </div>
       </div>
     </aside>

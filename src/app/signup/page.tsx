@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/client";
 import { Input } from "@/components/ui/input";
 
 export default function SignupPage() {
@@ -19,9 +20,13 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSignup = (e: React.FormEvent) => {
+  const supabase = createClient();
+  const [notice, setNotice] = useState("");
+
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setNotice("");
 
     if (!fullName || !email || !password || !confirmPassword) {
       setError("Please fill in all required fields.");
@@ -44,10 +49,42 @@ export default function SignupPage() {
     }
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push("/dashboard");
-    }, 800);
+
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: {
+        // Stored in auth.users.raw_user_meta_data and copied into profiles by
+        // the handle_new_user trigger, so it never lives in client-trusted state.
+        data: { full_name: fullName.trim() },
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+      },
+    });
+
+    setIsLoading(false);
+
+    if (signUpError) {
+      setError(signUpError.message);
+      return;
+    }
+
+    // Supabase returns a user with no identities when the email already exists,
+    // instead of raising an error (it avoids leaking which emails are registered).
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+      setError("An account with this email already exists. Try signing in instead.");
+      return;
+    }
+
+    if (data.session) {
+      // Email confirmation is disabled: a real session exists, so we can route on it.
+      window.location.assign("/dashboard");
+      return;
+    }
+
+    // No session yet: the account is not usable until the email is confirmed.
+    setNotice(
+      `We sent a verification link to ${email.trim()}. Confirm your email to activate the account.`
+    );
   };
 
   return (
@@ -78,6 +115,12 @@ export default function SignupPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
         <div className="bg-white py-8 px-6 sm:px-10 border border-border rounded-3xl shadow-float">
+          {notice && (
+            <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
+              {notice}
+            </div>
+          )}
+
           {error && (
             <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
               {error}

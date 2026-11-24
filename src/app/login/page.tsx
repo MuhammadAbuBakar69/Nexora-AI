@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { asset } from "@/lib/asset";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Sparkles, Shield, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/client";
 import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
@@ -17,7 +18,17 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const supabase = createClient();
+
+  // Surface failures handed back by /auth/callback (expired or reused links).
+  useEffect(() => {
+    const authError = new URLSearchParams(window.location.search).get(
+      "auth_error"
+    );
+    if (authError) setError(decodeURIComponent(authError));
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -27,35 +38,49 @@ export default function LoginPage() {
     }
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      // Route based on email for testing
-      if (email.includes("admin")) {
-        router.push("/admin");
-      } else {
-        router.push("/dashboard");
-      }
-    }, 800);
-  };
 
-  const handleDemoCustomerLogin = () => {
-    setEmail("developer@aetherdyn.io");
-    setPassword("••••••••••••");
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push("/dashboard");
-    }, 500);
-  };
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
 
-  const handleDemoAdminLogin = () => {
-    setEmail("admin@nexora.cloud");
-    setPassword("••••••••••••");
-    setIsLoading(true);
-    setTimeout(() => {
+    if (signInError) {
       setIsLoading(false);
-      router.push("/admin");
-    }, 500);
+      setError(
+        signInError.message === "Invalid login credentials"
+          ? "Incorrect email or password."
+          : signInError.message
+      );
+      return;
+    }
+
+    if (!data.user) {
+      setIsLoading(false);
+      setError("Sign in failed. Please try again.");
+      return;
+    }
+
+    // Authorization is read from user_roles in Postgres. The email address is
+    // never inspected to decide whether someone is an admin.
+    const { data: adminRole } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    const requested = new URLSearchParams(window.location.search).get("next");
+    const destination =
+      requested && requested.startsWith("/") && !requested.startsWith("//")
+        ? requested
+        : adminRole
+          ? "/admin"
+          : "/dashboard";
+
+    // Full navigation, not a client-side push: the freshly written auth
+    // cookies must reach the server so middleware and server components see
+    // the new session on the very next request.
+    window.location.assign(destination);
   };
 
   return (
@@ -159,35 +184,6 @@ export default function LoginPage() {
               <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </form>
-
-          {/* Quick Demo Fillers for Testing */}
-          <div className="mt-6 pt-6 border-t border-border">
-            <p className="text-[11px] uppercase font-semibold tracking-wider text-secondary text-center mb-3">
-              One-Click Evaluation Access
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={handleDemoCustomerLogin}
-                className="p-2.5 rounded-xl border border-border bg-surface hover:bg-violet-light/30 hover:border-violet-soft/50 text-left transition-all group"
-              >
-                <div className="text-xs font-semibold text-foreground group-hover:text-violet-primary">
-                  Customer Role
-                </div>
-                <div className="text-[10px] text-secondary">Token & API Portal</div>
-              </button>
-              <button
-                type="button"
-                onClick={handleDemoAdminLogin}
-                className="p-2.5 rounded-xl border border-border bg-surface hover:bg-violet-light/30 hover:border-violet-soft/50 text-left transition-all group"
-              >
-                <div className="text-xs font-semibold text-foreground group-hover:text-violet-primary">
-                  Admin Role
-                </div>
-                <div className="text-[10px] text-secondary">Multi-tenant Control</div>
-              </button>
-            </div>
-          </div>
 
           <div className="mt-6 text-center text-xs text-secondary">
             Don&apos;t have an account yet?{" "}

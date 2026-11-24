@@ -5,6 +5,7 @@ import { asset } from "@/lib/asset";
 import Link from "next/link";
 import { Mail, ArrowLeft, CheckCircle2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/client";
 import { Input } from "@/components/ui/input";
 
 export default function ForgotPasswordPage() {
@@ -12,15 +13,35 @@ export default function ForgotPasswordPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const supabase = createClient();
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
 
+    setError("");
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSubmitted(true);
-    }, 700);
+
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+      email.trim(),
+      {
+        // The recovery link lands on /auth/callback, which exchanges the code
+        // for a session and then forwards to the password update form.
+        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+      }
+    );
+
+    setIsLoading(false);
+
+    if (resetError) {
+      setError(resetError.message);
+      return;
+    }
+
+    // Always report success: revealing whether an address is registered would
+    // let anyone enumerate customer accounts.
+    setIsSubmitted(true);
   };
 
   return (
@@ -69,6 +90,13 @@ export default function ForgotPasswordPage() {
               </div>
             </div>
           ) : (
+            <>
+            {error && (
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
                 id="resetEmail"
@@ -100,6 +128,7 @@ export default function ForgotPasswordPage() {
                 </Link>
               </div>
             </form>
+            </>
           )}
         </div>
       </div>
