@@ -353,7 +353,7 @@ export function Footer() {
         {/* ROW 1: TOP SECTION (HEADLINE + 3 LINK COLUMNS + ISOMETRIC 3D)  */}
         {/* ============================================================== */}
         <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 border-b border-[#E2E2DA]">
-          
+
           {/* Cell 1: Big Editorial Bold Headline (Spans 4 cols on desktop) */}
           <div className="md:col-span-12 lg:col-span-4 p-6 sm:p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-[#E2E2DA] flex flex-col justify-between">
             <div>
@@ -502,7 +502,7 @@ export function Footer() {
         {/* ROW 2: MIDDLE SECTION (SUBSCRIBE, ADDRESS, INQUIRIES, SOCIAL)   */}
         {/* ============================================================== */}
         <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 border-b border-[#E2E2DA]">
-          
+
           {/* Cell 1: SUBSCRIBE Box (Spans 4 cols on desktop) */}
           <div className="md:col-span-12 lg:col-span-4 p-6 sm:p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-[#E2E2DA] flex flex-col justify-between">
             <div>
