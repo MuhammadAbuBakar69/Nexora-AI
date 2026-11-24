@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'TheHeritageLegacy';
+  src: url('/fonts/TheHeritageLegacy.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bg-primary: #ffffff;
+  --text-primary: #111111;
+  --text-secondary: #777783;
+  --violet-primary: #7557ff;
+  --violet-soft: #b4a3ff;
+  --blue-soft: #a5b4fc;
+  --surface-light: #f7f7fa;
+  --border-subtle: #ececf1;
+  --dark-footer: #100e20;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-feature-settings: "rlig" 1, "calt" 1, "cv11" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Custom delicate scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4d4de;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a5a5b5;
+}
+
+/* Sonivale-inspired radiant background gradient glows */
+.bg-glow-radial {
+  background: radial-gradient(circle at 50% 30%, rgba(180, 163, 255, 0.16) 0%, rgba(165, 180, 252, 0.08) 35%, transparent 70%);
+}
+
+.bg-hero-glow {
+  background: radial-gradient(circle at 50% 20%, rgba(117, 87, 255, 0.15) 0%, rgba(180, 163, 255, 0.08) 40%, transparent 75%);
+}
+
+.bg-purple-showcase-glow {
+  background: radial-gradient(circle at 50% 50%, rgba(180, 163, 255, 0.35) 0%, rgba(165, 180, 252, 0.2) 30%, rgba(247, 247, 250, 0.6) 60%, #ffffff 85%);
+}
+
+/* Glass & Card utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(236, 236, 241, 0.9);
+}
+
+.glass-panel-dark {
+  background: rgba(21, 19, 41, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Editorial typography: Only large hero display headers & the brand wordmark use TheHeritageLegacy */
+h1, .font-heritage {
+  font-family: 'TheHeritageLegacy', Georgia, serif;
+  letter-spacing: -0.015em;
+}
+
+h2 {
+  font-family: 'TheHeritageLegacy', Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+/* All functional UI headers, cards, tables, buttons, and sub-elements MUST use ultra-crisp modern sans-serif */
+h3, h4, h5, h6 {
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+/* High-contrast, elegant editorial paragraph typography */
+p, .prose p {
+  font-family: var(--font-sans);
+  color: #383847;
+  letter-spacing: -0.012em;
+  line-height: 1.68;
+}
+
+@keyframes waveFlow {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    transform: translateX(-30px) translateY(10px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+}
+
+.animate-wave-flow {
+  animation: waveFlow 12s ease-in-out infinite;
+}
+
+/* Shimmer animation for loading skeletons */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.tracking-editorial {
+  letter-spacing: -0.025em;
+}
+
+.tracking-wide-caps {
+  letter-spacing: 0.18em;
+}
+
+/* Interactive subtle transitions */
+.hover-lift {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -8px rgba(16, 14, 32, 0.08);
+}
+
+/* Smooth magnetic and glowing border utilities */
+.border-glow {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.border-glow:hover {
+  border-color: rgba(117, 87, 255, 0.45);
+  box-shadow: 0 10px 30px -5px rgba(117, 87, 255, 0.12);
+}
