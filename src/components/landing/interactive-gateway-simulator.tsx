@@ -154,10 +154,11 @@ export function InteractiveGatewaySimulator() {
                       setPromptType(t);
                       setStatus("idle");
                     }}
-                    className={`flex-1 py-2 text-[11px] font-bold uppercase border transition-all ${promptType === t
+                    className={`flex-1 py-2 text-[11px] font-bold uppercase border transition-all ${
+                      promptType === t
                         ? "bg-[#252535] text-white border-[#3A3A4E]"
                         : "bg-[#181824] text-[#888899] border-[#2B2B3D] hover:text-white"
-                      }`}
+                    }`}
                   >
                     {t}
                   </button>

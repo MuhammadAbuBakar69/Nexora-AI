@@ -185,10 +185,11 @@ export function SadaPayCheckoutModal({
                 <button
                   type="button"
                   onClick={() => setPaymentTab("card")}
-                  className={`flex-1 py-2 font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${paymentTab === "card"
+                  className={`flex-1 py-2 font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
+                    paymentTab === "card"
                       ? "bg-white text-[#111111] shadow-xs border border-[#E2E2DA]"
                       : "text-[#777783] hover:text-[#111111]"
-                    }`}
+                  }`}
                 >
                   <CreditCard className="w-3.5 h-3.5 text-[#02AAB0]" />
                   <span>SadaPay Card / Mastercard</span>
@@ -196,10 +197,11 @@ export function SadaPayCheckoutModal({
                 <button
                   type="button"
                   onClick={() => setPaymentTab("iban")}
-                  className={`flex-1 py-2 font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${paymentTab === "iban"
+                  className={`flex-1 py-2 font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
+                    paymentTab === "iban"
                       ? "bg-white text-[#111111] shadow-xs border border-[#E2E2DA]"
                       : "text-[#777783] hover:text-[#111111]"
-                    }`}
+                  }`}
                 >
                   <Building className="w-3.5 h-3.5 text-[#111111]" />
                   <span>SadaPay IBAN / Raast Transfer</span>

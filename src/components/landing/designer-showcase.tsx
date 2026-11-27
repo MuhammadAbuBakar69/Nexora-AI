@@ -108,10 +108,11 @@ export function DesignerShowcase() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("failover")}
-                  className={`px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${activeTab === "failover"
+                  className={`px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${
+                    activeTab === "failover"
                       ? "bg-[#111111] text-white border-[#111111] shadow-xs"
                       : "bg-[#F7F7F4] text-[#555562] border-[#E2E2DA] hover:text-[#111111]"
-                    }`}
+                  }`}
                 >
                   <Cpu className="w-3.5 h-3.5 text-violet-primary" />
                   <span>01. Dynamic Failover Engine</span>
@@ -119,10 +120,11 @@ export function DesignerShowcase() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("kms")}
-                  className={`px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${activeTab === "kms"
+                  className={`px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${
+                    activeTab === "kms"
                       ? "bg-[#111111] text-white border-[#111111] shadow-xs"
                       : "bg-[#F7F7F4] text-[#555562] border-[#E2E2DA] hover:text-[#111111]"
-                    }`}
+                  }`}
                 >
                   <Lock className="w-3.5 h-3.5 text-emerald-600" />
                   <span>02. Zero-Retention Memory Vault</span>
@@ -130,10 +132,11 @@ export function DesignerShowcase() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("radar")}
-                  className={`px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${activeTab === "radar"
+                  className={`px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${
+                    activeTab === "radar"
                       ? "bg-[#111111] text-white border-[#111111] shadow-xs"
                       : "bg-[#F7F7F4] text-[#555562] border-[#E2E2DA] hover:text-[#111111]"
-                    }`}
+                  }`}
                 >
                   <Radio className="w-3.5 h-3.5 text-amber-500" />
                   <span>03. Spatial Anycast Radar</span>
@@ -205,10 +208,11 @@ export function DesignerShowcase() {
                         <div className="space-y-3">
                           {/* Route A: Claude 3.5 Sonnet */}
                           <div
-                            className={`p-3 border text-xs transition-all ${isSimulatingFailover
+                            className={`p-3 border text-xs transition-all ${
+                              isSimulatingFailover
                                 ? "bg-rose-50 border-rose-300 text-rose-800 line-through opacity-70"
                                 : "bg-white border-[#E2E2DA] text-[#111111]"
-                              }`}
+                            }`}
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-bold">Claude 3.5 Sonnet</span>
@@ -219,10 +223,11 @@ export function DesignerShowcase() {
 
                           {/* Route B: Google Gemini 2.5 Flash Fallback */}
                           <div
-                            className={`p-3 border text-xs transition-all ${isSimulatingFailover
+                            className={`p-3 border text-xs transition-all ${
+                              isSimulatingFailover
                                 ? "bg-emerald-50 border-emerald-400 text-emerald-900 ring-2 ring-emerald-400 shadow-xs"
                                 : "bg-[#F2F2EE] border-[#E2E2DA] text-[#777783]"
-                              }`}
+                            }`}
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-bold">Gemini 2.5 Flash</span>
@@ -451,10 +456,11 @@ export function DesignerShowcase() {
                               key={pop.id}
                               type="button"
                               onClick={() => setActivePoP(pop.id)}
-                              className={`p-4 text-left border relative transition-all ${isSelected
+                              className={`p-4 text-left border relative transition-all ${
+                                isSelected
                                   ? "bg-white border-[#111111] ring-1 ring-[#111111] shadow-sm"
                                   : "bg-white/80 border-[#E2E2DA] hover:border-[#111111]"
-                                }`}
+                              }`}
                             >
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-[#111111] uppercase">{pop.city}</span>

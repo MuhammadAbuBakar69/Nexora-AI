@@ -126,10 +126,11 @@ print(response.choices[0].message.content)`,
                   <button
                     key={lang}
                     onClick={() => setActiveLang(lang)}
-                    className={`px-3 py-1 text-xs font-bold uppercase transition-all ${activeLang === lang
+                    className={`px-3 py-1 text-xs font-bold uppercase transition-all ${
+                      activeLang === lang
                         ? "bg-[#252535] text-white shadow-xs"
                         : "text-[#888899] hover:text-white"
-                      }`}
+                    }`}
                   >
                     {lang}
                   </button>
