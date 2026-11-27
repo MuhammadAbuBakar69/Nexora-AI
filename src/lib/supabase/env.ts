@@ -46,6 +46,15 @@ export function getSupabaseEnv(): SupabaseEnv {
   const env = tryGetSupabaseEnv();
 
   if (!env) {
+    // During Next.js build-time static prerendering on CI/Vercel where env vars may not be present,
+    // return a safe dummy config so prerendering /reset-password, /signup, etc. does not abort the build.
+    if (typeof window === "undefined") {
+      return {
+        url: "https://placeholder.supabase.co",
+        key: "placeholder-anon-key-for-build-prerender",
+      };
+    }
+
     throw new Error(
       "Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and " +
         "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in .env.local (and in the " +
