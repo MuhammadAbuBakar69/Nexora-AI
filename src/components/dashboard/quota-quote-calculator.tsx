@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SadaPayCheckoutModal } from "@/components/dashboard/sadapay-checkout-modal";
 
 interface QuotaQuoteCalculatorProps {
   onQuoteGenerated?: (quote: CustomerQuote) => void;
@@ -42,6 +43,7 @@ export function QuotaQuoteCalculator({ onQuoteGenerated, onRequestQuota }: Quota
   const [currency, setCurrency] = useState<"PKR" | "USD">("PKR");
   const [selectedTier, setSelectedTier] = useState<"standard" | "priority">("priority");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSadaPayOpen, setIsSadaPayOpen] = useState(false);
 
   // Pricing formula
   // Blended LLM average: $2.50 per 1M tokens (e.g. Gemini 2.5 Flash / Pro mix)
@@ -295,13 +297,13 @@ export function QuotaQuoteCalculator({ onQuoteGenerated, onRequestQuota }: Quota
             {/* Recommended Tier Pill */}
             <div className="p-3 bg-[#F7F7F4] border border-[#E2E2DA] flex items-center justify-between text-xs">
               <span className="text-[11px] font-mono uppercase text-[#777783]">Recommended Tier:</span>
-              <span className="font-mono font-bold text-violet-primary uppercase bg-violet-light/50 px-2 py-0.5 border border-violet-soft/30">
+              <span className="font-mono font-bold text-[#FF5722] uppercase bg-[#FF5722]/10 px-2 py-0.5 border border-[#FF5722]/30">
                 {recommendedPlan} Package
               </span>
             </div>
           </div>
 
-          {/* Action Button */}
+          {/* Action Buttons */}
           <div className="mt-6 pt-4 border-t border-[#E2E2DA] space-y-2.5">
             {isSubmitted ? (
               <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
@@ -309,22 +311,46 @@ export function QuotaQuoteCalculator({ onQuoteGenerated, onRequestQuota }: Quota
                 <span>Access &amp; Quota Request submitted. Standing by for admin approval.</span>
               </div>
             ) : (
-              <Button
-                onClick={handleRequestAllocation}
-                variant="violet"
-                className="w-full text-xs font-bold h-11 tracking-wide uppercase gap-2 shadow-sm"
-              >
-                <span>Request This Quota Allocation</span>
-                <ArrowRight className="w-4 h-4" />
-              </Button>
+              <div className="space-y-2">
+                <Button
+                  onClick={() => setIsSadaPayOpen(true)}
+                  className="w-full text-xs font-bold h-11 tracking-wide uppercase gap-2 shadow-sm bg-[#02AAB0] hover:bg-[#008f94] text-white border-transparent"
+                >
+                  <span className="w-5 h-5 rounded-none bg-white text-[#02AAB0] flex items-center justify-center font-bold text-[10px]">
+                    SP
+                  </span>
+                  <span>Instant Checkout with SadaPay (₨{totalPkr.toLocaleString()} PKR)</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  onClick={handleRequestAllocation}
+                  variant="outline"
+                  className="w-full text-xs font-bold h-10 tracking-wide uppercase gap-2 border-[#E2E2DA] hover:bg-[#F2F2EE]"
+                >
+                  <span>Request Custom Enterprise Invoice</span>
+                </Button>
+              </div>
             )}
             <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono text-[#777783]">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Zero-Overdraft Protection • Dynamic Model Routing</span>
+              <span>SadaPay SBP Regulated • Zero Foreign Transaction Fees • Instant Activation</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* SadaPay Interactive Checkout Modal */}
+      <SadaPayCheckoutModal
+        isOpen={isSadaPayOpen}
+        onClose={() => setIsSadaPayOpen(false)}
+        planName={`${recommendedPlan.toUpperCase()} Tier (${tokenMillions}M Tokens)`}
+        amountPkr={totalPkr}
+        amountUsd={totalUsd}
+        onPaymentSuccess={() => {
+          handleRequestAllocation();
+        }}
+      />
     </div>
   );
 }
