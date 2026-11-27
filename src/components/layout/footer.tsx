@@ -691,8 +691,13 @@ export function Footer() {
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-[#EAEAE2] text-[10px] font-mono text-[#777783]">
-              UPSTREAM: <span className="text-[#FF5722] font-semibold">OPENAI</span> • <span className="text-[#FFA726] font-semibold">ANTHROPIC</span> • <span className="text-[#FF5722] font-semibold">GOOGLE</span>
+            <div className="mt-6 pt-4 border-t border-[#EAEAE2] text-[10px] font-mono text-[#777783] space-y-1">
+              <div>
+                UPSTREAM: <span className="text-[#FF5722] font-semibold">OPENAI</span> • <span className="text-[#FFA726] font-semibold">ANTHROPIC</span> • <span className="text-[#FF5722] font-semibold">GOOGLE</span>
+              </div>
+              <div>
+                SETTLEMENT: <span className="text-[#02AAB0] font-semibold">SADAPAY</span> • <span className="text-[#111111] font-semibold">RAAST</span> • <span className="text-[#111111] font-semibold">MASTERCARD</span>
+              </div>
             </div>
           </div>
 

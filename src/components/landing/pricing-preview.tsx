@@ -2,13 +2,19 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Check, Sparkles, ArrowRight, Calculator } from "lucide-react";
+import { Check, Sparkles, ArrowRight, Calculator, CreditCard, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuotaQuoteCalculator } from "@/components/dashboard/quota-quote-calculator";
 import { AnimatedGradientCard } from "@/components/ui/animated-gradient-card";
+import { SadaPayCheckoutModal } from "@/components/dashboard/sadapay-checkout-modal";
 
 export function PricingPreview() {
   const [activeTab, setActiveTab] = useState<"tiers" | "calculator">("calculator");
+  const [selectedPlanForSadaPay, setSelectedPlanForSadaPay] = useState<{
+    name: string;
+    amountPkr: number;
+    amountUsd: number;
+  } | null>(null);
 
   const plans = [
     {
@@ -17,6 +23,8 @@ export function PricingPreview() {
       description: "Ideal for solo engineers, researchers, and prototypes testing unified AI gateway routing.",
       price: "$49",
       pkrPrice: "₨13,720",
+      numericPkr: 13720,
+      numericUsd: 49,
       period: "/ month",
       isPopular: false,
       ctaText: "Start Starter Plan",
@@ -35,6 +43,8 @@ export function PricingPreview() {
       description: "Designed for high-growth startups and product teams deploying production AI applications.",
       price: "$249",
       pkrPrice: "₨69,720",
+      numericPkr: 69720,
+      numericUsd: 249,
       period: "/ month",
       isPopular: true,
       ctaText: "Start Growth Plan",
@@ -55,6 +65,8 @@ export function PricingPreview() {
       description: "Dedicated infrastructure, custom SLAs, audit compliance, and private VPC routing for enterprise.",
       price: "Custom",
       pkrPrice: "Custom",
+      numericPkr: 0,
+      numericUsd: 0,
       period: "",
       isPopular: false,
       ctaText: "Contact Sales",
@@ -113,6 +125,13 @@ export function PricingPreview() {
             >
               Standard Tier Matrix
             </button>
+          </div>
+
+          {/* SadaPay Official Settlement Badge */}
+          <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-300 text-emerald-800 text-[11px] font-mono">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-bold">SadaPay Settlement Enabled:</span>
+            <span>Pay in PKR with zero FX markup via SadaPay Virtual Card, Raast, or SadaBiz.</span>
           </div>
         </div>
 
@@ -178,23 +197,58 @@ export function PricingPreview() {
                   </div>
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-[#E2E2DA]">
-                  <Button
-                    href="/signup"
-                    size="sm"
-                    className={`w-full text-xs font-mono font-bold uppercase tracking-wider ${
-                      plan.isPopular
-                        ? "bg-gradient-sunset text-white hover:opacity-95 shadow-md border-transparent"
-                        : ""
-                    }`}
-                  >
-                    {plan.ctaText}
-                    <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-                  </Button>
+                <div className="pt-6 mt-6 border-t border-[#E2E2DA] space-y-2">
+                  {plan.numericPkr > 0 ? (
+                    <>
+                      <button
+                        onClick={() =>
+                          setSelectedPlanForSadaPay({
+                            name: `${plan.name} Tier Allocation`,
+                            amountPkr: plan.numericPkr,
+                            amountUsd: plan.numericUsd,
+                          })
+                        }
+                        className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-[#02AAB0] hover:bg-[#00cdac] text-white shadow-sm transition-all border border-[#02AAB0]"
+                      >
+                        <CreditCard className="w-3.5 h-3.5" />
+                        <span>Pay with SadaPay ({plan.pkrPrice})</span>
+                      </button>
+
+                      <Button
+                        href="/signup"
+                        size="sm"
+                        variant="outline"
+                        className="w-full text-xs font-mono font-bold uppercase tracking-wider border-[#E2E2DA] text-[#555562] hover:text-[#111111]"
+                      >
+                        <span>Standard Signup</span>
+                        <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      href="/signup"
+                      size="sm"
+                      className="w-full text-xs font-mono font-bold uppercase tracking-wider bg-[#111111] text-white hover:bg-black"
+                    >
+                      {plan.ctaText}
+                      <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                    </Button>
+                  )}
                 </div>
               </AnimatedGradientCard>
             ))}
           </div>
+        )}
+
+        {/* Global SadaPay Checkout Modal */}
+        {selectedPlanForSadaPay && (
+          <SadaPayCheckoutModal
+            isOpen={!!selectedPlanForSadaPay}
+            onClose={() => setSelectedPlanForSadaPay(null)}
+            planName={selectedPlanForSadaPay.name}
+            amountPkr={selectedPlanForSadaPay.amountPkr}
+            amountUsd={selectedPlanForSadaPay.amountUsd}
+          />
         )}
       </div>
     </section>

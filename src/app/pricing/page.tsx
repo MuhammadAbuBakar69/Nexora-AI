@@ -21,6 +21,7 @@ export default function PricingPage() {
     { name: "Zero-Data Retention (ZDR)", starter: "Enforced", growth: "Enforced", enterprise: "Enforced + Audit Proofs" },
     { name: "SLA Availability", starter: "99.9%", growth: "99.98%", enterprise: "99.99% Financial Backing" },
     { name: "Currency Support", starter: "USD & PKR", growth: "USD & PKR", enterprise: "Multi-Currency Wire / Invoicing" },
+    { name: "Payment Gateways", starter: "SadaPay / Mastercard / Raast", growth: "SadaPay / Mastercard / Raast", enterprise: "SadaBiz / Multi-Currency Invoicing" },
   ];
 
   return (
