@@ -166,11 +166,10 @@ export default function SolutionsPage() {
                 <button
                   key={sol.id}
                   onClick={() => setActiveSolution(sol.id as any)}
-                  className={`p-4 border transition-all text-left flex items-center gap-3 relative ${
-                    isSelected
-                      ? "bg-white border-[#111111] ring-1 ring-[#111111]"
-                      : "bg-[#F7F7F4] border-[#E2E2DA] hover:border-[#111111]"
-                  }`}
+                  className={`p-4 border transition-all text-left flex items-center gap-3 relative ${isSelected
+                    ? "bg-white border-[#111111] ring-1 ring-[#111111]"
+                    : "bg-[#F7F7F4] border-[#E2E2DA] hover:border-[#111111]"
+                    }`}
                 >
                   <Icon className={`w-4 h-4 shrink-0 ${isSelected ? "text-violet-primary" : "text-[#777783]"}`} />
                   <span className="text-xs font-bold uppercase text-[#111111]">{sol.label}</span>

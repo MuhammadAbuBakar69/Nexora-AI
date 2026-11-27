@@ -93,11 +93,10 @@ export function EdgeTopologySection() {
                 onClick={() => setSelectedRegion(reg.id)}
                 whileHover={{ y: -4 }}
                 transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className={`p-5 text-left border relative transition-all ${
-                  isSelected
+                className={`p-5 text-left border relative transition-all ${isSelected
                     ? "bg-white border-[#111111] ring-1 ring-[#111111] shadow-sm"
                     : "bg-[#F7F7F4]/90 hover:bg-white border-[#E2E2DA] hover:border-[#111111]"
-                }`}
+                  }`}
               >
                 <span className="absolute top-1.5 left-2 text-xs text-[#888892] select-none">+</span>
                 <span className="absolute top-1.5 right-2 text-xs text-[#888892] select-none">+</span>

@@ -221,33 +221,30 @@ export function Hero() {
               <button
                 type="button"
                 onClick={() => setActiveTerminalTab("stream")}
-                className={`px-2.5 py-1 text-[10px] uppercase font-bold transition-all ${
-                  activeTerminalTab === "stream"
-                    ? "bg-[#252535] text-white shadow-xs"
-                    : "text-[#888899] hover:text-white"
-                }`}
+                className={`px-2.5 py-1 text-[10px] uppercase font-bold transition-all ${activeTerminalTab === "stream"
+                  ? "bg-[#252535] text-white shadow-xs"
+                  : "text-[#888899] hover:text-white"
+                  }`}
               >
                 Live Proxy Stream
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTerminalTab("audit")}
-                className={`px-2.5 py-1 text-[10px] uppercase font-bold transition-all ${
-                  activeTerminalTab === "audit"
-                    ? "bg-[#252535] text-white shadow-xs"
-                    : "text-[#888899] hover:text-white"
-                }`}
+                className={`px-2.5 py-1 text-[10px] uppercase font-bold transition-all ${activeTerminalTab === "audit"
+                  ? "bg-[#252535] text-white shadow-xs"
+                  : "text-[#888899] hover:text-white"
+                  }`}
               >
                 KMS Hash Ledger
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTerminalTab("mesh")}
-                className={`px-2.5 py-1 text-[10px] uppercase font-bold transition-all ${
-                  activeTerminalTab === "mesh"
-                    ? "bg-[#252535] text-white shadow-xs"
-                    : "text-[#888899] hover:text-white"
-                }`}
+                className={`px-2.5 py-1 text-[10px] uppercase font-bold transition-all ${activeTerminalTab === "mesh"
+                  ? "bg-[#252535] text-white shadow-xs"
+                  : "text-[#888899] hover:text-white"
+                  }`}
               >
                 PoP Mesh Status
               </button>

@@ -67,19 +67,17 @@ export function AnimatedGradientCard({
       onClick={onClick}
       whileHover={{ y: -5, scale: 1.008 }}
       transition={{ type: "spring", stiffness: 350, damping: 26 }}
-      className={`relative group rounded-none select-none transition-shadow duration-500 ${
-        isFeatured
+      className={`relative group rounded-none select-none transition-shadow duration-500 ${isFeatured
           ? "shadow-[0_12px_36px_-10px_rgba(17,17,17,0.14)]"
           : "hover:shadow-[0_12px_32px_-12px_rgba(17,17,17,0.10)]"
-      } ${containerClassName}`}
+        } ${containerClassName}`}
     >
       {/* 1. CONTINUOUS ANIMATED GRADIENT BORDER FRAME */}
       <div
-        className={`absolute -inset-[1px] rounded-none transition-opacity duration-500 pointer-events-none ${
-          isFeatured
+        className={`absolute -inset-[1px] rounded-none transition-opacity duration-500 pointer-events-none ${isFeatured
             ? "opacity-100"
             : "opacity-40 group-hover:opacity-100"
-        }`}
+          }`}
         style={{
           background: isFeatured
             ? "linear-gradient(135deg, #111111 0%, #4F46E5 50%, #7C3AED 100%)"
@@ -91,11 +89,10 @@ export function AnimatedGradientCard({
 
       {/* 2. AMBIENT GLOWING RADIAL AURA (BEHIND CARD ON HOVER) */}
       <div
-        className={`absolute -inset-2 rounded-none filter blur-xl transition-opacity duration-700 pointer-events-none ${
-          isFeatured
+        className={`absolute -inset-2 rounded-none filter blur-xl transition-opacity duration-700 pointer-events-none ${isFeatured
             ? "opacity-20 group-hover:opacity-35"
             : "opacity-0 group-hover:opacity-20"
-        }`}
+          }`}
         style={{
           background: "radial-gradient(circle at 50% 50%, rgba(79,70,229,0.18) 0%, rgba(124,58,237,0.08) 50%, transparent 80%)",
         }}
@@ -103,9 +100,8 @@ export function AnimatedGradientCard({
 
       {/* 3. CARD BODY WITH CRISP CAD BACKGROUND */}
       <div
-        className={`relative z-10 w-full h-full bg-[#FFFFFF]/98 backdrop-blur-xs border border-[#E2E2DA]/60 transition-colors duration-300 overflow-hidden ${
-          isFeatured ? "bg-white" : "group-hover:border-transparent"
-        } ${className}`}
+        className={`relative z-10 w-full h-full bg-[#FFFFFF]/98 backdrop-blur-xs border border-[#E2E2DA]/60 transition-colors duration-300 overflow-hidden ${isFeatured ? "bg-white" : "group-hover:border-transparent"
+          } ${className}`}
       >
         {/* Dynamic Cursor-Tracking Ambient Spotlight */}
         <div

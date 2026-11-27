@@ -141,11 +141,10 @@ export function ModelsMatrixSection() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-3 py-1 font-bold uppercase transition-all ${
-                  activeCategory === cat
+                className={`px-3 py-1 font-bold uppercase transition-all ${activeCategory === cat
                     ? "bg-[#111111] text-white shadow-xs"
                     : "text-[#555562] hover:text-[#111111]"
-                }`}
+                  }`}
               >
                 {cat}
               </button>

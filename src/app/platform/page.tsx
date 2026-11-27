@@ -115,11 +115,10 @@ export default function PlatformPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`p-4 border transition-all text-left flex items-center gap-3 relative ${
-                    isSelected
-                      ? "bg-white border-[#111111] ring-1 ring-[#111111]"
-                      : "bg-[#F7F7F4] border-[#E2E2DA] hover:border-[#111111]"
-                  }`}
+                  className={`p-4 border transition-all text-left flex items-center gap-3 relative ${isSelected
+                    ? "bg-white border-[#111111] ring-1 ring-[#111111]"
+                    : "bg-[#F7F7F4] border-[#E2E2DA] hover:border-[#111111]"
+                    }`}
                 >
                   <Icon className={`w-4 h-4 shrink-0 ${isSelected ? "text-violet-primary" : "text-[#777783]"}`} />
                   <span className="text-xs font-bold uppercase text-[#111111]">{tab.label}</span>
@@ -169,7 +168,7 @@ export default function PlatformPage() {
                     <span className="text-emerald-400 font-bold">STATUS: ACTIVE</span>
                   </div>
                   <pre className="text-[11px] text-[#DDDDDD] overflow-x-auto leading-relaxed">
-{`{
+                    {`{
   "route": "google/gemini-2.5-flash",
   "circuit_breaker": "CLOSED",
   "upstream_latency_p95": "18ms",
@@ -200,7 +199,7 @@ export default function PlatformPage() {
                     <span className="text-emerald-400 font-bold">200 AUTHORIZED</span>
                   </div>
                   <pre className="text-[11px] text-[#DDDDDD] overflow-x-auto leading-relaxed">
-{`{
+                    {`{
   "tenant_id": "org_enterprise_primary",
   "allocated_quota": 75000000,
   "consumed_tokens": 32410800,
@@ -230,7 +229,7 @@ export default function PlatformPage() {
                     <span className="text-violet-400 font-bold">CACHE HIT (0.984)</span>
                   </div>
                   <pre className="text-[11px] text-[#DDDDDD] overflow-x-auto leading-relaxed">
-{`{
+                    {`{
   "cache_status": "HIT",
   "cosine_similarity": 0.984,
   "latency_saved": "320ms",
@@ -260,7 +259,7 @@ export default function PlatformPage() {
                     <span className="text-emerald-400 font-bold">AES-256-GCM</span>
                   </div>
                   <pre className="text-[11px] text-[#DDDDDD] overflow-x-auto leading-relaxed">
-{`{
+                    {`{
   "vault_id": "vlt_tenant_sec_01",
   "cipher": "AES-256-GCM",
   "key_derivation": "PBKDF2_SHA256",
