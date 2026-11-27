@@ -15,21 +15,21 @@ export function Badge({
   children,
   ...props
 }: BadgeProps) {
-  const baseStyles = "inline-flex items-center font-semibold rounded-full tracking-wide select-none";
+  const baseStyles = "inline-flex items-center font-mono font-bold uppercase select-none border";
 
   const sizeStyles = {
-    sm: "text-xs px-2.5 py-0.5",
-    md: "text-xs px-3 py-1 font-semibold",
+    sm: "text-[9px] px-1.5 py-0.5 tracking-wider",
+    md: "text-[10px] px-2 py-0.5 tracking-wider",
   };
 
   const variantStyles = {
-    default: "bg-surface text-[#4a4a58] border border-border font-semibold",
-    violet: "bg-violet-light/90 text-violet-primary border border-violet-soft/40 font-semibold shadow-sm",
-    blue: "bg-blue-light/90 text-indigo-800 border border-blue-soft/40 font-semibold",
-    success: "bg-emerald-50 text-emerald-800 border border-emerald-300/80 font-semibold",
-    warning: "bg-amber-50 text-amber-800 border border-amber-300/80 font-semibold",
-    danger: "bg-rose-50 text-rose-800 border border-rose-300/80 font-semibold",
-    outline: "bg-transparent text-[#4a4a58] border border-border font-semibold",
+    default: "bg-[#F6F6F3] text-[#333333] border-[#E2E2DA]",
+    violet: "bg-[#F4F0FF] text-[#5533FF] border-[#D4C4FF]",
+    blue: "bg-[#EEF4FF] text-[#1D4ED8] border-[#BFDBFE]",
+    success: "bg-[#EDFCF2] text-[#15803D] border-[#BBF7D0]",
+    warning: "bg-[#FEFCE8] text-[#A16207] border-[#FEF08A]",
+    danger: "bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]",
+    outline: "bg-transparent text-[#555562] border-[#E2E2DA]",
   };
 
   return (

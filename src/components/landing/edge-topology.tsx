@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Globe2, Server, Shield, Zap, Activity, Cpu, ArrowUpRight, CheckCircle2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
+import { Globe2, Server, Shield, Zap, Activity, Cpu } from "lucide-react";
+import { AnimatedSunsetMesh } from "@/components/ui/animated-sunset-mesh";
+import { GsapHeadline } from "@/components/animations/gsap-animator";
 
 export function EdgeTopologySection() {
   const [selectedRegion, setSelectedRegion] = useState("iad");
@@ -13,9 +15,9 @@ export function EdgeTopologySection() {
       name: "US-East (Virginia)",
       code: "iad-edge-01",
       latency: "14 ms",
-      health: "Optimal",
+      health: "OPTIMAL",
       throughput: "14.2k req/s",
-      providers: ["OpenAI", "Anthropic", "Google"],
+      providers: ["Google", "Anthropic", "OpenAI"],
       uptime: "99.99%",
     },
     {
@@ -23,262 +25,155 @@ export function EdgeTopologySection() {
       name: "US-West (Oregon)",
       code: "pdx-edge-02",
       latency: "18 ms",
-      health: "Optimal",
+      health: "OPTIMAL",
       throughput: "9.8k req/s",
-      providers: ["OpenAI", "Google", "Meta"],
-      uptime: "99.98%",
+      providers: ["Google", "OpenAI"],
+      uptime: "99.99%",
     },
     {
       id: "fra",
       name: "EU-Central (Frankfurt)",
       code: "fra-edge-01",
       latency: "19 ms",
-      health: "Optimal",
+      health: "OPTIMAL",
       throughput: "12.5k req/s",
-      providers: ["Mistral", "Anthropic", "OpenAI"],
+      providers: ["Google", "Anthropic", "OpenAI"],
       uptime: "99.99%",
-    },
-    {
-      id: "dub",
-      name: "EU-West (Dublin)",
-      code: "dub-edge-02",
-      latency: "22 ms",
-      health: "Optimal",
-      throughput: "8.1k req/s",
-      providers: ["Mistral", "OpenAI"],
-      uptime: "99.99%",
-    },
-    {
-      id: "tyo",
-      name: "AP-East (Tokyo)",
-      code: "tyo-edge-01",
-      latency: "26 ms",
-      health: "Optimal",
-      throughput: "10.4k req/s",
-      providers: ["Google", "OpenAI", "Anthropic"],
-      uptime: "99.97%",
     },
     {
       id: "sin",
-      name: "AP-South (Singapore)",
-      code: "sin-edge-02",
-      latency: "28 ms",
-      health: "Optimal",
+      name: "AP-East (Singapore)",
+      code: "sin-edge-01",
+      latency: "24 ms",
+      health: "OPTIMAL",
       throughput: "7.6k req/s",
-      providers: ["OpenAI", "Google"],
-      uptime: "99.98%",
+      providers: ["Google", "OpenAI"],
+      uptime: "99.99%",
     },
   ];
 
-  const current = regions.find((r) => r.id === selectedRegion) || regions[0];
+  const active = regions.find((r) => r.id === selectedRegion) || regions[0];
 
   return (
-    <section className="py-24 sm:py-32 bg-[#FAFAFC] border-t border-border relative overflow-hidden">
-      {/* Subtle radial ambient background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-gradient-to-r from-violet-soft/10 via-blue-soft/15 to-transparent rounded-full blur-3xl pointer-events-none" />
+    <section className="py-20 bg-[#F6F6F3] border-b border-[#E2E2DA] select-none font-sans relative overflow-hidden">
+      {/* Subtle Ambient Sunset Glow */}
+      <AnimatedSunsetMesh intensity="subtle" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-border text-xs font-semibold text-secondary shadow-subtle mb-4">
-            <Globe2 className="w-3.5 h-3.5 text-violet-primary" />
-            Distributed Anycast Infrastructure
-          </div>
-          <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-[#111111] mb-5 font-heritage">
-            Global Edge Topology.
-            <br />
-            <span className="text-violet-primary">Sub-20ms Gateway Latency.</span>
-          </h2>
-          <p className="text-base sm:text-lg text-secondary leading-relaxed">
-            Requests hit the nearest Nexora edge point-of-presence (PoP), terminating TLS and validating token quotas locally before intelligent routing to upstream model servers.
+        {/* CAD Blueprint Header */}
+        <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
+          <span className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722] animate-pulse" />
+            // TOPOLOGY SPECIFICATION: ANYCAST GLOBAL INGRESS RADAR
+          </span>
+          <span>MESH NODES: 32 ACTIVE EDGE PoPs</span>
+        </div>
+
+        <div className="max-w-3xl mb-12">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30 inline-block mb-3">
+            DISTRIBUTED EDGE TOPOLOGY
+          </span>
+          <GsapHeadline
+            text="SUB-20MS INFERENCE ROUTING ACROSS"
+            highlight="32 GLOBAL PoPs"
+            className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-[#111111] font-mono leading-[1.12] mb-3"
+          />
+          <p className="text-xs sm:text-sm text-[#555562] font-mono leading-relaxed">
+            Requests hit the nearest physical Anycast node via BGP Anycast routing, minimizing time-to-first-token (TTFT) and providing resilient zero-packet-drop failover.
           </p>
         </div>
 
-        {/* Interactive Edge Console */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white border border-border rounded-3xl p-6 sm:p-8 lg:p-10 shadow-premium">
-          {/* Region Picker & Node List */}
-          <div className="lg:col-span-5 space-y-3">
-            <div className="flex items-center justify-between pb-3 border-b border-border">
-              <span className="text-xs font-semibold uppercase tracking-wider text-secondary">
-                Active Edge PoPs (24 Nodes)
-              </span>
-              <span className="text-xs text-emerald-600 font-medium flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                All Operational
-              </span>
-            </div>
+        {/* Region Selector Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 font-mono">
+          {regions.map((reg) => {
+            const isSelected = selectedRegion === reg.id;
+            return (
+              <motion.button
+                key={reg.id}
+                onClick={() => setSelectedRegion(reg.id)}
+                whileHover={{ y: -4 }}
+                transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                className={`p-5 text-left border relative transition-all ${
+                  isSelected
+                    ? "bg-white border-[#FF5722] ring-1 ring-[#FF5722] shadow-sm"
+                    : "bg-[#F7F7F4]/90 hover:bg-white border-[#E2E2DA] hover:border-[#111111]"
+                }`}
+              >
+                <span className="absolute top-1.5 left-2 text-xs text-[#888892] select-none">+</span>
+                <span className="absolute top-1.5 right-2 text-xs text-[#888892] select-none">+</span>
 
-            <div className="space-y-2">
-              {regions.map((reg) => (
-                <button
-                  key={reg.id}
-                  onClick={() => setSelectedRegion(reg.id)}
-                  className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-center justify-between ${
-                    selectedRegion === reg.id
-                      ? "bg-violet-light/40 border-violet-soft text-foreground shadow-sm"
-                      : "bg-surface border-border/80 text-secondary hover:text-foreground hover:bg-white"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center font-mono text-xs font-bold ${
-                        selectedRegion === reg.id
-                          ? "bg-violet-primary text-white"
-                          : "bg-white text-secondary border border-border"
-                      }`}
-                    >
-                      {reg.id.toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-foreground">{reg.name}</p>
-                      <p className="text-xs font-mono text-[#525263] font-semibold">{reg.code}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-mono font-bold text-emerald-700">
-                      {reg.latency}
-                    </span>
-                    <p className="text-xs font-bold text-[#6e6e7c]">p95 TTFT</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Detailed Node Telemetry Visualizer */}
-          <div className="lg:col-span-7 bg-[#100E20] rounded-2xl p-6 sm:p-8 text-white border border-white/10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-violet-primary/20 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="relative z-10 space-y-6">
-              {/* Header inside Dark Terminal */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-white/10">
-                <div>
-                  <span className="text-xs uppercase font-mono font-bold tracking-widest text-violet-soft">
-                    PoP Node Telemetry
-                  </span>
-                  <h3 className="text-xl font-bold font-heritage text-white mt-0.5">
-                    {current.name}
-                  </h3>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold border border-emerald-500/30">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    {current.health}
-                  </span>
-                  <span className="text-xs font-mono font-semibold text-white/80 bg-white/10 px-3 py-1 rounded-full border border-white/15">
-                    {current.uptime} SLA
-                  </span>
-                </div>
-              </div>
-
-              {/* Live Metric Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                  <span className="text-xs text-white/70 block mb-1 font-semibold">p95 TTFT Latency</span>
-                  <span className="text-2xl font-mono font-bold text-violet-soft">
-                    {current.latency}
-                  </span>
-                  <span className="text-xs text-emerald-400 block mt-1 font-semibold">Direct fiber link</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] text-[#777783] uppercase tracking-wider">{reg.code}</span>
+                  <span className={`w-2 h-2 rounded-full ${isSelected ? "bg-[#FF5722] animate-ping" : "bg-emerald-500"}`} />
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                  <span className="text-xs text-white/70 block mb-1 font-semibold">Live Ingress Rate</span>
-                  <span className="text-2xl font-mono font-bold text-white">
-                    {current.throughput}
-                  </span>
-                  <span className="text-xs text-white/60 block mt-1 font-semibold">Real-time telemetry</span>
+                <div className="text-sm font-bold text-[#111111] uppercase mb-1">
+                  {reg.name}
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4 col-span-2 sm:col-span-1">
-                  <span className="text-xs text-white/70 block mb-1 font-semibold">TLS Handshake</span>
-                  <span className="text-2xl font-mono font-bold text-blue-soft">0-RTT</span>
-                  <span className="text-xs text-white/60 block mt-1 font-semibold">TLS 1.3 / ChaCha20</span>
+                <div className="flex items-baseline gap-1 mt-2">
+                  <span className="text-xl font-extrabold text-[#111111]">{reg.latency}</span>
+                  <span className="text-[10px] text-[#777783]">TTFT</span>
                 </div>
-              </div>
-
-              {/* Connected Model Upstream Pipes */}
-              <div>
-                <span className="text-xs text-white/60 block mb-2 font-medium">
-                  Direct Private Peering Upstreams:
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {current.providers.map((p) => (
-                    <span
-                      key={p}
-                      className="px-3 py-1.5 rounded-lg bg-white/10 text-xs text-white border border-white/15 flex items-center gap-1.5"
-                    >
-                      <Zap className="w-3 h-3 text-violet-soft" />
-                      {p} Direct Pipe
-                    </span>
-                  ))}
-                  <span className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-xs text-emerald-300 border border-emerald-500/20 flex items-center gap-1.5">
-                    <Shield className="w-3 h-3" />
-                    Layer 7 Anti-DDoS
-                  </span>
-                </div>
-              </div>
-
-              {/* Edge routing mock terminal feed */}
-              <div className="bg-black/40 border border-white/10 rounded-xl p-3 font-mono text-[11px] text-white/70 space-y-1">
-                <div className="flex justify-between text-white/40 text-[10px]">
-                  <span>INGRESS STREAM</span>
-                  <span>TCP BBR CONGESTION CONTROL</span>
-                </div>
-                <div className="text-emerald-400">
-                  ✔ 08:44:12 [TLS-TERM] Client TLS terminated at {current.code} in 3.2ms
-                </div>
-                <div className="text-blue-300">
-                  ✔ 08:44:12 [AUTH-GATE] API key verified; token budget quota valid
-                </div>
-                <div className="text-violet-300">
-                  ✔ 08:44:13 [ROUTE-DISPATCH] Proxied to {current.providers[0]} upstream with 0% dropped frames
-                </div>
-              </div>
-            </div>
-          </div>
+              </motion.button>
+            );
+          })}
         </div>
 
-        {/* 3 Core Architecture Guarantees */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <div className="bg-white border border-border p-6 rounded-2xl flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-violet-light border border-violet-soft/30 flex items-center justify-center text-violet-primary shrink-0">
-              <Zap className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-foreground font-heritage">
-                BGP Anycast Routing
-              </h4>
-              <p className="text-xs text-secondary mt-1 leading-relaxed">
-                Single global IP address announces via BGP across 24 tier-1 transit providers, routing developers to the physically nearest PoP automatically.
-              </p>
-            </div>
-          </div>
+        {/* Selected Region Telemetry Board */}
+        <div className="bg-white/95 backdrop-blur-xs border border-[#E2E2DA] p-6 sm:p-8 relative shadow-sm">
+          <span className="absolute top-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute top-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute bottom-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute bottom-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
 
-          <div className="bg-white border border-border p-6 rounded-2xl flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-blue-light border border-blue-soft/30 flex items-center justify-center text-indigo-700 shrink-0">
-              <Server className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-foreground font-heritage">
-                Zero Cold-Start Buffering
-              </h4>
-              <p className="text-xs text-secondary mt-1 leading-relaxed">
-                Persistent keep-alive connection pools to Anthropic, OpenAI, and Google data centers eliminate TCP handshake overhead on every generation call.
-              </p>
-            </div>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 font-mono">
+            <div className="md:col-span-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs font-bold text-[#111111] uppercase">{active.name}</span>
+                <span className="text-xs text-[#777783]">({active.code})</span>
+              </div>
 
-          <div className="bg-white border border-border p-6 rounded-2xl flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0">
-              <Shield className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-foreground font-heritage">
-                Multi-Provider Failover
-              </h4>
-              <p className="text-xs text-secondary mt-1 leading-relaxed">
-                If an upstream provider returns 502/503 or degrades beyond 1,500ms TTFT, Nexora reroutes requests to your configured secondary model in under 12ms.
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="p-3 bg-[#F7F7F4] border border-[#E2E2DA]">
+                  <span className="text-[10px] text-[#777783] uppercase block">HEALTH STATUS</span>
+                  <span className="font-bold text-emerald-700 text-sm mt-0.5 block">{active.health}</span>
+                </div>
+                <div className="p-3 bg-[#F7F7F4] border border-[#E2E2DA]">
+                  <span className="text-[10px] text-[#777783] uppercase block">THROUGHPUT</span>
+                  <span className="font-bold text-[#111111] text-sm mt-0.5 block">{active.throughput}</span>
+                </div>
+              </div>
+
+              <p className="text-xs text-[#555562] font-sans leading-relaxed">
+                Hardware-accelerated edge routing node with local vector caching and zero-copy packet proxying directly into Google Cloud, AWS, and Cloudflare interconnects.
               </p>
+            </div>
+
+            <div className="md:col-span-7 flex flex-col justify-between">
+              <div className="space-y-3">
+                <span className="text-[10px] uppercase font-bold text-[#777783] tracking-wider block">
+                  SUPPORTED UPSTREAM MESH PROVIDERS
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {active.providers.map((p) => (
+                    <span
+                      key={p}
+                      className="px-3 py-1 bg-[#F7F7F4] border border-[#E2E2DA] text-xs font-bold text-[#111111]"
+                    >
+                      {p} Direct Interconnect
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-[#E2E2DA] flex items-center justify-between text-xs">
+                <span className="text-[#777783]">FINANCIAL SLA:</span>
+                <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 border border-emerald-300">
+                  {active.uptime} BACKED
+                </span>
+              </div>
             </div>
           </div>
         </div>

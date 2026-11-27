@@ -61,12 +61,10 @@ export default function GlobalRouteError({
           <RotateCw className="w-4 h-4" />
           Reload Route
         </Button>
-        <Link href="/">
-          <Button variant="secondary" size="lg" className="gap-2 font-semibold">
-            <Home className="w-4 h-4 text-secondary" />
-            Return Home
-          </Button>
-        </Link>
+        <Button href="/" variant="secondary" size="lg" className="gap-2 font-semibold">
+          <Home className="w-4 h-4 text-secondary" />
+          Return Home
+        </Button>
       </div>
     </div>
   );

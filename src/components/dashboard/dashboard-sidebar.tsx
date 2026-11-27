@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { asset } from "@/lib/asset";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,12 +14,13 @@ import {
   CreditCard,
   BookOpen,
   Settings,
-  ShieldAlert,
-  LogOut,
+  ShieldCheck,
+  Building2,
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { createClient } from "@/utils/supabase/client";
 
 interface DashboardSidebarProps {
   onCloseMobile?: () => void;
@@ -27,6 +28,50 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const [userEmail, setUserEmail] = useState<string>("user@nexora.cloud");
+  const [workspaceName, setWorkspaceName] = useState<string>("Production Workspace");
+  const [planName, setPlanName] = useState<string>("Commercial Gateway");
+  const [initials, setInitials] = useState<string>("NX");
+
+  useEffect(() => {
+    async function loadUserData() {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user && user.email) {
+          setUserEmail(user.email);
+          const namePart = user.email.split("@")[0];
+          setInitials(namePart.slice(0, 2).toUpperCase());
+          setWorkspaceName(`${namePart.charAt(0).toUpperCase() + namePart.slice(1)}'s Workspace`);
+
+          // Attempt to read real profile & organization if tables exist
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("organization_id, full_name")
+            .eq("id", user.id)
+            .maybeSingle();
+
+          if (profile?.full_name) {
+            const parts = profile.full_name.trim().split(" ");
+            setInitials(parts.map((p: string) => p[0]).join("").slice(0, 2).toUpperCase());
+          }
+
+          if (profile?.organization_id) {
+            const { data: org } = await supabase
+              .from("organizations")
+              .select("name, plan")
+              .eq("id", profile.organization_id)
+              .maybeSingle();
+            if (org?.name) setWorkspaceName(org.name);
+            if (org?.plan) setPlanName(`${org.plan.charAt(0).toUpperCase() + org.plan.slice(1)} Plan`);
+          }
+        }
+      } catch (err) {
+        // Fallback safely to production defaults
+      }
+    }
+    loadUserData();
+  }, []);
 
   const navigation = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -35,46 +80,38 @@ export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
     { name: "Token Usage", href: "/dashboard/tokens", icon: Zap },
     { name: "Analytics", href: "/dashboard/analytics", icon: LineChart },
     { name: "Cloud Storage", href: "/dashboard/storage", icon: HardDrive },
-    { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
+    { name: "Billing & Quotes", href: "/dashboard/billing", icon: CreditCard },
     { name: "Documentation", href: "/dashboard/docs", icon: BookOpen },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-border h-full flex flex-col justify-between select-none">
+    <aside className="w-64 bg-[#F6F6F3] border-r border-[#E2E2DA] h-full flex flex-col justify-between select-none font-sans">
       <div>
-        {/* Brand Logo */}
-        <div className="h-16 flex items-center px-6 border-b border-border">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-              <img
-                src={asset("/logo.png")}
-                alt="NEXORA Logo"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heritage font-bold text-base tracking-tight text-foreground">
-                NEXORA
-              </span>
-              <span className="text-[10px] text-secondary font-mono">Customer Portal</span>
-            </div>
+        {/* Brand Logo & Telemetry Header */}
+        <div className="h-16 flex items-center px-5 border-b border-[#E2E2DA] bg-[#F2F2EE]">
+          <Link href="/" className="flex items-center group">
+            <img
+              src={asset("/logo-full.png")}
+              alt="nexora AI"
+              className="h-7 w-auto object-contain"
+            />
           </Link>
         </div>
 
-        {/* Workspace pill */}
-        <div className="px-4 py-3 border-b border-border/60">
-          <div className="p-2.5 rounded-xl bg-surface border border-border/80 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-violet-light text-violet-primary flex items-center justify-center text-xs font-bold">
-                A
+        {/* Real Workspace Indicator */}
+        <div className="p-3 border-b border-[#E2E2DA]">
+          <div className="p-2.5 bg-white border border-[#E2E2DA] flex items-center justify-between">
+            <div className="flex items-center gap-2 truncate">
+              <div className="w-6 h-6 bg-[#111111] text-white flex items-center justify-center text-[10px] font-mono font-bold shrink-0">
+                {initials}
               </div>
               <div className="truncate">
-                <p className="text-xs font-semibold text-foreground truncate">Aether Dynamics</p>
-                <p className="text-[10px] text-secondary">Growth Workspace</p>
+                <p className="text-xs font-bold text-[#111111] truncate">{workspaceName}</p>
+                <p className="text-[10px] font-mono text-[#777783]">{planName}</p>
               </div>
             </div>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="Active Connection" />
           </div>
         </div>
 
@@ -89,13 +126,13 @@ export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
                 href={item.href}
                 onClick={onCloseMobile}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors",
+                  "flex items-center gap-3 px-3 py-2 text-xs font-semibold transition-colors border",
                   isActive
-                    ? "bg-violet-light/60 text-violet-primary font-semibold border border-violet-soft/30 shadow-xs"
-                    : "text-secondary hover:text-foreground hover:bg-surface"
+                    ? "bg-white text-[#111111] font-bold border-[#E2E2DA] shadow-xs"
+                    : "border-transparent text-[#555562] hover:text-[#111111] hover:bg-white/60"
                 )}
               >
-                <Icon className={cn("w-4 h-4", isActive ? "text-violet-primary" : "text-secondary")} />
+                <Icon className={cn("w-4 h-4", isActive ? "text-[#FF5722]" : "text-[#777783]")} />
                 <span>{item.name}</span>
               </Link>
             );
@@ -103,27 +140,28 @@ export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
         </nav>
       </div>
 
-      {/* Bottom section: switch to admin & user account */}
-      <div className="p-3 border-t border-border space-y-2">
+      {/* Bottom Section: Admin Switch & Real User Account */}
+      <div className="p-3 border-t border-[#E2E2DA] space-y-2 bg-[#F2F2EE]/50">
         <Link
           href="/admin"
-          className="flex items-center justify-between p-2.5 rounded-xl bg-surface hover:bg-violet-light/40 border border-border transition-colors text-xs text-foreground group"
+          className="flex items-center justify-between p-2.5 bg-white hover:bg-[#111111] hover:text-white border border-[#E2E2DA] transition-all text-xs text-[#111111] group"
         >
           <div className="flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 text-violet-primary" />
-            <span className="font-medium">Admin Interface</span>
+            <ShieldCheck className="w-4 h-4 text-[#FF5722] group-hover:text-white" />
+            <span className="font-bold text-[11px] uppercase tracking-wider">Admin Console</span>
           </div>
-          <span className="text-[10px] text-violet-primary font-bold group-hover:translate-x-0.5 transition-transform">
+          <span className="text-[10px] font-mono font-bold text-[#FF5722] group-hover:text-white">
             Switch →
           </span>
         </Link>
 
-        <div className="flex items-center justify-between px-3 py-2 text-xs text-secondary">
+        {/* Real Authenticated User */}
+        <div className="flex items-center justify-between px-2 py-1.5 text-xs text-[#555562]">
           <div className="flex items-center gap-2 truncate">
-            <div className="w-6 h-6 rounded-full bg-surface border border-border text-[10px] font-bold flex items-center justify-center text-foreground">
-              ER
+            <div className="w-6 h-6 rounded-none bg-white border border-[#E2E2DA] text-[10px] font-mono font-bold flex items-center justify-center text-[#111111] shrink-0">
+              {initials}
             </div>
-            <span className="truncate text-foreground font-medium">Elena Rostova</span>
+            <span className="truncate text-[#111111] font-mono text-[11px]">{userEmail}</span>
           </div>
           <SignOutButton />
         </div>

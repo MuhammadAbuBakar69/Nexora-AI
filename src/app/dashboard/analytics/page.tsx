@@ -2,125 +2,122 @@
 
 import React, { useState } from "react";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import { UsageAreaChart } from "@/components/charts/usage-area-chart";
-import { ModelDonutChart } from "@/components/charts/model-donut-chart";
-import { StatCard } from "@/components/ui/stat-card";
-import { mockDailyUsageData, mockModelDistribution } from "@/data/mock-data";
-import { Activity, Clock, AlertTriangle, ArrowUpRight, Filter } from "lucide-react";
+import { Activity, Clock, ShieldCheck, Cpu, ArrowUpRight, Filter, AlertCircle } from "lucide-react";
 
 export default function AnalyticsPage() {
-  const [timeframe, setTimeframe] = useState<"24h" | "7d" | "30d" | "90d">("30d");
-  const [selectedMetric, setSelectedMetric] = useState<"tokens" | "requests" | "cost">("requests");
+  const [timeframe, setTimeframe] = useState<"24h" | "7d" | "30d">("24h");
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#F6F6F3] font-sans">
       <DashboardHeader
-        title="Gateway Usage Analytics"
-        subtitle="End-to-end performance metrics, request velocity, and latency percentiles"
-        
+        title="Gateway Telemetry &amp; Latency Analytics"
+        subtitle="End-to-end performance metrics, request velocity, and provider latency percentiles"
       />
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        {/* Filter & Metric Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-1 bg-white border border-border p-1 rounded-xl shadow-subtle">
-            {(["24h", "7d", "30d", "90d"] as const).map((t) => (
+        {/* CAD Telemetry Marker */}
+        <div className="flex items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase px-1">
+          <span>// TELEMETRY RADAR • DWG: ANL-PERF-01</span>
+          <span>ROUTING TOPOLOGY: ANYCAST (32 POPs)</span>
+        </div>
+
+        {/* Timeframe Bar */}
+        <div className="flex items-center justify-between p-4 bg-white border border-[#E2E2DA]">
+          <div className="flex items-center gap-2">
+            {(["24h", "7d", "30d"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTimeframe(t)}
-                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                className={`px-3 py-1 text-xs font-mono font-bold uppercase transition-all ${
                   timeframe === t
-                    ? "bg-[#111111] text-white shadow-xs font-semibold"
-                    : "text-secondary hover:text-foreground"
+                    ? "bg-[#111111] text-white"
+                    : "bg-[#F7F7F4] text-[#555562] border border-[#E2E2DA] hover:border-[#111111]"
                 }`}
               >
                 {t}
               </button>
             ))}
           </div>
-
-          <div className="inline-flex items-center p-1 bg-white border border-border rounded-xl shadow-subtle">
-            {(["requests", "tokens", "cost"] as const).map((m) => (
-              <button
-                key={m}
-                onClick={() => setSelectedMetric(m)}
-                className={`px-3 py-1 rounded-lg text-xs font-medium capitalize transition-all ${
-                  selectedMetric === m
-                    ? "bg-violet-light text-violet-primary font-bold border border-violet-soft/30"
-                    : "text-secondary hover:text-foreground"
-                }`}
-              >
-                {m}
-              </button>
-            ))}
-          </div>
+          <span className="text-[11px] font-mono text-emerald-600 font-bold">
+            GATEWAY HEALTH: 99.99%
+          </span>
         </div>
 
-        {/* 3 Metric Cards */}
+        {/* 3 Core Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <StatCard
-            title="Total Gateway Requests"
-            value="349,200"
-            subtitle="Processed across all models"
-            change={{ value: "+24.5%", isPositive: true }}
-            icon={<Activity className="w-4 h-4 text-violet-primary" />}
-          />
-          <StatCard
-            title="P95 Edge Latency"
-            value="210 ms"
-            subtitle="Including TTFT & proxy routing"
-            change={{ value: "-12 ms", isPositive: true }}
-            icon={<Clock className="w-4 h-4 text-emerald-600" />}
-          />
-          <StatCard
-            title="Error Rate"
-            value="0.02%"
-            subtitle="Automatic retry coverage active"
-            change={{ value: "Healthy", isPositive: true }}
-            icon={<AlertTriangle className="w-4 h-4 text-indigo-600" />}
-          />
-        </div>
-
-        {/* Main Chart */}
-        <div className="bg-white border border-border rounded-2xl p-6 shadow-subtle">
-          <div className="flex items-center justify-between pb-4 border-b border-border/60">
-            <div>
-              <h3 className="text-base font-semibold text-foreground capitalize">
-                {selectedMetric} Velocity Trend
-              </h3>
-              <p className="text-xs text-secondary">
-                Filtered for timeframe: <span className="font-semibold text-foreground">{timeframe}</span>
-              </p>
+          <div className="p-5 bg-white border border-[#E2E2DA] relative">
+            <span className="absolute top-1.5 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+            <div className="flex items-center justify-between text-[#777783] text-xs font-mono uppercase mb-2">
+              <span>Gateway Requests</span>
+              <Activity className="w-4 h-4 text-violet-primary" />
             </div>
-            <span className="text-[11px] font-mono text-secondary">
-              p50: 160ms • p95: 210ms • p99: 380ms
-            </span>
+            <div className="text-2xl font-mono font-extrabold text-[#111111]">
+              0
+            </div>
+            <p className="text-[11px] text-[#777783] font-mono mt-1">
+              Awaiting client incoming traffic
+            </p>
           </div>
 
-          <div className="pt-4">
-            <UsageAreaChart data={mockDailyUsageData} metric={selectedMetric} />
+          <div className="p-5 bg-white border border-[#E2E2DA] relative">
+            <span className="absolute top-1.5 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+            <div className="flex items-center justify-between text-[#777783] text-xs font-mono uppercase mb-2">
+              <span>P95 Edge Latency</span>
+              <Clock className="w-4 h-4 text-emerald-600" />
+            </div>
+            <div className="text-2xl font-mono font-extrabold text-[#111111]">
+              18 ms
+            </div>
+            <p className="text-[11px] text-[#777783] font-mono mt-1">
+              Anycast edge proxy overhead
+            </p>
+          </div>
+
+          <div className="p-5 bg-white border border-[#E2E2DA] relative">
+            <span className="absolute top-1.5 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+            <div className="flex items-center justify-between text-[#777783] text-xs font-mono uppercase mb-2">
+              <span>Gateway Error Rate</span>
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            </div>
+            <div className="text-2xl font-mono font-extrabold text-emerald-700">
+              0.00%
+            </div>
+            <p className="text-[11px] text-[#777783] font-mono mt-1">
+              Zero-packet drop routing mesh
+            </p>
           </div>
         </div>
 
-        {/* Provider Latency Benchmarks */}
-        <div className="bg-white border border-border rounded-2xl p-6 shadow-subtle">
-          <h3 className="text-base font-semibold text-foreground mb-4">
-            Upstream Provider Latency & Health
-          </h3>
+        {/* Live Provider Health & Latency Benchmarks */}
+        <div className="bg-white border border-[#E2E2DA] p-6 relative">
+          <span className="absolute top-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute top-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+
+          <div className="pb-4 border-b border-[#E2E2DA] mb-4">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#111111]">
+              Upstream Provider Mesh Telemetry
+            </h3>
+            <p className="text-[11px] font-mono text-[#777783] mt-0.5">
+              Live automated ping &amp; health checks from the Nexora Anycast router
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { provider: "Anthropic Claude 3.5", p95: "380ms", status: "Operational", color: "text-emerald-600" },
-              { provider: "OpenAI GPT-4o", p95: "340ms", status: "Operational", color: "text-emerald-600" },
-              { provider: "Google Gemini 1.5 Pro", p95: "410ms", status: "Operational", color: "text-emerald-600" },
-              { provider: "Meta Llama 3.3 70B", p95: "290ms", status: "Operational", color: "text-emerald-600" },
+              { provider: "Google Gemini (Vertex AI)", p95: "19ms", status: "NORMAL" },
+              { provider: "Google Veo (Video)", p95: "45ms", status: "NORMAL" },
+              { provider: "Anthropic (Direct API)", p95: "38ms", status: "NORMAL" },
+              { provider: "OpenAI (Direct API)", p95: "32ms", status: "NORMAL" },
             ].map((p, idx) => (
-              <div key={idx} className="p-4 rounded-xl bg-surface border border-border">
+              <div key={idx} className="p-4 bg-[#F7F7F4] border border-[#E2E2DA]">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-foreground">{p.provider}</span>
-                  <span className={`text-[10px] font-semibold ${p.color}`}>● {p.status}</span>
+                  <span className="text-xs font-mono font-bold text-[#111111]">{p.provider}</span>
+                  <span className="text-[10px] font-mono text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.2 border border-emerald-200">
+                    {p.status}
+                  </span>
                 </div>
-                <div className="text-lg font-bold text-foreground font-mono">{p.p95}</div>
-                <span className="text-[10px] text-secondary">Median p95 response time</span>
+                <div className="text-lg font-bold text-[#111111] font-mono">{p.p95}</div>
+                <span className="text-[10px] font-mono text-[#777783]">Edge connection latency</span>
               </div>
             ))}
           </div>

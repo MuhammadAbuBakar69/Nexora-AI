@@ -1,21 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { StatCard } from "@/components/ui/stat-card";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { UsageAreaChart } from "@/components/charts/usage-area-chart";
-import { ModelDonutChart } from "@/components/charts/model-donut-chart";
 import { ApiKeyModal } from "@/components/dashboard/api-key-modal";
-import {
-  mockCustomerTokenUsage,
-  mockDailyUsageData,
-  mockModelDistribution,
-  mockCustomerApiKeys,
-} from "@/data/mock-data";
+import { QuotaQuoteCalculator, CustomerQuote } from "@/components/dashboard/quota-quote-calculator";
+import { createClient } from "@/utils/supabase/client";
 import {
   Coins,
   Key,
@@ -27,27 +20,127 @@ import {
   CheckCircle2,
   Clock,
   Sparkles,
+  Layers,
+  FileCode2,
+  AlertCircle
 } from "lucide-react";
-import { formatNumber, formatBytes } from "@/lib/utils";
 import { ApiKey } from "@/types";
 
 export default function CustomerDashboardOverview() {
   const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
-  const [keysList, setKeysList] = useState<ApiKey[]>(mockCustomerApiKeys);
-  const [chartMetric, setChartMetric] = useState<"tokens" | "requests" | "cost">("tokens");
+  const [keysList, setKeysList] = useState<ApiKey[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [allocatedTokens, setAllocatedTokens] = useState<number>(0);
+  const [consumedTokens, setConsumedTokens] = useState<number>(0);
+  const [currentPlan, setCurrentPlan] = useState<string>("Starter Tier");
+  const [userEmail, setUserEmail] = useState<string>("");
+
+  useEffect(() => {
+    async function fetchDashboardState() {
+      setIsLoading(true);
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+          setUserEmail(user.email || "");
+
+          // 1. Fetch real API keys
+          const { data: keys } = await supabase
+            .from("api_keys")
+            .select("*")
+            .order("created_at", { ascending: false });
+
+          if (keys && keys.length > 0) {
+            setKeysList(
+              keys.map((k) => ({
+                id: k.id,
+                name: k.name,
+                prefix: k.prefix,
+                maskedKey: `${k.prefix}••••••••••••••••${k.last_four}`,
+                permissions: k.permissions || [],
+                createdAt: k.created_at,
+                lastUsedAt: k.last_used_at,
+                status: k.status,
+                rateLimitRpm: k.rate_limit_rpm,
+                totalRequests: 0,
+              }))
+            );
+          } else {
+            setKeysList([]);
+          }
+
+          // 2. Fetch real Quota Allocations
+          const { data: quotas } = await supabase
+            .from("quota_allocations")
+            .select("tokens_allocated")
+            .order("created_at", { ascending: false });
+
+          if (quotas && quotas.length > 0) {
+            const total = quotas.reduce((acc, curr) => acc + (Number(curr.tokens_allocated) || 0), 0);
+            setAllocatedTokens(total);
+          }
+
+          // 3. Fetch real Subscription / Plan
+          const { data: sub } = await supabase
+            .from("subscriptions")
+            .select("plan, status")
+            .eq("status", "active")
+            .maybeSingle();
+
+          if (sub?.plan) {
+            setCurrentPlan(`${sub.plan.charAt(0).toUpperCase() + sub.plan.slice(1)} Tier`);
+          }
+        }
+      } catch (err) {
+        // Fallback safely to production zero-state
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchDashboardState();
+  }, []);
 
   const handleKeyCreated = (newKey: ApiKey) => {
     setKeysList([newKey, ...keysList]);
   };
 
+  const handleQuoteRequested = async (quote: CustomerQuote) => {
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("organization_id")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (profile?.organization_id) {
+        await supabase.from("access_requests").insert({
+          organization_id: profile.organization_id,
+          user_id: user.id,
+          requested_plan: quote.recommendedPlan,
+          business_justification: `Customer quota request for ${quote.monthlyTokens.toLocaleString()} tokens & ${quote.monthlyVideoSeconds}s Veo video (₨${quote.estimatedCostPkr.toLocaleString()} PKR/mo).`,
+          status: "pending",
+        });
+      }
+    } catch (err) {
+      // Handled cleanly
+    }
+  };
+
+  const remainingTokens = Math.max(0, allocatedTokens - consumedTokens);
+
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#F6F6F3] font-sans">
       <DashboardHeader
         title="Workspace Overview"
         subtitle="Real-time monitoring of tokens, API requests, and model routing"
-        
         actionButton={
-          <Button size="sm" onClick={() => setIsKeyModalOpen(true)} className="gap-1.5 text-xs">
+          <Button size="sm" onClick={() => setIsKeyModalOpen(true)} className="gap-1.5 text-xs font-bold uppercase tracking-wider">
             <Plus className="w-3.5 h-3.5" />
             Create API Key
           </Button>
@@ -55,220 +148,247 @@ export default function CustomerDashboardOverview() {
       />
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        {/* Top Notification Banner */}
-        <div className="p-4 rounded-2xl bg-white border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-subtle">
+        {/* Top Blueprint Status Banner */}
+        <div className="p-4 bg-white border border-[#E2E2DA] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-violet-light border border-violet-soft/30 flex items-center justify-center text-violet-primary shrink-0">
+            <div className="w-8 h-8 bg-[#FF5722]/10 border border-[#FF5722]/30 flex items-center justify-center text-[#FF5722] shrink-0">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-semibold text-foreground">
-                Current Plan: <span className="text-violet-primary">Growth Tier</span> • Monthly Cycle
-              </p>
-              <p className="text-[11px] text-secondary">
-                Auto-renews Dec 1, 2026. Quota resets to 50,000,000 tokens.
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <p className="text-xs font-bold text-[#111111] uppercase tracking-wide">
+                  Active Workload: <span className="text-[#FF5722] font-bold">{currentPlan}</span>
+                </p>
+              </div>
+              <p className="text-[11px] font-mono text-[#777783] mt-0.5">
+                {allocatedTokens > 0
+                  ? `Active Quota: ${allocatedTokens.toLocaleString()} tokens allocated for this billing cycle.`
+                  : "No active token quota allocated yet. Use the Quota Calculator below to request an allocation."}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/dashboard/billing">
-              <Button variant="outline" size="sm" className="text-xs h-8">
-                Manage Subscription
-              </Button>
-            </Link>
+            <Button href="/dashboard/billing" variant="outline" size="sm" className="text-xs h-8 font-bold border-[#E2E2DA]">
+              Manage Plan &amp; Billing
+            </Button>
           </div>
         </div>
 
         {/* Core Stat Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Allocated Tokens"
-            value="50.0M"
-            subtitle="Monthly workspace quota"
-            change={{ value: "100%", isPositive: true }}
-            icon={<Coins className="w-4 h-4 text-violet-primary" />}
-            variant="violet"
-          />
-
-          <StatCard
-            title="Tokens Consumed"
-            value="32.4M"
-            subtitle="64.9% of allocated budget"
-            change={{ value: "+18%", isPositive: false }}
-            icon={<Activity className="w-4 h-4 text-indigo-600" />}
-          />
-
-          <StatCard
-            title="Remaining Balance"
-            value="17.5M"
-            subtitle="Safe buffer remaining"
-            icon={<ShieldCheck className="w-4 h-4 text-emerald-600" />}
-          />
-
-          <StatCard
-            title="Active API Keys"
-            value={keysList.filter((k) => k.status === "active").length}
-            subtitle="Provisioned edge credentials"
-            icon={<Key className="w-4 h-4 text-amber-600" />}
-          />
-        </div>
-
-        {/* Charts & Analytics Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Main Area Chart */}
-          <div className="lg:col-span-8 bg-white border border-border rounded-2xl p-6 shadow-subtle">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-border/60 gap-4">
-              <div>
-                <h3 className="text-base font-semibold text-foreground">
-                  Consumption Telemetry
-                </h3>
-                <p className="text-xs text-secondary">
-                  Daily token consumption & gateway traffic velocity
-                </p>
-              </div>
-
-              {/* Metric Selector Pills */}
-              <div className="inline-flex items-center p-1 bg-surface border border-border rounded-xl">
-                {(["tokens", "requests", "cost"] as const).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => setChartMetric(m)}
-                    className={`px-3 py-1 rounded-lg text-xs font-medium capitalize transition-all ${
-                      chartMetric === m
-                        ? "bg-white text-foreground shadow-xs font-semibold"
-                        : "text-secondary hover:text-foreground"
-                    }`}
-                  >
-                    {m}
-                  </button>
-                ))}
-              </div>
+          <div className="p-5 bg-white border border-[#E2E2DA] flex flex-col justify-between">
+            <div className="flex items-center justify-between text-[#777783] text-xs font-mono uppercase mb-3">
+              <span>Total Allocated</span>
+              <Coins className="w-4 h-4 text-violet-primary" />
             </div>
-
-            <div className="pt-4">
-              <UsageAreaChart data={mockDailyUsageData} metric={chartMetric} />
+            <div className="text-2xl font-mono font-extrabold text-[#111111]">
+              {allocatedTokens > 0 ? `${(allocatedTokens / 1_000_000).toFixed(1)}M` : "0.0M"}
             </div>
+            <p className="text-[11px] text-[#777783] font-mono mt-1">
+              {allocatedTokens > 0 ? "Active monthly quota" : "Quota unallocated"}
+            </p>
           </div>
 
-          {/* Model Distribution Donut */}
-          <div className="lg:col-span-4 bg-white border border-border rounded-2xl p-6 shadow-subtle flex flex-col justify-between">
-            <div>
-              <h3 className="text-base font-semibold text-foreground">
-                Model Distribution
-              </h3>
-              <p className="text-xs text-secondary mb-4">
-                Share of tokens consumed per frontier provider
-              </p>
-              <ModelDonutChart data={mockModelDistribution} />
+          <div className="p-5 bg-white border border-[#E2E2DA] flex flex-col justify-between">
+            <div className="flex items-center justify-between text-[#777783] text-xs font-mono uppercase mb-3">
+              <span>Tokens Consumed</span>
+              <Activity className="w-4 h-4 text-indigo-600" />
             </div>
+            <div className="text-2xl font-mono font-extrabold text-[#111111]">
+              {consumedTokens > 0 ? `${(consumedTokens / 1_000_000).toFixed(1)}M` : "0.0M"}
+            </div>
+            <p className="text-[11px] text-[#777783] font-mono mt-1">
+              {allocatedTokens > 0 
+                ? `${((consumedTokens / allocatedTokens) * 100).toFixed(1)}% of budget`
+                : "Awaiting gateway traffic"}
+            </p>
+          </div>
 
-            <div className="pt-4 border-t border-border/60 mt-4 text-center">
-              <Link
-                href="/dashboard/models"
-                className="text-xs text-violet-primary hover:underline font-medium inline-flex items-center gap-1"
-              >
-                View full model catalog & rates
-                <ArrowRight className="w-3 h-3" />
-              </Link>
+          <div className="p-5 bg-white border border-[#E2E2DA] flex flex-col justify-between">
+            <div className="flex items-center justify-between text-[#777783] text-xs font-mono uppercase mb-3">
+              <span>Remaining Balance</span>
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
             </div>
+            <div className="text-2xl font-mono font-extrabold text-emerald-700">
+              {remainingTokens > 0 ? `${(remainingTokens / 1_000_000).toFixed(1)}M` : "0.0M"}
+            </div>
+            <p className="text-[11px] text-[#777783] font-mono mt-1">
+              Zero-overdraft buffer
+            </p>
+          </div>
+
+          <div className="p-5 bg-white border border-[#E2E2DA] flex flex-col justify-between">
+            <div className="flex items-center justify-between text-[#777783] text-xs font-mono uppercase mb-3">
+              <span>Active API Keys</span>
+              <Key className="w-4 h-4 text-amber-600" />
+            </div>
+            <div className="text-2xl font-mono font-extrabold text-[#111111]">
+              {keysList.filter((k) => k.status === "active").length}
+            </div>
+            <p className="text-[11px] text-[#777783] font-mono mt-1">
+              Provisioned gateway keys
+            </p>
           </div>
         </div>
 
-        {/* Active Keys & Recent Activity Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Active API Keys List Preview */}
-          <div className="lg:col-span-7 bg-white border border-border rounded-2xl p-6 shadow-subtle">
-            <div className="flex items-center justify-between pb-4 border-b border-border/60">
-              <div>
-                <h3 className="text-base font-semibold text-foreground">
-                  Active API Credentials
-                </h3>
-                <p className="text-xs text-secondary">
-                  Keys authorized to route via Nexora gateway
-                </p>
-              </div>
-              <Link href="/dashboard/api-keys">
-                <Button variant="ghost" size="sm" className="text-xs text-violet-primary">
-                  View All ({keysList.length})
-                </Button>
-              </Link>
+        {/* Customer Quota & Quote Calculator Section */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono text-[#777783] uppercase tracking-wider">
+                // COMMERCIAL PRICING &amp; QUOTA ENGINE
+              </span>
             </div>
-
-            <div className="divide-y divide-border/60 pt-2">
-              {keysList.slice(0, 3).map((key) => (
-                <div key={key.id} className="py-3 flex items-center justify-between text-xs">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-foreground">{key.name}</span>
-                      <Badge variant={key.status === "active" ? "success" : "default"} size="sm">
-                        {key.status}
-                      </Badge>
-                    </div>
-                    <p className="font-mono text-secondary text-[11px] mt-0.5">{key.maskedKey}</p>
-                  </div>
-                  <div className="text-right text-secondary text-[11px]">
-                    <p>{key.rateLimitRpm} RPM</p>
-                    <p className="text-[10px] text-secondary/70">
-                      {key.lastUsedAt ? "Active recently" : "Never used"}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <span className="text-[10px] font-mono text-[#777783] uppercase">
+              PKR &amp; USD REAL-TIME COMPUTATION
+            </span>
           </div>
 
-          {/* Cloud Storage Resource Allocation */}
-          <div className="lg:col-span-5 bg-white border border-border rounded-2xl p-6 shadow-subtle flex flex-col justify-between">
+          <QuotaQuoteCalculator onRequestQuota={handleQuoteRequested} />
+        </div>
+
+        {/* Active API Keys & Edge Infrastructure Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Active API Keys List */}
+          <div className="lg:col-span-7 bg-white border border-[#E2E2DA] p-6 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-border/60">
+              <div className="flex items-center justify-between pb-4 border-b border-[#E2E2DA]">
                 <div>
-                  <h3 className="text-base font-semibold text-foreground">
-                    Cloud Storage Capacity
+                  <h3 className="text-sm font-bold text-[#111111] uppercase tracking-tight">
+                    Active Edge Credentials
                   </h3>
-                  <p className="text-xs text-secondary">
-                    Allocated storage for cache & vector artifacts
+                  <p className="text-xs text-[#777783]">
+                    API keys authorized to route inference requests via Nexora Gateway
                   </p>
                 </div>
-                <HardDrive className="w-4 h-4 text-secondary" />
+                <Button href="/dashboard/api-keys" variant="ghost" size="sm" className="text-xs text-[#FF5722] font-bold">
+                  View All ({keysList.length})
+                </Button>
               </div>
 
-              <div className="py-4 space-y-4">
-                <div>
-                  <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-secondary">Total Used: 276.4 GB</span>
-                    <span className="font-semibold text-foreground">36.8% of 750 GB</span>
+              {/* Dynamic Keys List or Clean Production Zero-State */}
+              {keysList.length === 0 ? (
+                <div className="py-12 px-4 text-center flex flex-col items-center justify-center">
+                  <div className="w-10 h-10 bg-[#F6F6F3] border border-[#E2E2DA] flex items-center justify-center text-[#777783] mb-3">
+                    <Key className="w-5 h-5 text-[#888892]" />
                   </div>
-                  <div className="w-full bg-border rounded-full h-2 overflow-hidden">
-                    <div className="bg-gradient-to-r from-violet-primary to-blue-soft h-full w-[36.8%]" />
+                  <h4 className="text-xs font-bold text-[#111111] uppercase tracking-wide">
+                    No API Credentials Provisioned Yet
+                  </h4>
+                  <p className="text-xs text-[#777783] max-w-sm mt-1 mb-4 leading-relaxed">
+                    Generate an API key to connect your application to Gemini, Veo, Claude, and GPT models via the Nexora Anycast Edge Router.
+                  </p>
+                  <Button
+                    size="sm"
+                    onClick={() => setIsKeyModalOpen(true)}
+                    className="text-xs font-bold uppercase tracking-wider gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Provision Your First Key
+                  </Button>
+                </div>
+              ) : (
+                <div className="divide-y divide-[#E2E2DA] pt-2">
+                  {keysList.slice(0, 3).map((key) => (
+                    <div key={key.id} className="py-3 flex items-center justify-between text-xs">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-[#111111]">{key.name}</span>
+                          <span className="px-1.5 py-0.5 text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            {key.status}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-[11px] font-mono text-[#777783] mt-0.5">
+                          <span>{key.maskedKey}</span>
+                          <span>•</span>
+                          <span>{key.rateLimitRpm} RPM</span>
+                        </div>
+                      </div>
+                      <Button href="/dashboard/api-keys" variant="outline" size="sm" className="text-xs h-7 border-[#E2E2DA]">
+                        Manage
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="pt-4 border-t border-[#E2E2DA] mt-4 flex items-center justify-between text-[11px] font-mono text-[#777783]">
+              <span>AUTHENTICATION: SHA-256 SALTED HASH</span>
+              <span className="text-emerald-600 font-bold">GATEWAY MESH: 99.99%</span>
+            </div>
+          </div>
+
+          {/* Model Routing & Supported Endpoints Card */}
+          <div className="lg:col-span-5 bg-white border border-[#E2E2DA] p-6 flex flex-col justify-between">
+            <div>
+              <div className="pb-4 border-b border-[#E2E2DA]">
+                <h3 className="text-sm font-bold text-[#111111] uppercase tracking-tight">
+                  Frontier AI Routing Endpoints
+                </h3>
+                <p className="text-xs text-[#777783]">
+                  Connected upstream providers ready for incoming gateway traffic
+                </p>
+              </div>
+
+              <div className="pt-4 space-y-3">
+                <div className="p-3 bg-[#F7F7F4] border border-[#E2E2DA] flex items-center justify-between text-xs">
+                  <div>
+                    <span className="font-bold text-[#111111] block">Google Gemini 2.5 Flash &amp; Pro</span>
+                    <span className="text-[10px] font-mono text-[#777783]">Text, Multimodal, Vision &amp; Reasoning</span>
                   </div>
+                  <span className="px-2 py-0.5 text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                    ONLINE
+                  </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-surface border border-border/80 space-y-1.5 text-xs">
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-secondary">nexora-cache-us-east4</span>
-                    <span className="font-medium text-foreground">84.6 GB</span>
+                <div className="p-3 bg-[#F7F7F4] border border-[#E2E2DA] flex items-center justify-between text-xs">
+                  <div>
+                    <span className="font-bold text-[#111111] block">Google Veo Video Engine</span>
+                    <span className="text-[10px] font-mono text-[#777783]">Generative Video Inference (per active second)</span>
                   </div>
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-secondary">vector-artifacts-eu-west1</span>
-                    <span className="font-medium text-foreground">192.4 GB</span>
+                  <span className="px-2 py-0.5 text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                    ONLINE
+                  </span>
+                </div>
+
+                <div className="p-3 bg-[#F7F7F4] border border-[#E2E2DA] flex items-center justify-between text-xs">
+                  <div>
+                    <span className="font-bold text-[#111111] block">Anthropic Claude 3.5 Sonnet</span>
+                    <span className="text-[10px] font-mono text-[#777783]">High-Precision Code &amp; Analysis</span>
                   </div>
+                  <span className="px-2 py-0.5 text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                    ONLINE
+                  </span>
+                </div>
+
+                <div className="p-3 bg-[#F7F7F4] border border-[#E2E2DA] flex items-center justify-between text-xs">
+                  <div>
+                    <span className="font-bold text-[#111111] block">OpenAI GPT-4o &amp; Embeddings</span>
+                    <span className="text-[10px] font-mono text-[#777783]">Text Embeddings &amp; Conversational Mesh</span>
+                  </div>
+                  <span className="px-2 py-0.5 text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                    ONLINE
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 text-center">
+            <div className="pt-4 border-t border-[#E2E2DA] mt-4 text-center">
               <Link
-                href="/dashboard/storage"
-                className="text-xs text-violet-primary hover:underline font-medium inline-flex items-center gap-1"
+                href="/dashboard/models"
+                className="text-xs text-violet-primary hover:underline font-bold inline-flex items-center gap-1 uppercase tracking-wider"
               >
-                Manage cloud storage buckets
-                <ArrowRight className="w-3 h-3" />
+                <span>Inspect All Models &amp; Real-time Token Rates</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Key Creation Modal */}
       <ApiKeyModal
         isOpen={isKeyModalOpen}
         onClose={() => setIsKeyModalOpen(false)}

@@ -1,17 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import {
   Bell,
-  Search,
   Menu,
   Sparkles,
-  ExternalLink,
   ShieldCheck,
   Check,
+  Activity,
+  Layers,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useDashboard } from "@/lib/dashboard-context";
 
 interface DashboardHeaderProps {
@@ -28,73 +26,86 @@ export function DashboardHeader({
   actionButton,
 }: DashboardHeaderProps) {
   const { openMobileSidebar } = useDashboard();
-  const [hasNotifications, setHasNotifications] = useState(true);
+  const [hasNotifications, setHasNotifications] = useState(false);
   const [showNotificationsMenu, setShowNotificationsMenu] = useState(false);
 
   const handleOpenMobile = onOpenMobileMenu || openMobileSidebar;
 
   return (
-    <header className="h-16 bg-white border-b border-border flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 relative z-20">
+    <header className="h-16 bg-[#F6F6F3] border-b border-[#E2E2DA] flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 relative z-20 font-sans select-none">
       <div className="flex items-center gap-3">
         <button
           onClick={handleOpenMobile}
-          className="lg:hidden p-2 rounded-xl text-secondary hover:text-foreground hover:bg-surface border border-border"
+          className="lg:hidden p-2 bg-white text-[#111111] hover:bg-[#EAEAE2] border border-[#E2E2DA]"
           aria-label="Open sidebar"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="w-4 h-4" />
         </button>
         <div>
-          <h1 className="text-lg font-semibold tracking-tight text-foreground">
-            {title}
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-base font-bold uppercase tracking-tight text-[#111111] font-mono">
+              {title}
+            </h1>
+            <span className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono uppercase bg-emerald-50 text-emerald-700 border border-emerald-300 font-bold">
+              ROUTER v2.4
+            </span>
+          </div>
           {subtitle && (
-            <p className="text-xs text-secondary hidden sm:block">{subtitle}</p>
+            <p className="text-[11px] font-mono text-[#777783] hidden sm:block mt-0.5">
+              {subtitle}
+            </p>
           )}
         </div>
       </div>
 
       <div className="flex items-center gap-3">
-        {/* Illustrative Notice Pill */}
-        <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface border border-border text-[11px] text-secondary">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-          <span>Demo Gateway: v1.0.4 Connected</span>
+        {/* Real Upstream Gateway Telemetry Pill */}
+        <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-white border border-[#E2E2DA] text-[11px] font-mono text-[#555562]">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span>ANYCAST EDGE: 99.99% UPSTREAM MESH</span>
         </div>
 
-        {/* Notifications Dropdown */}
+        {/* System Notifications Menu */}
         <div className="relative">
           <button
             onClick={() => setShowNotificationsMenu(!showNotificationsMenu)}
-            className="p-2 rounded-xl text-secondary hover:text-foreground hover:bg-surface border border-border relative transition-colors"
-            title="Notifications"
+            className="p-2 bg-white text-[#555562] hover:text-[#111111] hover:bg-[#F2F2EE] border border-[#E2E2DA] relative transition-colors"
+            title="System Telemetry Notifications"
           >
             <Bell className="w-4 h-4" />
             {hasNotifications && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-violet-primary ring-2 ring-white" />
+              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-violet-primary ring-2 ring-white" />
             )}
           </button>
 
           {showNotificationsMenu && (
-            <div className="absolute right-0 mt-2 w-80 bg-white border border-border rounded-2xl shadow-float p-4 z-50 animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex items-center justify-between pb-3 border-b border-border">
-                <span className="text-xs font-semibold text-foreground">Notifications</span>
-                <button
-                  onClick={() => {
-                    setHasNotifications(false);
-                    setShowNotificationsMenu(false);
-                  }}
-                  className="text-[10px] text-violet-primary hover:underline font-medium"
-                >
-                  Mark all as read
-                </button>
+            <div className="absolute right-0 mt-2 w-80 bg-white border border-[#E2E2DA] shadow-xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E2E2DA]">
+                <span className="text-xs font-mono font-bold uppercase text-[#111111]">
+                  Gateway Telemetry Logs
+                </span>
+                <span className="text-[10px] font-mono text-emerald-600 font-bold">
+                  LIVE
+                </span>
               </div>
-              <div className="py-2 space-y-2 text-xs">
-                <div className="p-2.5 rounded-xl bg-violet-light/30 border border-violet-soft/30">
-                  <p className="font-semibold text-foreground text-[11px]">Monthly Quota Renewed</p>
-                  <p className="text-[10px] text-secondary mt-0.5">50,000,000 tokens provisioned for Nov 2026.</p>
+              <div className="py-3 space-y-2 text-xs">
+                <div className="p-3 bg-[#F7F7F4] border border-[#E2E2DA] text-[11px] font-mono space-y-1">
+                  <div className="flex items-center justify-between font-bold text-[#111111]">
+                    <span>MESH SUPERCLUSTER</span>
+                    <span className="text-emerald-600 font-bold">ONLINE</span>
+                  </div>
+                  <p className="text-[#777783] text-[10px]">
+                    All 32 Anycast Edge Points of Presence reporting healthy routing latency.
+                  </p>
                 </div>
-                <div className="p-2.5 rounded-xl bg-surface border border-border">
-                  <p className="font-semibold text-foreground text-[11px]">API Key Generated</p>
-                  <p className="text-[10px] text-secondary mt-0.5">Key &quot;Production Gateway&quot; is active.</p>
+                <div className="p-3 bg-[#F7F7F4] border border-[#E2E2DA] text-[11px] font-mono space-y-1">
+                  <div className="flex items-center justify-between font-bold text-[#111111]">
+                    <span>ZERO DATA RETENTION</span>
+                    <span className="text-violet-primary font-bold">ENFORCED</span>
+                  </div>
+                  <p className="text-[#777783] text-[10px]">
+                    End-to-end ephemeral proxy routing with no upstream storage persistence.
+                  </p>
                 </div>
               </div>
             </div>

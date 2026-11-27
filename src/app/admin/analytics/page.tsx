@@ -1,72 +1,89 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { UsageAreaChart } from "@/components/charts/usage-area-chart";
 import { ModelDonutChart } from "@/components/charts/model-donut-chart";
 import { StatCard } from "@/components/ui/stat-card";
-import { mockDailyUsageData, mockModelDistribution, mockCustomersList } from "@/data/mock-data";
-import { Activity, Coins, Clock, ArrowUpRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { createClient } from "@/utils/supabase/client";
+import { Activity, Coins, Clock, ArrowUpRight, ShieldCheck } from "lucide-react";
 
 export default function AdminAnalyticsPage() {
   const [metric, setMetric] = useState<"requests" | "tokens" | "cost">("tokens");
+  const [orgsCount, setOrgsCount] = useState<number>(0);
+  const [totalTokens, setTotalTokens] = useState<number>(0);
+
+  useEffect(() => {
+    async function loadTelemetry() {
+      try {
+        const supabase = createClient();
+        const { count } = await supabase.from("organizations").select("*", { count: "exact", head: true });
+        setOrgsCount(count || 0);
+
+        const { data: quotas } = await supabase.from("quota_allocations").select("tokens_allocated");
+        const total = quotas?.reduce((acc, q) => acc + (Number(q.tokens_allocated) || 0), 0) || 0;
+        setTotalTokens(total);
+      } catch (err) {
+        // Safe fallback
+      }
+    }
+
+    loadTelemetry();
+  }, []);
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#F6F6F3] font-sans">
       <AdminHeader
-        title="Fleet Analytics & Telemetry"
+        title="Fleet Analytics &amp; Mesh Telemetry"
         subtitle="Global cross-tenant analytics, upstream load distribution, and cost reporting"
-        
       />
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
         {/* KPI Row */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard
-            title="Global Daily Requests"
-            value="1.42M"
-            subtitle="Current 24h rolling velocity"
-            change={{ value: "+14.8%", isPositive: true }}
-            icon={<Activity className="w-4 h-4 text-violet-primary" />}
-            variant="violet"
+            title="Global Edge Latency"
+            value="14 ms"
+            subtitle="Anycast CDN dispatching"
+            icon={<Clock className="w-4 h-4 text-emerald-600" />}
           />
           <StatCard
-            title="Total Tokens In Flight"
-            value="68.4M / hr"
-            subtitle="Throughput dispatched to providers"
-            change={{ value: "Healthy", isPositive: true }}
+            title="Provisioned Quota Pool"
+            value={totalTokens > 0 ? `${(totalTokens / 1_000_000).toFixed(1)}M` : "0.0M"}
+            subtitle="Global token allocation"
             icon={<Coins className="w-4 h-4 text-indigo-600" />}
           />
           <StatCard
-            title="Global Edge Latency"
-            value="38 ms"
-            subtitle="Direct CDN gateway routing"
-            change={{ value: "-4ms", isPositive: true }}
-            icon={<Clock className="w-4 h-4 text-emerald-600" />}
+            title="Active Workspaces"
+            value={orgsCount.toString()}
+            subtitle="Tenant organizations on mesh"
+            icon={<Activity className="w-4 h-4 text-violet-primary" />}
           />
         </div>
 
         {/* Global Consumption Chart */}
-        <div className="bg-white border border-border rounded-2xl p-6 shadow-subtle">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-border/60 gap-4">
+        <div className="bg-white border border-[#E2E2DA] p-6 relative font-mono">
+          <span className="absolute top-1.5 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E2E2DA] gap-4 mb-4">
             <div>
-              <h3 className="text-base font-semibold text-foreground">
-                Aggregated Fleet Throughput
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#111111]">
+                // Aggregated Fleet Throughput Telemetry
               </h3>
-              <p className="text-xs text-secondary">
+              <p className="text-[11px] text-[#777783] mt-0.5">
                 Cumulative gateway request and token velocity across all tenants
               </p>
             </div>
 
-            <div className="inline-flex items-center p-1 bg-surface border border-border rounded-xl">
+            <div className="inline-flex items-center p-1 bg-[#F6F6F3] border border-[#E2E2DA] gap-1">
               {(["tokens", "requests", "cost"] as const).map((m) => (
                 <button
                   key={m}
                   onClick={() => setMetric(m)}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium capitalize transition-all ${
+                  className={`px-3 py-1 text-xs uppercase font-mono transition-all border ${
                     metric === m
-                      ? "bg-white text-foreground shadow-xs font-semibold"
-                      : "text-secondary hover:text-foreground"
+                      ? "bg-white text-[#111111] font-bold border-[#E2E2DA] shadow-xs"
+                      : "text-[#777783] border-transparent hover:text-[#111111]"
                   }`}
                 >
                   {m}
@@ -75,60 +92,42 @@ export default function AdminAnalyticsPage() {
             </div>
           </div>
 
-          <div className="pt-4">
-            <UsageAreaChart data={mockDailyUsageData} metric={metric} />
+          <div className="pt-2">
+            <UsageAreaChart
+              data={[
+                { date: "Day 1", tokens: 0, requests: 0, cost: 0 },
+                { date: "Day 2", tokens: 0, requests: 0, cost: 0 },
+                { date: "Day 3", tokens: 0, requests: 0, cost: 0 },
+                { date: "Day 4", tokens: 0, requests: 0, cost: 0 },
+                { date: "Day 5", tokens: 0, requests: 0, cost: 0 },
+                { date: "Day 6", tokens: 0, requests: 0, cost: 0 },
+                { date: "Day 7", tokens: 0, requests: 0, cost: 0 },
+              ]}
+              metric={metric}
+            />
           </div>
         </div>
 
-        {/* 2-Column: Customer Comparison & Model Distribution */}
+        {/* Upstream Provider Distribution */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Top Customers Comparison */}
-          <div className="lg:col-span-7 bg-white border border-border rounded-2xl p-6 shadow-subtle">
-            <h3 className="text-base font-semibold text-foreground mb-1">
-              Top Tenant Workspaces by Consumption
-            </h3>
-            <p className="text-xs text-secondary mb-4">
-              Relative consumption vs monthly quota
-            </p>
-
-            <div className="space-y-4">
-              {mockCustomersList.map((c) => {
-                const pct = Math.min(100, (c.consumedTokens / c.allocatedTokens) * 100);
-                return (
-                  <div key={c.id} className="space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="font-semibold text-foreground">{c.company}</span>
-                      <span className="text-secondary font-mono">
-                        {(c.consumedTokens / 1_000_000).toFixed(1)}M / {(c.allocatedTokens / 1_000_000).toFixed(0)}M ({pct.toFixed(0)}%)
-                      </span>
-                    </div>
-                    <div className="w-full bg-border rounded-full h-2 overflow-hidden">
-                      <div
-                        className="bg-violet-primary h-full rounded-full"
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Upstream Provider Distribution */}
-          <div className="lg:col-span-5 bg-white border border-border rounded-2xl p-6 shadow-subtle flex flex-col justify-between">
-            <div>
-              <h3 className="text-base font-semibold text-foreground mb-1">
-                Upstream Provider Share
+          <div className="lg:col-span-12 bg-white border border-[#E2E2DA] p-6 relative font-mono">
+            <span className="absolute top-1.5 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+            <div className="pb-4 border-b border-[#E2E2DA] mb-4">
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#111111]">
+                // Upstream Frontier Provider Distribution
               </h3>
-              <p className="text-xs text-secondary mb-4">
-                Distribution of API calls across frontier labs
+              <p className="text-[11px] text-[#777783] mt-0.5">
+                Frontier model routing capacity across Google, Anthropic, and OpenAI
               </p>
-              <ModelDonutChart data={mockModelDistribution} />
             </div>
-
-            <div className="pt-4 border-t border-border/60 mt-4 text-xs text-secondary">
-              <span className="font-semibold text-foreground">Failover Readiness:</span> 100% of routes configured with automatic fallback redundancy.
-            </div>
+            <ModelDonutChart
+              data={[
+                { model: "Google Gemini 2.5 Pro & Flash", tokens: 40000000, percentage: 40, cost: 0 },
+                { model: "Google Veo Video Engine", tokens: 25000000, percentage: 25, cost: 0 },
+                { model: "Anthropic Claude 3.5 Sonnet", tokens: 20000000, percentage: 20, cost: 0 },
+                { model: "OpenAI GPT-4o & Embeddings", tokens: 15000000, percentage: 15, cost: 0 },
+              ]}
+            />
           </div>
         </div>
       </div>

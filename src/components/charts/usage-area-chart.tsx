@@ -26,8 +26,8 @@ export function UsageAreaChart({ data, metric = "tokens" }: UsageAreaChartProps)
 
   if (!mounted) {
     return (
-      <div className="h-[280px] w-full flex items-center justify-center bg-surface/50 rounded-2xl animate-pulse text-xs text-secondary">
-        Loading chart data...
+      <div className="h-[280px] w-full flex items-center justify-center bg-[#F6F6F3] border border-[#E2E2DA] font-mono text-xs text-[#777783]">
+        INITIALIZING TELEMETRY CHART...
       </div>
     );
   }
@@ -49,52 +49,56 @@ export function UsageAreaChart({ data, metric = "tokens" }: UsageAreaChartProps)
   };
 
   return (
-    <div className="h-[280px] w-full">
+    <div className="h-[280px] w-full font-mono">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
           <defs>
-            <linearGradient id="tokenGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#7557FF" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#7557FF" stopOpacity={0.0} />
+            <linearGradient id="cadTokenGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#111111" stopOpacity={0.12} />
+              <stop offset="95%" stopColor="#111111" stopOpacity={0.0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ECECF1" />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E2DA" />
           <XAxis
             dataKey="date"
-            axisLine={false}
+            axisLine={{ stroke: "#E2E2DA" }}
             tickLine={false}
-            tick={{ fontSize: 11, fill: "#777783" }}
+            tick={{ fill: "#777783", fontSize: 10, fontFamily: "monospace" }}
+            dy={8}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
+            tick={{ fill: "#777783", fontSize: 10, fontFamily: "monospace" }}
             tickFormatter={formatYAxis}
-            tick={{ fontSize: 11, fill: "#777783" }}
+            dx={-5}
           />
           <Tooltip
             contentStyle={{
               backgroundColor: "#FFFFFF",
-              borderColor: "#ECECF1",
-              borderRadius: "14px",
-              boxShadow: "0 10px 25px -5px rgba(0,0,0,0.08)",
-              fontSize: "12px",
+              borderColor: "#E2E2DA",
+              borderRadius: "0px",
+              fontSize: "11px",
+              fontFamily: "monospace",
+              boxShadow: "none",
             }}
             formatter={(value: any) => [
               metric === "tokens"
-                ? `${Number(value).toLocaleString()} tokens`
+                ? `${(Number(value) / 1_000_000).toFixed(2)}M Tokens`
                 : metric === "requests"
-                ? `${Number(value).toLocaleString()} reqs`
-                : `$${Number(value).toFixed(2)}`,
-              metric.charAt(0).toUpperCase() + metric.slice(1),
+                ? `${Number(value).toLocaleString()} Invocations`
+                : `$${Number(value).toFixed(2)} USD`,
+              metric.toUpperCase(),
             ]}
+            labelStyle={{ fontWeight: 700, color: "#111111", marginBottom: "4px" }}
           />
           <Area
             type="monotone"
             dataKey={getMetricKey()}
-            stroke="#7557FF"
-            strokeWidth={2.5}
+            stroke="#111111"
+            strokeWidth={1.5}
             fillOpacity={1}
-            fill="url(#tokenGradient)"
+            fill="url(#cadTokenGradient)"
           />
         </AreaChart>
       </ResponsiveContainer>

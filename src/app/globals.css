@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&display=swap');
-
 @font-face {
   font-family: 'TheHeritageLegacy';
   src: url('/fonts/TheHeritageLegacy.otf') format('opentype');
@@ -14,14 +12,17 @@
 
 :root {
   --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --bg-primary: #ffffff;
+  --bg-primary: #F6F6F3;
+  --bg-paper: #F7F7F4;
   --text-primary: #111111;
-  --text-secondary: #777783;
+  --text-secondary: #555562;
+  --text-muted: #777783;
   --violet-primary: #7557ff;
   --violet-soft: #b4a3ff;
   --blue-soft: #a5b4fc;
-  --surface-light: #f7f7fa;
-  --border-subtle: #ececf1;
+  --surface-light: #FFFFFF;
+  --border-cad: #E2E2DA;
+  --border-subtle: #E2E2DA;
   --dark-footer: #100e20;
 }
 
@@ -163,3 +164,196 @@ p, .prose p {
   border-color: rgba(117, 87, 255, 0.45);
   box-shadow: 0 10px 30px -5px rgba(117, 87, 255, 0.12);
 }
+
+/* ============================================================================
+   ARCHITECTURAL BLUEPRINT CAD & DRAFTING SYSTEM
+   ============================================================================ */
+
+/* CAD Millimeter Graph Paper Texture */
+.bg-cad-grid {
+  background-color: #F6F6F3;
+  background-image: 
+    radial-gradient(#D6D6DC 1px, transparent 1px), 
+    radial-gradient(#D6D6DC 1px, #F6F6F3 1px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+.bg-cad-paper {
+  background-color: #F7F7F4;
+}
+
+.border-cad {
+  border-color: #E2E2DA;
+}
+
+/* Architectural Crosshair Corner Markers */
+.cad-crosshair-container {
+  position: relative;
+}
+
+.cad-crosshair-tl {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888892;
+  user-select: none;
+  pointer-events: none;
+}
+
+.cad-crosshair-tr {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888892;
+  user-select: none;
+  pointer-events: none;
+}
+
+.cad-crosshair-bl {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888892;
+  user-select: none;
+  pointer-events: none;
+}
+
+.cad-crosshair-br {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888892;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* CAD Technical Label Callout */
+.cad-label {
+  font-family: monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #777783;
+}
+
+/* ============================================================================
+   ANIMATED SUNSET CORAL & AMBER MESH GRADIENT SYSTEM
+   ============================================================================ */
+
+@keyframes meshShift1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  33% {
+    transform: translate3d(6%, -4%, 0) rotate(8deg) scale(1.08);
+  }
+  66% {
+    transform: translate3d(-5%, 6%, 0) rotate(-6deg) scale(0.94);
+  }
+}
+
+@keyframes meshShift2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  33% {
+    transform: translate3d(-6%, 5%, 0) rotate(-8deg) scale(1.1);
+  }
+  66% {
+    transform: translate3d(5%, -4%, 0) rotate(7deg) scale(0.96);
+  }
+}
+
+@keyframes meshShift3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, 4%, 0) scale(1.08);
+  }
+}
+
+.animate-mesh-1 {
+  animation: meshShift1 16s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.animate-mesh-2 {
+  animation: meshShift2 20s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.animate-mesh-3 {
+  animation: meshShift3 14s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Sunset Amber & Coral Utilities */
+.bg-gradient-sunset {
+  background: linear-gradient(135deg, #C22B2B 0%, #FF5722 45%, #FFA726 100%);
+}
+
+.bg-gradient-sunset-soft {
+  background: linear-gradient(135deg, rgba(194, 43, 43, 0.08) 0%, rgba(255, 87, 34, 0.12) 50%, rgba(255, 167, 38, 0.08) 100%);
+}
+
+.text-gradient-sunset {
+  background: linear-gradient(135deg, #C22B2B 0%, #FF5722 50%, #FFA726 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glow-sunset {
+  box-shadow: 0 10px 30px -10px rgba(255, 87, 34, 0.35);
+}
+
+.glow-sunset-lg {
+  box-shadow: 0 20px 60px -15px rgba(255, 87, 34, 0.4);
+}
+
+@keyframes cardGradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes borderRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.card-animated-border {
+  background-size: 200% 200%;
+  animation: cardGradientFlow 6s ease infinite;
+}
+
+

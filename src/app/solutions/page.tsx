@@ -9,44 +9,44 @@ import {
   Users2,
   Bot,
   ShieldCheck,
-  CheckCircle2,
+  Check,
   ArrowRight,
-  Sparkles,
   Zap,
-  BarChart3,
-  Lock,
   Globe2,
+  Lock,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { CaseStudiesSection } from "@/components/landing/case-studies";
 import { SecurityComplianceSection } from "@/components/landing/security-compliance";
+import { AnimatedSunsetMesh } from "@/components/ui/animated-sunset-mesh";
 
 export default function SolutionsPage() {
   const [activeSolution, setActiveSolution] = useState<"startups" | "enterprise" | "agencies" | "agents">("startups");
 
   const solutions = {
     startups: {
+      code: "SOL-01",
       title: "AI Startups & Scaleups",
-      badge: "Rapid Scale & Zero Vendor Lock-in",
+      badge: "RAPID DEPLOYMENT",
       headline: "Ship multi-model AI features without building complex backend plumbing.",
       description:
-        "Avoid rewrites and vendor lock-in as model benchmarks shift weekly. With Nexora, your engineers write to one unified interface and instantly leverage Claude 3.5 Sonnet, GPT-4o, Gemini 1.5 Pro, and Llama 3.3 with automatic fallback and predictable token spending.",
+        "Avoid rewrites and vendor lock-in as model benchmarks shift. With Nexora, your engineers integrate one unified interface and instantly leverage Google Gemini 2.5, Google Veo Video, Claude 3.5 Sonnet, and GPT-4o with automatic fallback and predictable token spending.",
       benefits: [
-        "Single API key integration across OpenAI, Anthropic, Google, and Meta",
-        "Semantic caching cuts early-stage token costs by up to 40%",
-        "Soft limit alerts prevent surprise bills when your product goes viral",
-        "Free tier with 10M tokens to prototype and validate fast",
+        "Single API key integration across Google, Anthropic, and OpenAI",
+        "Semantic caching cuts early-stage token burn by up to 40%",
+        "Soft limit alerts prevent surprise charges when your product goes viral",
+        "Starter tier with 10M tokens to prototype and validate quickly",
       ],
       stat: "4.2x Faster",
       statLabel: "Time to market for new AI features",
     },
     enterprise: {
+      code: "SOL-02",
       title: "Regulated Enterprise & FinTech",
-      badge: "Bank-Grade Compliance & Security",
+      badge: "BANK-GRADE COMPLIANCE",
       headline: "Deploy frontier generative AI with Zero Data Retention and absolute control.",
       description:
-        "Satisfy the most stringent security, legal, and compliance standards. Nexora guarantees Zero Data Retention (ZDR), hardware-backed AES-256 KMS key isolation, private VPC peering, and tamper-proof SHA-256 HMAC audit logs for SOC2 Type II and HIPAA certification.",
+        "Satisfy the most stringent security, legal, and compliance standards. Nexora guarantees Zero Data Retention (ZDR), hardware-backed AES-256 KMS key isolation, private VPC peering, and tamper-proof SHA-256 audit ledgers for SOC2 Type II and HIPAA certification.",
       benefits: [
         "Zero-Data Retention (ZDR): No prompts or completions ever written to persistent disk",
         "Dedicated AWS PrivateLink and Google Cloud Interconnect VPC peering",
@@ -57,31 +57,33 @@ export default function SolutionsPage() {
       statLabel: "Zero data retention on inference payloads",
     },
     agencies: {
+      code: "SOL-03",
       title: "AI Consultancies & Software Agencies",
-      badge: "Multi-Tenant Client Governance",
-      headline: "Manage 50+ client accounts and token budgets from one master console.",
+      badge: "MULTI-TENANT GOVERNANCE",
+      headline: "Manage multi-client accounts and token budgets from one master console.",
       description:
         "Stop juggling separate billing accounts, individual credit cards, and chaotic API keys for every client project. Nexora gives agencies multi-tenant workspaces with customer-scoped API keys, individual token allocations, and transparent usage telemetry.",
       benefits: [
         "Issue client-specific API keys with pre-funded token quotas",
         "Real-time usage breakdown per client for exact, frictionless pass-through billing",
         "Revoke or adjust client permissions instantly from the master admin dashboard",
-        "Separate cloud storage partitions for client vector databases and fine-tunes",
+        "Separate cloud storage partitions for client vector databases",
       ],
       stat: "94% Fewer",
       statLabel: "Billing disputes and invoice reconciliations",
     },
     agents: {
+      code: "SOL-04",
       title: "Autonomous Agent Swarms",
-      badge: "High-Concurrency Parallel Workflows",
+      badge: "HIGH CONCURRENCY",
       headline: "Scale agentic workflows with 10k+ concurrent tool calls and automatic backoff.",
       description:
         "Autonomous multi-agent swarms generate massive spikes of concurrent tool calls and reasoning loops that trigger immediate rate-limiting from standard LLM endpoints. Nexora provides high-throughput queuing, sub-second retry backoff, and parallel stream coordination.",
       benefits: [
-        "Handles 10,000+ parallel async requests without dropped frames or socket exhaustion",
-        "Sub-second circuit breaking cascades to secondary models when upstream latency spikes",
-        "Token usage rate-limits enforced per-agent to prevent infinite recursive loop expenses",
-        "Persistent HTTP/2 connection pooling minimizes connection setup overhead",
+        "Handles 10,000+ parallel async requests without dropped sockets",
+        "Sub-second circuit breaking cascades to secondary models when latency spikes",
+        "Token usage rate-limits enforced per-agent to prevent runaway loop expenses",
+        "Persistent connection pooling minimizes connection setup overhead",
       ],
       stat: "99.99%",
       statLabel: "Agent swarm execution completion rate",
@@ -91,171 +93,142 @@ export default function SolutionsPage() {
   const current = solutions[activeSolution];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-[#F6F6F3] font-sans select-none">
       <Navbar />
 
       <main className="flex-1 pt-24">
-        {/* Editorial Solutions Hero */}
-        <section className="relative py-20 sm:py-28 overflow-hidden bg-white border-b border-border">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-hero-glow blur-3xl pointer-events-none -z-10" />
+        {/* CAD Blueprint Solutions Hero */}
+        <section className="relative py-20 sm:py-28 overflow-hidden bg-[#F6F6F3] border-b border-[#E2E2DA]">
+          {/* Animated Sunset Mesh Gradient */}
+          <AnimatedSunsetMesh intensity="subtle" />
 
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <span className="text-xs uppercase font-semibold tracking-wider text-violet-primary bg-violet-light px-3 py-1 rounded-full border border-violet-soft/30 inline-flex items-center gap-1.5 mb-6">
-              <Sparkles className="w-3.5 h-3.5" />
-              Tailored Engineering Solutions
-            </span>
+          <div
+            className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply z-[1]"
+            style={{
+              backgroundImage:
+                "radial-gradient(#111111 1px, transparent 1px), radial-gradient(#111111 1px, transparent 1px)",
+              backgroundSize: "24px 24px",
+              backgroundPosition: "0 0, 12px 12px",
+            }}
+          />
 
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-[#111111] mb-6 leading-[1.08] font-heritage">
-              Architected for Every Scale.
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-primary via-[#5D38F0] to-[#7E88FF]">
-                From Seed to Global Enterprise.
+          <span className="absolute top-4 left-4 font-mono text-sm font-semibold text-[#888892] select-none">+</span>
+          <span className="absolute top-4 right-4 font-mono text-sm font-semibold text-[#888892] select-none">+</span>
+          <span className="absolute bottom-4 left-4 font-mono text-sm font-semibold text-[#888892] select-none">+</span>
+          <span className="absolute bottom-4 right-4 font-mono text-sm font-semibold text-[#888892] select-none">+</span>
+
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center font-mono">
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30">
+                DWG: SPEC-SOLUTIONS-01 // PRODUCTION USE-CASES
               </span>
+            </div>
+
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold uppercase tracking-tight text-[#111111] mb-6 leading-[1.08]">
+              ARCHITECTED FOR EVERY SCALE. FROM <span className="text-gradient-sunset">SEED TO GLOBAL ENTERPRISE</span>.
             </h1>
 
-            <p className="text-base sm:text-xl text-secondary max-w-3xl mx-auto mb-10 leading-relaxed">
-              Whether you are an ambitious AI startup shipping your first agent or a multinational bank orchestrating millions of daily requests, Nexora provides the precise controls your infrastructure requires.
+            <p className="text-xs sm:text-sm text-[#444452] max-w-2xl mx-auto mb-8 leading-relaxed font-sans">
+              Whether you are an ambitious startup shipping agentic features or a regulated bank orchestrating millions of daily requests, Nexora provides the precise controls your infrastructure requires.
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link href="/signup">
-                <Button size="lg" className="shadow-md gap-2 font-medium">
-                  Start Your Free Trial
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
-              <Link href="/pricing">
-                <Button variant="secondary" size="lg" className="gap-2">
-                  View Pricing Tiers
-                </Button>
-              </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button
+                href="/signup"
+                size="lg"
+                className="w-full sm:w-auto bg-[#111111] text-white hover:bg-black font-bold uppercase tracking-wider text-xs px-8 py-3.5 border border-[#111111]"
+              >
+                <span>Start Free Trial</span>
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button
+                href="/pricing"
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto bg-white text-[#111111] hover:bg-[#F2F2EE] font-bold uppercase tracking-wider text-xs px-7 py-3.5 border border-[#E2E2DA]"
+              >
+                <span>Explore Pricing Tiers</span>
+              </Button>
             </div>
           </div>
         </section>
 
-        {/* Interactive Segment Showcase */}
-        <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Solution Selector Buttons */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-12">
+        {/* Industry Solutions Switcher */}
+        <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#E2E2DA]">
+          {/* Solution Category Tabs */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10 font-mono">
             {[
               { id: "startups", label: "Startups & Scaleups", icon: Rocket },
-              { id: "enterprise", label: "Enterprise & FinTech", icon: Building2 },
-              { id: "agencies", label: "AI Consultancies & Agencies", icon: Users2 },
+              { id: "enterprise", label: "Regulated Enterprise", icon: Building2 },
+              { id: "agencies", label: "Consultancies & Agencies", icon: Users2 },
               { id: "agents", label: "Autonomous Agent Swarms", icon: Bot },
-            ].map((item) => {
-              const Icon = item.icon;
+            ].map((sol) => {
+              const Icon = sol.icon;
+              const isSelected = activeSolution === sol.id;
               return (
                 <button
-                  key={item.id}
-                  onClick={() => setActiveSolution(item.id as any)}
-                  className={`p-4 rounded-2xl border transition-all text-left flex items-center gap-3 ${
-                    activeSolution === item.id
-                      ? "bg-violet-light/50 border-violet-soft text-foreground shadow-subtle"
-                      : "bg-surface border-border text-secondary hover:text-foreground hover:bg-white"
+                  key={sol.id}
+                  onClick={() => setActiveSolution(sol.id as any)}
+                  className={`p-4 border transition-all text-left flex items-center gap-3 relative ${
+                    isSelected
+                      ? "bg-white border-[#111111] ring-1 ring-[#111111]"
+                      : "bg-[#F7F7F4] border-[#E2E2DA] hover:border-[#111111]"
                   }`}
                 >
-                  <Icon
-                    className={`w-5 h-5 shrink-0 ${
-                      activeSolution === item.id ? "text-violet-primary" : "text-secondary"
-                    }`}
-                  />
-                  <span className="text-xs sm:text-sm font-semibold">{item.label}</span>
+                  <Icon className={`w-4 h-4 shrink-0 ${isSelected ? "text-violet-primary" : "text-[#777783]"}`} />
+                  <span className="text-xs font-bold uppercase text-[#111111]">{sol.label}</span>
                 </button>
               );
             })}
           </div>
 
           {/* Solution Detail Card */}
-          <div className="bg-[#FAFAFC] border border-border rounded-3xl p-6 sm:p-10 shadow-premium">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-              <div className="lg:col-span-8 space-y-6">
-                <div>
-                  <span className="text-xs font-semibold uppercase tracking-wider text-violet-primary bg-violet-light/60 px-3 py-1 rounded-full border border-violet-soft/30">
+          <div className="bg-white border border-[#E2E2DA] p-6 sm:p-10 relative font-mono">
+            <span className="absolute top-2 left-2 text-xs text-[#888892] select-none">+</span>
+            <span className="absolute top-2 right-2 text-xs text-[#888892] select-none">+</span>
+            <span className="absolute bottom-2 left-2 text-xs text-[#888892] select-none">+</span>
+            <span className="absolute bottom-2 right-2 text-xs text-[#888892] select-none">+</span>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-8 space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-violet-primary font-bold">
+                    // {current.code}
+                  </span>
+                  <span className="text-[9px] uppercase px-2 py-0.5 bg-[#F7F7F4] border border-[#E2E2DA] text-[#555562]">
                     {current.badge}
                   </span>
-                  <h2 className="text-2xl sm:text-4xl font-bold font-heritage text-[#111111] mt-3 mb-3 leading-snug">
-                    {current.headline}
-                  </h2>
-                  <p className="text-sm sm:text-base text-secondary leading-relaxed">
-                    {current.description}
-                  </p>
                 </div>
 
-                <div className="space-y-3 pt-2">
+                <h3 className="text-xl sm:text-2xl font-bold uppercase text-[#111111]">
+                  {current.headline}
+                </h3>
+
+                <p className="text-xs text-[#555562] leading-relaxed font-sans">
+                  {current.description}
+                </p>
+
+                <div className="space-y-2 pt-2 text-xs font-sans">
                   {current.benefits.map((benefit, i) => (
-                    <div key={i} className="flex items-start gap-3 text-xs sm:text-sm text-foreground">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                    <div key={i} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                       <span>{benefit}</span>
                     </div>
                   ))}
                 </div>
-
-                <div className="pt-4 flex flex-wrap gap-3">
-                  <Link href="/signup">
-                    <Button size="sm" className="gap-1.5 font-medium">
-                      Deploy Solution Architecture
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Button>
-                  </Link>
-                  <Link href="/developers">
-                    <Button variant="outline" size="sm">
-                      Read Integration Specs
-                    </Button>
-                  </Link>
-                </div>
               </div>
 
-              {/* Solution Stat Callout */}
-              <div className="lg:col-span-4 bg-gradient-to-b from-[#100E20] to-[#151329] text-white p-8 rounded-3xl border border-white/10 text-center space-y-4 shadow-float">
-                <span className="text-[10px] uppercase font-mono tracking-widest text-violet-soft block">
-                  Measured Customer Value
-                </span>
-                <div className="text-5xl sm:text-6xl font-bold font-heritage text-white">
-                  {current.stat}
-                </div>
-                <p className="text-xs text-white/70 font-medium">
-                  {current.statLabel}
-                </p>
-                <div className="pt-4 border-t border-white/10 text-[11px] text-white/50">
-                  Based on benchmark telemetry across 45M+ simulated gateway transactions.
-                </div>
+              <div className="lg:col-span-4 p-6 bg-[#F7F7F4] border border-[#E2E2DA] text-center flex flex-col justify-center items-center">
+                <span className="text-[10px] uppercase text-[#777783] block mb-2">VERIFIED IMPACT</span>
+                <div className="text-3xl sm:text-4xl font-extrabold text-[#111111]">{current.stat}</div>
+                <p className="text-xs text-[#555562] mt-2 font-sans">{current.statLabel}</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Enterprise Security Section */}
+        {/* Security & Compliance Section */}
         <SecurityComplianceSection />
-
-        {/* In-Depth Customer Case Studies */}
-        <CaseStudiesSection />
-
-        {/* Enterprise Consultation CTA */}
-        <section className="py-24 bg-white border-t border-border">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <span className="text-xs uppercase font-semibold tracking-wider text-violet-primary bg-violet-light px-3 py-1 rounded-full border border-violet-soft/30 mb-4 inline-block">
-              Dedicated Support & Custom Architecture
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-bold font-heritage text-[#111111] mb-5">
-              Need custom VPC peering or custom SLAs?
-            </h2>
-            <p className="text-secondary text-sm sm:text-base max-w-2xl mx-auto mb-8 leading-relaxed">
-              Our infrastructure engineering team works directly with enterprise clients to configure dedicated edge gateways, customized routing cascades, and tailored compliance agreements.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link href="/signup">
-                <Button size="lg" className="shadow-md">
-                  Book Enterprise Consultation
-                </Button>
-              </Link>
-              <Link href="/pricing">
-                <Button variant="secondary" size="lg">
-                  Compare Enterprise Features
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
       </main>
 
       <Footer />

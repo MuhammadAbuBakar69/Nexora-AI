@@ -30,18 +30,14 @@ function redirectWithCookies(
 /**
  * Refreshes the Supabase session cookie and enforces route protection.
  *
- * Identity comes from supabase.auth.getUser(), which validates the JWT against
- * the auth server. The admin check reads user_roles in Postgres through RLS, so
- * a tampered client-side role value cannot grant access.
- *
  * Resilience guarantees:
- * 1. Public marketing routes (/, /pricing, /solutions, /developers, etc.) NEVER
- *    fail with HTTP 500 if Supabase is unconfigured, unreachable, or timing out.
- *    They safely render in guest mode.
- * 2. Protected routes (/dashboard, /admin) FAIL CLOSED: if identity or role
- *    cannot be definitively verified on the server, requests are redirected
- *    to /login without granting access.
- * 3. Never leaks tokens, keys, or stack traces to HTTP responses.
+ * 1. ZERO-LATENCY GUEST CHECK: If no Supabase auth token cookies exist in the
+ *    request headers, guest visitors on public routes and auth routes (/login, /signup)
+ *    render instantaneously with 0ms overhead and zero external network calls.
+ * 2. Protected routes (/dashboard, /admin) fail closed: if unauthenticated, they
+ *    immediately redirect to /login?next=... without stalling or looping.
+ * 3. Bounded network timeouts: Any token verification against Supabase is wrapped in
+ *    a timeout to prevent slow remote connections from hanging RSC transitions.
  */
 export async function updateSession(request: NextRequest): Promise<NextResponse> {
   let response = NextResponse.next({ request });
@@ -53,17 +49,33 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
   const env = tryGetSupabaseEnv();
   if (!env) {
     if (isProtected) {
-      console.warn(
-        `[auth-middleware] Fail-closed: access to protected route '${pathname}' redirected to /login (Supabase unconfigured).`
-      );
       return redirectWithCookies(request, response, "/login", {
         next: pathname,
       });
     }
-    // Public routes safely render in guest mode
     return response;
   }
 
+  // Fast-path: Check for actual Supabase authentication cookies
+  const allCookies = request.cookies.getAll();
+  const hasAuthCookie = allCookies.some(
+    (c) =>
+      c.name.startsWith("sb-") &&
+      (c.name.includes("-auth-token") || c.name.includes("access-token"))
+  );
+
+  // If no auth cookie exists, visitor is definitively unauthenticated:
+  if (!hasAuthCookie) {
+    if (isProtected) {
+      return redirectWithCookies(request, response, "/login", {
+        next: pathname,
+      });
+    }
+    // Public routes, /login, and /signup immediately continue with zero network calls
+    return response;
+  }
+
+  // An auth cookie exists: validate token with bounded timeout
   let user: User | null = null;
   let supabaseClient: ReturnType<typeof createServerClient> | null = null;
 
@@ -87,19 +99,19 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
 
     supabaseClient = supabase;
 
-    // Validate token against auth server and refresh cookies.
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-      // Expected when no session cookie exists or session is expired
+    // Validate token against auth server with a 3.5s timeout guard
+    const authPromise = supabase.auth.getUser();
+    const timeoutPromise = new Promise<{ data: { user: null }; error: Error }>((_, reject) =>
+      setTimeout(() => reject(new Error("Supabase auth verification timed out")), 3500)
+    );
+
+    const result = (await Promise.race([authPromise, timeoutPromise])) as Awaited<typeof authPromise>;
+    if (result.error) {
       user = null;
     } else {
-      user = data.user;
+      user = result.data.user;
     }
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown auth error";
-    console.error(
-      `[auth-middleware] Session verification failed for '${pathname}': ${message}`
-    );
+  } catch {
     user = null;
   }
 
@@ -125,18 +137,10 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
         .maybeSingle();
 
       if (error) {
-        // Fail closed: an unreadable role table must never grant admin access.
-        console.error(
-          `[auth-middleware] Admin role lookup failed for user ${currentUser.id}: ${error.message}`
-        );
         return false;
       }
       return Boolean(data);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Role query exception";
-      console.error(
-        `[auth-middleware] Admin role query exception for user ${currentUser.id}: ${msg}`
-      );
+    } catch {
       return false;
     }
   };

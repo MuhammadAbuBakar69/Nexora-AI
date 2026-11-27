@@ -22,7 +22,7 @@ function ConsoleShellContent({
   // Markup mirrors the original per-area layouts exactly; only the sidebar and
   // drawer treatment differ between the customer and admin consoles.
   return (
-    <div className="flex h-screen bg-[#F7F7FA] overflow-hidden">
+    <div className="flex h-screen bg-[#F6F6F3] overflow-hidden font-sans">
       {/* Desktop Persistent Sidebar */}
       <div className="hidden lg:block shrink-0 h-full">
         {isAdmin ? <AdminSidebar /> : <DashboardSidebar />}

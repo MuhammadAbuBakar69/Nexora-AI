@@ -17,6 +17,14 @@ export interface SessionContext {
  */
 export async function getSessionContext(): Promise<SessionContext | null> {
   const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
+  const hasAuthCookie = allCookies.some(
+    (c) =>
+      c.name.startsWith("sb-") &&
+      (c.name.includes("-auth-token") || c.name.includes("access-token"))
+  );
+  if (!hasAuthCookie) return null;
+
   const supabase = createClient(cookieStore);
 
   const {

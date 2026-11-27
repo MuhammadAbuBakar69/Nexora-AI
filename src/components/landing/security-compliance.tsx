@@ -1,104 +1,121 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck, Lock, Key, Server, EyeOff, FileText, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, Lock, Key, Server, EyeOff, FileText, Check } from "lucide-react";
+import { AnimatedGradientCard } from "@/components/ui/animated-gradient-card";
 
 export function SecurityComplianceSection() {
   const securityPillars = [
     {
-      title: "Zero-Data Retention Guarantee",
+      code: "SEC-01",
+      title: "Zero-Data Retention Architecture",
       description:
-        "Your prompts and completions pass strictly through transient memory. Nexora never logs payload content, never stores customer data, and never uses your traffic for model training.",
+        "Prompts and completions stream strictly through volatile edge memory. Nexora never logs payload content, never stores customer outputs, and never uses your traffic for model training.",
       icon: EyeOff,
-      badge: "ZDR Enforced",
+      badge: "ZDR ENFORCED",
     },
     {
-      title: "Enterprise KMS Encryption",
+      code: "SEC-02",
+      title: "Hardware KMS & In-Transit Encryption",
       description:
-        "Every request is encrypted using TLS 1.3 with Perfect Forward Secrecy in transit, and AES-256 GCM at rest. Customer-managed keys (CMEK) are supported for enterprise tenants.",
+        "Every request is encrypted using TLS 1.3 with Perfect Forward Secrecy in transit, and AES-256-GCM for encrypted vector storage. Customer-managed keys (CMEK) supported.",
       icon: Lock,
-      badge: "AES-256 GCM",
+      badge: "AES-256-GCM",
     },
     {
-      title: "SOC2 Type II & HIPAA Ready",
+      code: "SEC-03",
+      title: "SOC2 Type II & HIPAA Compliance",
       description:
-        "Independently audited security controls, continuous penetration testing, and formal Business Associate Agreements (BAAs) available for healthcare and fintech workloads.",
+        "Independently verified security controls, continuous automated penetration testing, and formal Business Associate Agreements (BAAs) available for enterprise workloads.",
       icon: ShieldCheck,
-      badge: "Certified",
+      badge: "AUDITED",
     },
     {
+      code: "SEC-04",
       title: "Dedicated Tenant VPC Peering",
       description:
-        "Isolate your AI API gateway inside a private virtual cloud with static IP egress, AWS PrivateLink, and GCP VPC Service Controls to eliminate internet exposure.",
+        "Isolate your AI API gateway inside private virtual networks with static IP egress, AWS PrivateLink, and GCP VPC Service Controls to eliminate public internet exposure.",
       icon: Server,
-      badge: "Private VPC",
+      badge: "VPC PEERING",
     },
     {
-      title: "Granular RBAC & Key Scoping",
+      code: "SEC-05",
+      title: "Cryptographic Key Scoping & RBAC",
       description:
-        "Issue short-lived or permanent credentials locked to specific models, maximum rate ceilings (RPM), and CIDR IP whitelists. Rotate keys with zero application downtime.",
+        "Issue credentials locked to specific models, maximum rate ceilings (RPM), and IP allowlists. Rotate or revoke keys instantly via UI or REST API with zero downtime.",
       icon: Key,
-      badge: "Scoped Access",
+      badge: "SCOPED ACCESS",
     },
     {
+      code: "SEC-06",
       title: "Immutable Event Audit Ledger",
       description:
-        "Every administrative action—key generation, quota updates, permission changes, or access revocations—is cryptographically hashed into an append-only compliance log.",
+        "Every administrative operation—key generation, quota grants, access requests, or revocations—is cryptographically hashed into an append-only compliance audit trail.",
       icon: FileText,
-      badge: "365-Day Retention",
+      badge: "COMPLIANCE LEDGER",
     },
   ];
 
   return (
-    <section className="py-24 sm:py-32 bg-[#100E20] text-white relative overflow-hidden">
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-r from-violet-primary/20 via-blue-soft/10 to-transparent blur-3xl pointer-events-none" />
+    <section className="py-20 bg-[#F6F6F3] border-b border-[#E2E2DA] select-none font-sans relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* CAD Blueprint Header */}
+        <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
+          <span>// SECURITY GOVERNANCE: ZERO-DATA RETENTION &amp; AUDIT SPECIFICATION</span>
+          <span>STANDARDS: SOC2 TYPE II • HIPAA BAA</span>
+        </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <span className="text-xs uppercase font-semibold tracking-wider text-violet-soft bg-white/10 px-3 py-1 rounded-full border border-white/15">
-            Enterprise Security Architecture
+        <div className="max-w-3xl mb-12">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30">
+            SOVEREIGNTY &amp; GOVERNANCE
           </span>
-          <h2 className="text-3xl sm:text-5xl font-heritage font-semibold tracking-tight text-white mt-4 mb-5">
-            Security built into every gateway token.
+          <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-[#111111] font-mono mt-4 mb-3">
+            SECURITY GROUNDED INTO EVERY GATEWAY TOKEN
           </h2>
-          <p className="text-base sm:text-lg text-white/70 leading-relaxed">
-            Engineered from day one for heavily regulated industries. Control your AI workloads without compromising data sovereignty or governance.
+          <p className="text-xs sm:text-sm text-[#555562] font-mono leading-relaxed">
+            Engineered from day one for heavily regulated enterprises. Control your AI workloads without compromising data sovereignty or compliance.
           </p>
         </div>
 
-        {/* 6 Pillars Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* 6 CAD Grid Pillars with Animated Sunset Gradients */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-mono">
           {securityPillars.map((pillar, idx) => {
             const Icon = pillar.icon;
             return (
-              <div
+              <AnimatedGradientCard
                 key={idx}
-                className="bg-[#151329] border border-white/10 rounded-3xl p-8 hover:border-violet-soft/40 transition-all duration-300 flex flex-col justify-between group"
+                intensity="vibrant"
+                className="p-6 flex flex-col justify-between h-full font-mono"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-violet-soft group-hover:scale-110 group-hover:text-white transition-all">
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <span className="text-xs font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-400/30 px-3 py-0.5 rounded-full">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#E2E2DA] mb-4">
+                    <span className="text-[10px] text-[#FF5722] font-bold">
+                      // {pillar.code}
+                    </span>
+                    <span className="text-[9px] uppercase px-1.5 py-0.2 bg-emerald-50 text-emerald-700 border border-emerald-300 font-bold">
                       {pillar.badge}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold font-sans text-white tracking-tight mb-3">
-                    {pillar.title}
-                  </h3>
-                  <p className="text-sm text-white/80 leading-relaxed font-normal">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 bg-[#F7F7F4] border border-[#E2E2DA] flex items-center justify-center text-[#111111] group-hover:text-[#FF5722] group-hover:border-[#FF5722]/40 transition-colors shrink-0">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <h3 className="text-xs font-bold text-[#111111] uppercase tracking-tight group-hover:text-[#FF5722] transition-colors">
+                      {pillar.title}
+                    </h3>
+                  </div>
+
+                  <p className="text-xs text-[#555562] leading-relaxed font-sans mb-4">
                     {pillar.description}
                   </p>
                 </div>
 
-                <div className="pt-6 mt-4 border-t border-white/10 flex items-center gap-2 text-xs text-violet-soft font-semibold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Enforced on all tier endpoints</span>
+                <div className="pt-3 border-t border-[#E2E2DA] flex items-center gap-2 text-[10px] text-[#777783]">
+                  <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>Enforced across all gateway endpoints</span>
                 </div>
-              </div>
+              </AnimatedGradientCard>
             );
           })}
         </div>

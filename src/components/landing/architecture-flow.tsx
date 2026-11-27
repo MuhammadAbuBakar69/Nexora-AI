@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck,
   Zap,
@@ -8,11 +9,11 @@ import {
   Layers,
   Database,
   ArrowRight,
-  Sparkles,
   Server,
   Lock,
-  GitBranch,
 } from "lucide-react";
+import { AnimatedSunsetMesh } from "@/components/ui/animated-sunset-mesh";
+import { GsapHeadline } from "@/components/animations/gsap-animator";
 
 export function ArchitectureFlowSection() {
   const [activeStep, setActiveStep] = useState(0);
@@ -20,12 +21,12 @@ export function ArchitectureFlowSection() {
   const steps = [
     {
       num: "01",
-      title: "Edge Ingress & TLS Termination",
+      title: "Edge Ingress & TLS 1.3 Termination",
       icon: ShieldCheck,
-      short: "Anycast BGP routes to the nearest edge PoP in <15ms.",
+      short: "Anycast BGP routes client traffic to the nearest edge PoP in <15ms.",
       details:
         "Requests from your backend or client SDK terminate at the closest edge point-of-presence using TLS 1.3 0-RTT handshakes. DDoS scrubbing and IP allowlisting execute in under 2ms.",
-      meta: { latency: "2.1 ms", protocol: "HTTP/2 & HTTP/3", security: "TLS 1.3 / mTLS" },
+      meta: { latency: "1.8 ms", protocol: "HTTP/2 & HTTP/3", security: "TLS 1.3 / mTLS" },
       code: `POST /v1/chat/completions HTTP/2
 Host: api.nexora.cloud
 Authorization: Bearer nx_live_98e1...
@@ -33,185 +34,180 @@ Content-Type: application/json`,
     },
     {
       num: "02",
-      title: "Identity & Token Quota Gatekeeper",
+      title: "Token Quota Gatekeeper & Authorization",
       icon: Lock,
-      short: "Validates tenant keys and real-time token balances in memory.",
+      short: "Validates tenant keys and real-time token balances in sub-millisecond memory.",
       details:
-        "High-performance Redis-compatible volatile caches verify the API key, inspect current monthly token burn, and enforce rate ceilings (RPM/TPM). If a quota is exceeded, clean 429 errors return without calling expensive upstream models.",
-      meta: { latency: "0.8 ms", storage: "In-Memory Volatile", isolation: "Tenant-Isolated" },
+        "High-performance volatile caches verify the API key, inspect current monthly token burn, and enforce rate ceilings (RPM/TPM). Overdraft requests return clean 429 errors without consuming expensive upstream models.",
+      meta: { latency: "0.6 ms", storage: "In-Memory Volatile", isolation: "Tenant-Isolated" },
       code: `{
-  "status": "APPROVED",
-  "tenant_id": "cust_88291",
-  "remaining_tokens": 17640200,
+  "status": "AUTHORIZED",
+  "tenant_id": "org_enterprise_primary",
+  "quota_remaining": 17500000,
   "rate_limit_remaining": 2490
 }`,
     },
     {
       num: "03",
-      title: "Semantic Vector Caching Layer",
+      title: "Semantic Vector Caching Subsystem",
       icon: Database,
-      short: "Serves matching or high-similarity prompts in sub-5ms.",
+      short: "Serves identical or semantically similar prompts in sub-5ms.",
       details:
-        "Nexora computes prompt embeddings and searches your tenant's private vector cache. Identical or near-identical prompts (configurable cosine threshold ≥ 0.96) return cached completions instantly, cutting upstream LLM API costs by up to 40%.",
-      meta: { latency: "4.5 ms", cacheHitRate: "34.8%", costSaved: "100% on hit" },
-      code: `// Cache Evaluation
-cos_similarity: 0.984 (> 0.96 threshold)
+        "Nexora computes prompt embeddings and evaluates your tenant's private vector cache. High-similarity queries (cosine threshold ≥ 0.96) return cached completions instantly, cutting upstream latency and token cost by up to 40%.",
+      meta: { latency: "4.2 ms", cacheHitRate: "34.8%", costSaved: "100% on cache hit" },
+      code: `// Semantic Cache Evaluation
+cosine_similarity: 0.984 (> 0.96 threshold)
 cache_status: "HIT"
-upstream_skipped: true
-cost: $0.00`,
+upstream_skipped: true`,
     },
     {
       num: "04",
-      title: "Intelligent Routing & Upstream Balancing",
-      icon: GitBranch,
-      short: "Selects healthiest provider or cascades to secondary models.",
+      title: "Frontier Upstream Dispatch & Failover",
+      icon: Cpu,
+      short: "Proxies request to Gemini, Veo, Claude, or GPT with zero data retention.",
       details:
-        "On cache miss, Nexora's dynamic load balancer evaluates real-time upstream provider health, TTFT benchmarks, and pricing. If Anthropic or OpenAI latency exceeds SLA, traffic automatically reroutes to the optimal secondary provider in under 12ms.",
-      meta: { fallbackLatency: "12 ms", providers: "OpenAI, Anthropic, Google, Mistral", health: "Active Probing" },
-      code: `// Dynamic Provider Dispatch
-primary: "anthropic/claude-3-5-sonnet"
-status: "HEALTHY (320ms TTFT)"
-active_fallback: "openai/gpt-4o"
-circuit_breaker: "CLOSED"`,
-    },
-    {
-      num: "05",
-      title: "Zero-Retention Streaming & Telemetry",
-      icon: Zap,
-      short: "Pipes Server-Sent Events to client; records usage hashes.",
-      details:
-        "Tokens stream back to your application with zero disk persistence. Nexora logs only token counts, execution latency, and cryptographic audit proofs for billing, strictly adhering to Zero Data Retention compliance standards.",
-      meta: { streamProtocol: "SSE", dataRetention: "0 bytes", auditTrail: "SHA-256 HMAC" },
-      code: `data: {"id":"chatcmpl-nx82","choices":[{"delta":{"content":"Nexora"}}]}
-data: {"id":"chatcmpl-nx82","choices":[{"delta":{"content":" Gateway"}}]}
-data: [DONE]
-
-// Usage Telemetry
-X-Nexora-Tokens-Prompt: 142
-X-Nexora-Tokens-Completion: 68`,
+        "The gateway dispatches the payload to the designated frontier model provider. If the primary provider experiences elevated latency or outages, traffic automatically routes to an enabled fallback model with zero packet loss.",
+      meta: { latency: "18 ms TTFT", providers: "Google • Anthropic • OpenAI", retention: "Zero-Data Retention" },
+      code: `{
+  "id": "chatcmpl_98a72e81",
+  "model": "google/gemini-2.5-flash",
+  "choices": [{"message": {"role": "assistant"}}],
+  "usage": {"prompt_tokens": 1420, "completion_tokens": 340}
+}`,
     },
   ];
 
   const current = steps[activeStep];
+  const StepIcon = current.icon;
 
   return (
-    <section className="py-24 sm:py-32 bg-white border-t border-border relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-border text-xs font-semibold text-secondary mb-4">
-            <Cpu className="w-3.5 h-3.5 text-violet-primary" />
-            Under the Hood
-          </div>
-          <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-[#111111] mb-5 font-heritage">
-            The Request Lifecycle.
-            <br />
-            <span className="text-violet-primary">From Edge Ingress to Output Stream.</span>
-          </h2>
-          <p className="text-base sm:text-lg text-secondary leading-relaxed">
-            See how every API call travels through Nexora&apos;s low-latency security, quota validation, semantic caching, and dynamic routing layers.
+    <section className="py-20 bg-[#F6F6F3] border-b border-[#E2E2DA] select-none font-sans relative overflow-hidden">
+      {/* Subtle Ambient Sunset Glow */}
+      <AnimatedSunsetMesh intensity="subtle" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* CAD Blueprint Header */}
+        <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
+          <span className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722] animate-pulse" />
+            // PROTOCOL ARCHITECTURE: REQUEST LIFECYCLE &amp; ROUTING PIPELINE
+          </span>
+          <span>DWG: ARCH-FLOW-01 • SCALE: 1:1</span>
+        </div>
+
+        <div className="max-w-3xl mb-12">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30 inline-block mb-3">
+            INGRESS TO COMPLETION
+          </span>
+          <GsapHeadline
+            text="HOW REQUESTS TRAVERSE THE"
+            highlight="NEXORA EDGE MESH"
+            className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-[#111111] font-mono leading-[1.12] mb-3"
+          />
+          <p className="text-xs sm:text-sm text-[#555562] font-mono leading-relaxed">
+            Every inference call is authenticated, quota-checked, and proxied with sub-millisecond overhead and strict Zero-Data Retention.
           </p>
         </div>
 
-        {/* Step Selector Horizontal Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pb-8 border-b border-border">
+        {/* 4 Architectural Step Compartments with Connecting Flow */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {steps.map((s, idx) => {
             const Icon = s.icon;
+            const isSelected = activeStep === idx;
             return (
-              <button
-                key={s.num}
+              <motion.button
+                key={idx}
                 onClick={() => setActiveStep(idx)}
-                className={`p-4 rounded-2xl text-left border transition-all ${
-                  activeStep === idx
-                    ? "bg-violet-light/50 border-violet-soft text-foreground shadow-subtle"
-                    : "bg-surface/60 border-border/70 text-secondary hover:text-foreground hover:bg-white"
+                whileHover={{ y: -4 }}
+                transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                className={`p-5 text-left transition-all border relative flex flex-col justify-between ${
+                  isSelected
+                    ? "bg-white border-[#FF5722] ring-1 ring-[#FF5722] shadow-sm"
+                    : "bg-[#F7F7F4]/90 hover:bg-white border-[#E2E2DA] hover:border-[#111111]"
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-mono font-bold text-violet-primary">
-                    STAGE {s.num}
-                  </span>
-                  <Icon
-                    className={`w-4 h-4 ${
-                      activeStep === idx ? "text-violet-primary" : "text-secondary"
-                    }`}
-                  />
+                <span className="absolute top-1.5 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+                <span className="absolute top-1.5 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className={`font-mono text-xs font-bold ${isSelected ? "text-[#FF5722]" : "text-[#777783]"}`}>
+                      PHASE // {s.num}
+                    </span>
+                    <Icon className={`w-4 h-4 ${isSelected ? "text-[#FF5722]" : "text-[#111111]"}`} />
+                  </div>
+                  <h3 className="text-xs font-mono font-bold uppercase text-[#111111] mb-1.5">
+                    {s.title}
+                  </h3>
+                  <p className="text-[11px] font-mono text-[#777783] leading-relaxed">
+                    {s.short}
+                  </p>
                 </div>
-                <p className="text-xs font-bold text-foreground truncate">{s.title}</p>
-                <p className="text-xs text-[#525263] font-medium truncate mt-0.5">{s.short}</p>
-              </button>
+
+                <div className="pt-3 border-t border-[#E2E2DA] mt-4 flex items-center justify-between text-[10px] font-mono">
+                  <span className="text-[#777783]">LATENCY:</span>
+                  <span className="font-bold text-[#111111]">{s.meta.latency}</span>
+                </div>
+              </motion.button>
             );
           })}
         </div>
 
-        {/* Active Step Detailed Inspector */}
-        <div className="pt-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Narrative */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="flex items-center gap-3">
-              <span className="w-10 h-10 rounded-2xl bg-violet-primary text-white flex items-center justify-center font-bold text-lg shadow-sm">
-                {current.num}
-              </span>
-              <div>
-                <h3 className="text-xl sm:text-2xl font-bold font-sans text-[#111111]">
+        {/* Step Deep-Dive Drafting Box */}
+        <div className="bg-white/95 backdrop-blur-xs border border-[#E2E2DA] p-6 sm:p-8 relative shadow-sm">
+          <span className="absolute top-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute top-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute bottom-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute bottom-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeStep}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+            >
+              <div className="lg:col-span-6 space-y-4 font-mono">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 text-[10px] font-bold uppercase bg-[#FF5722]/10 text-[#FF5722] border border-[#FF5722]/30">
+                    PHASE {current.num} SPECIFICATION
+                  </span>
+                  <span className="text-[11px] text-[#777783]">•</span>
+                  <span className="text-[11px] text-emerald-600 font-bold">OPERATIONAL</span>
+                </div>
+
+                <h3 className="text-lg font-bold text-[#111111] uppercase tracking-tight">
                   {current.title}
                 </h3>
-                <p className="text-xs text-violet-primary font-bold">{current.short}</p>
-              </div>
-            </div>
 
-            <p className="text-sm text-[#40404f] leading-relaxed font-medium">
-              {current.details}
-            </p>
+                <p className="text-xs text-[#555562] leading-relaxed font-sans">
+                  {current.details}
+                </p>
 
-            {/* Architecture Metadata Badges */}
-            <div className="grid grid-cols-3 gap-3 pt-2">
-              {Object.entries(current.meta).map(([key, val]) => (
-                <div key={key} className="bg-surface border border-border p-3.5 rounded-2xl">
-                  <span className="text-xs uppercase font-bold text-[#555562] block">
-                    {key}
-                  </span>
-                  <span className="text-xs font-mono font-bold text-foreground mt-0.5 block truncate">
-                    {val}
-                  </span>
+                <div className="pt-4 border-t border-[#E2E2DA] grid grid-cols-3 gap-3 text-xs">
+                  {Object.entries(current.meta).map(([k, v]) => (
+                    <div key={k} className="p-2.5 bg-[#F7F7F4] border border-[#E2E2DA]">
+                      <span className="text-[9px] uppercase text-[#777783] block">{k}</span>
+                      <span className="font-bold text-[#111111] text-[11px] mt-0.5 block">{v}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-3 pt-2">
-              <button
-                onClick={() => setActiveStep((activeStep + 1) % steps.length)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#100E20] text-white text-xs font-bold hover:bg-violet-dark transition-all cursor-pointer shadow-sm active:scale-97"
-              >
-                Next Architecture Stage
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-              <span className="text-xs font-semibold text-secondary">
-                Step {activeStep + 1} of {steps.length}
-              </span>
-            </div>
-          </div>
-
-          {/* Right Code/Telemetry Inspector Window */}
-          <div className="lg:col-span-6 bg-[#100E20] rounded-2xl border border-white/10 p-6 text-white font-mono text-xs shadow-premium relative">
-            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                <span className="text-[11px] text-white/50 ml-2 font-mono">
-                  gateway-stage-{current.num}.log
-                </span>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-violet-primary/30 text-violet-soft border border-violet-soft/30">
-                LIVE TELEMETRY
-              </span>
-            </div>
 
-            <pre className="text-[11px] text-violet-soft/90 leading-relaxed overflow-x-auto whitespace-pre p-2 bg-black/30 rounded-xl border border-white/5">
-              {current.code}
-            </pre>
-          </div>
+              <div className="lg:col-span-6 flex flex-col justify-between">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E2E2DA] text-[11px] font-mono text-[#777783]">
+                  <span>PAYLOAD PROTOCOL VERIFICATION</span>
+                  <span className="text-[#FF5722] font-bold">RFC-8259 JSON</span>
+                </div>
+
+                <pre className="p-4 bg-[#111111] text-[#EAEAEA] font-mono text-xs overflow-x-auto leading-relaxed border border-[#333333] h-full flex items-center">
+                  <code>{current.code}</code>
+                </pre>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </section>

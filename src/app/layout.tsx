@@ -17,11 +17,12 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
-      { url: `${basePath}/favicon.png`, type: "image/png" },
-      { url: `${basePath}/favicon.svg`, type: "image/svg+xml" },
+      { url: `${basePath}/favicon.png?v=2`, type: "image/png" },
+      { url: `${basePath}/favicon.svg?v=2`, type: "image/svg+xml" },
+      { url: `${basePath}/favicon.ico?v=2` },
     ],
-    shortcut: `${basePath}/favicon.png`,
-    apple: `${basePath}/logo.png`,
+    shortcut: `${basePath}/favicon.png?v=2`,
+    apple: `${basePath}/logo-icon.png?v=2`,
   },
 };
 
@@ -32,6 +33,30 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                if (typeof window === 'undefined') return;
+                window.addEventListener('unhandledrejection', function(event) {
+                  var r = event && event.reason;
+                  if (
+                    r instanceof Event ||
+                    (r && typeof r === 'object' && ('isTrusted' in r || 'target' in r || 'currentTarget' in r))
+                  ) {
+                    event.preventDefault();
+                    if (typeof event.stopImmediatePropagation === 'function') {
+                      event.stopImmediatePropagation();
+                    }
+                    console.warn('[Nexora Shield] Intercepted non-Error unhandled rejection:', r);
+                  }
+                }, true);
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className="min-h-screen bg-white text-[#111111] antialiased selection:bg-violet-light selection:text-violet-primary font-sans"
         suppressHydrationWarning

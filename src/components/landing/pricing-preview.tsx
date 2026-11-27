@@ -2,26 +2,28 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Check, Sparkles, ArrowRight } from "lucide-react";
+import { Check, Sparkles, ArrowRight, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { QuotaQuoteCalculator } from "@/components/dashboard/quota-quote-calculator";
+import { AnimatedGradientCard } from "@/components/ui/animated-gradient-card";
 
 export function PricingPreview() {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
+  const [activeTab, setActiveTab] = useState<"tiers" | "calculator">("calculator");
 
   const plans = [
     {
       name: "Starter",
       badge: "Experimentation",
       description: "Ideal for solo engineers, researchers, and prototypes testing unified AI gateway routing.",
-      monthlyPrice: "$49",
-      annualPrice: "$39",
+      price: "$49",
+      pkrPrice: "₨13,720",
       period: "/ month",
       isPopular: false,
       ctaText: "Start Starter Plan",
       features: [
         "10,000,000 monthly token quota",
         "Up to 3 active API keys",
-        "Access to standard LLM endpoints",
+        "Access to Gemini 2.5 Flash & standard LLMs",
         "25 GB vector cache storage",
         "Community support & docs",
         "Basic rate limiting (600 RPM)",
@@ -31,18 +33,18 @@ export function PricingPreview() {
       name: "Growth",
       badge: "Most Popular",
       description: "Designed for high-growth startups and product teams deploying production AI applications.",
-      monthlyPrice: "$249",
-      annualPrice: "$199",
+      price: "$249",
+      pkrPrice: "₨69,720",
       period: "/ month",
       isPopular: true,
       ctaText: "Start Growth Plan",
       features: [
         "75,000,000 monthly token quota",
         "Up to 25 scoped API keys",
-        "Full access: OpenAI, Anthropic, Google",
+        "Full access: Gemini, Veo Video, Claude, GPT",
         "150 GB encrypted vector storage",
         "Real-time telemetry & webhook alerts",
-        "Sub-100ms multi-region gateway proxy",
+        "Sub-20ms multi-region gateway proxy",
         "High-throughput rate limits (2,500 RPM)",
         "Priority developer engineering support",
       ],
@@ -51,141 +53,149 @@ export function PricingPreview() {
       name: "Enterprise",
       badge: "Custom Scale",
       description: "Dedicated infrastructure, custom SLAs, audit compliance, and private VPC routing for enterprise.",
-      monthlyPrice: "Custom",
-      annualPrice: "Custom",
+      price: "Custom",
+      pkrPrice: "Custom",
       period: "",
       isPopular: false,
       ctaText: "Contact Sales",
       features: [
         "Custom or multi-billion token quotas",
         "Unlimited granular API keys",
+        "Google Veo high-concurrency dedicated queue",
         "Private edge proxy & dedicated tenant VPC",
         "Multi-TB encrypted storage vaults",
         "99.99% uptime SLA with financial backing",
         "SOC2 Type II & HIPAA compliance docs",
         "Dedicated Technical Account Manager",
-        "Custom model fine-tuning cache routing",
       ],
     },
   ];
 
   return (
-    <section id="pricing" className="py-24 sm:py-32 bg-surface/60 border-t border-border">
+    <section id="pricing" className="py-20 bg-[#F6F6F3] border-b border-[#E2E2DA] select-none font-sans relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs uppercase font-semibold tracking-wider text-violet-primary bg-violet-light px-3 py-1 rounded-full border border-violet-soft/30">
-            Transparent Allocation
+        {/* CAD Blueprint Header */}
+        <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
+          <span>// COMMERCIAL PRICING &amp; ALLOCATION SPECIFICATION</span>
+          <span>CURRENCIES: USD ($) &amp; PKR (₨) REAL-TIME</span>
+        </div>
+
+        <div className="text-left sm:text-center max-w-3xl sm:mx-auto mb-12">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-violet-primary bg-violet-50 px-2.5 py-1 border border-violet-200">
+            TRANSPARENT ALLOCATION
           </span>
-          <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-[#111111] mt-4 mb-4 font-heritage">
-            Predictable plans. No surprises.
+          <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-[#111111] font-mono mt-4 mb-3">
+            PREDICTABLE PLANS. NO OVERDRAFT SURPRISES.
           </h2>
-          <p className="text-base sm:text-lg text-secondary">
-            Provision token quotas and gateway capacity according to your team’s workload requirements.
+          <p className="text-xs sm:text-sm text-[#555562] font-mono leading-relaxed">
+            Provision token quotas, Google Veo video inference seconds, and image units according to your workload requirements.
           </p>
 
-          {/* Billing Toggle */}
-          <div className="inline-flex items-center p-1 bg-white border border-border rounded-full mt-8 shadow-subtle">
+          {/* Toggle between Calculator and Plan Tiers */}
+          <div className="inline-flex items-center p-1 bg-white border border-[#E2E2DA] mt-6 font-mono text-xs">
             <button
-              onClick={() => setBillingCycle("monthly")}
-              className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
-                billingCycle === "monthly"
-                  ? "bg-[#111111] text-white shadow-sm font-semibold"
-                  : "text-secondary hover:text-foreground"
+              onClick={() => setActiveTab("calculator")}
+              className={`px-4 py-1.5 font-bold uppercase transition-all ${
+                activeTab === "calculator"
+                  ? "bg-[#111111] text-white"
+                  : "text-[#555562] hover:text-[#111111]"
               }`}
             >
-              Monthly Billing
+              Interactive Quota Calculator
             </button>
             <button
-              onClick={() => setBillingCycle("annual")}
-              className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
-                billingCycle === "annual"
-                  ? "bg-[#111111] text-white shadow-sm font-semibold"
-                  : "text-secondary hover:text-foreground"
+              onClick={() => setActiveTab("tiers")}
+              className={`px-4 py-1.5 font-bold uppercase transition-all ${
+                activeTab === "tiers"
+                  ? "bg-[#111111] text-white"
+                  : "text-[#555562] hover:text-[#111111]"
               }`}
             >
-              Annual Billing
-              <span className="bg-violet-light text-violet-primary text-[10px] px-2 py-0.2 rounded-full font-bold">
-                Save 20%
-              </span>
+              Standard Tier Matrix
             </button>
           </div>
         </div>
 
-        {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {plans.map((plan, idx) => (
-            <div
-              key={idx}
-              className={`relative rounded-3xl p-8 bg-white border transition-all duration-300 flex flex-col justify-between ${
-                plan.isPopular
-                  ? "border-violet-primary ring-2 ring-violet-primary/20 shadow-float"
-                  : "border-border hover:border-violet-soft/40 hover:shadow-premium"
-              }`}
-            >
-              {plan.isPopular && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-violet-primary text-white text-[11px] font-semibold px-3 py-0.5 rounded-full shadow-sm flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" />
-                  {plan.badge}
-                </div>
-              )}
-
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-foreground tracking-tight">
-                    {plan.name}
-                  </h3>
-                  {!plan.isPopular && (
-                    <span className="text-[11px] font-medium text-secondary bg-surface px-2.5 py-1 rounded-full border border-border">
+        {activeTab === "calculator" ? (
+          <div className="max-w-4xl mx-auto">
+            <QuotaQuoteCalculator />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {plans.map((plan, idx) => (
+              <AnimatedGradientCard
+                key={idx}
+                isFeatured={plan.isPopular}
+                intensity={plan.isPopular ? "glow" : "vibrant"}
+                className="p-6 sm:p-8 flex flex-col justify-between font-mono h-full"
+              >
+                <div>
+                  <div className="flex items-center justify-between pb-3 border-b border-[#E2E2DA] mb-4">
+                    <h3 className="text-base font-bold text-[#111111] font-mono uppercase">
+                      {plan.name}
+                    </h3>
+                    <span
+                      className={`text-[10px] font-mono uppercase px-2 py-0.5 border font-semibold ${
+                        plan.isPopular
+                          ? "bg-gradient-sunset text-white border-transparent shadow-xs"
+                          : "bg-[#F7F7F4] border-[#E2E2DA] text-[#555562]"
+                      }`}
+                    >
                       {plan.badge}
                     </span>
-                  )}
-                </div>
+                  </div>
 
-                <p className="text-xs text-secondary leading-relaxed mb-6">
-                  {plan.description}
-                </p>
+                  <p className="text-xs text-[#555562] leading-relaxed mb-6 font-mono">
+                    {plan.description}
+                  </p>
 
-                <div className="mb-8">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold tracking-tight text-foreground">
-                      {billingCycle === "monthly" ? plan.monthlyPrice : plan.annualPrice}
-                    </span>
-                    {plan.period && (
-                      <span className="text-xs text-secondary font-normal">{plan.period}</span>
+                  <div className="mb-6 pb-6 border-b border-[#E2E2DA]">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-extrabold font-mono text-[#111111]">
+                        {plan.price}
+                      </span>
+                      {plan.period && (
+                        <span className="text-xs font-mono text-[#777783]">{plan.period}</span>
+                      )}
+                    </div>
+                    {plan.pkrPrice !== "Custom" && (
+                      <span className="text-[11px] font-mono text-[#777783] block mt-1">
+                        ≈ {plan.pkrPrice} PKR / month
+                      </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-secondary/70 mt-1">
-                    * Clearly marked illustrative model tiers subject to finalized SLA terms.
-                  </p>
+
+                  <div className="space-y-2.5 font-mono text-xs text-[#555562]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#111111] block mb-2">
+                      SPECIFICATIONS
+                    </span>
+                    {plan.features.map((feature, fIdx) => (
+                      <div key={fIdx} className="flex items-start gap-2">
+                        <Check className="w-3.5 h-3.5 text-[#FF5722] shrink-0 mt-0.5" />
+                        <span className="text-[11px]">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="space-y-3 pt-6 border-t border-border">
-                  <p className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                    Included Capabilities
-                  </p>
-                  {plan.features.map((feature, fIdx) => (
-                    <div key={fIdx} className="flex items-start gap-2.5 text-xs text-secondary leading-relaxed">
-                      <Check className="w-4 h-4 text-violet-primary shrink-0 mt-0.5" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-8 mt-6">
-                <Link href={plan.name === "Enterprise" ? "/pricing#contact" : "/signup"}>
+                <div className="pt-6 mt-6 border-t border-[#E2E2DA]">
                   <Button
-                    variant={plan.isPopular ? "primary" : "secondary"}
-                    className="w-full text-xs font-semibold"
+                    href="/signup"
+                    size="sm"
+                    className={`w-full text-xs font-mono font-bold uppercase tracking-wider ${
+                      plan.isPopular
+                        ? "bg-gradient-sunset text-white hover:opacity-95 shadow-md border-transparent"
+                        : ""
+                    }`}
                   >
                     {plan.ctaText}
                     <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                   </Button>
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+                </div>
+              </AnimatedGradientCard>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

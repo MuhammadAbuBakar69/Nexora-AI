@@ -1,94 +1,104 @@
 "use client";
 
 import React from "react";
-import { Quote } from "lucide-react";
+import { motion } from "framer-motion";
+import { ShieldCheck, Cpu, Activity, Zap } from "lucide-react";
+import { GsapCounter, GsapReveal } from "@/components/animations/gsap-animator";
+import { AnimatedSunsetMesh } from "@/components/ui/animated-sunset-mesh";
+import { AnimatedGradientCard } from "@/components/ui/animated-gradient-card";
 
 export function MetricsSection() {
   const metrics = [
     {
-      value: "45M+",
-      label: "API Requests Processed",
-      sublabel: "Illustrative gateway throughput",
+      numeric: 32,
+      decimals: 0,
+      suffix: "",
+      unit: "PoPs",
+      label: "Anycast Edge Nodes",
+      sublabel: "Global low-latency ingress mesh",
+      icon: Cpu,
     },
     {
-      value: "40+",
-      label: "AI Models Supported",
-      sublabel: "Frontier LLMs, vision & embeddings",
+      numeric: 6,
+      decimals: 0,
+      suffix: "+",
+      unit: "Engines",
+      label: "Frontier AI Modalities",
+      sublabel: "Gemini, Veo, Claude, GPT-4o",
+      icon: Zap,
     },
     {
-      value: "85%",
-      label: "Resource Optimization",
-      sublabel: "Through intelligent request caching",
+      numeric: 18,
+      decimals: 0,
+      prefix: "< ",
+      suffix: "",
+      unit: "ms",
+      label: "Median Edge Routing",
+      sublabel: "Intelligent proxy cache TTFT",
+      icon: Activity,
     },
     {
-      value: "99.98%",
+      numeric: 99.99,
+      decimals: 2,
+      suffix: "%",
+      unit: "SLA",
       label: "Platform Availability",
-      sublabel: "Multi-region failover architecture",
+      sublabel: "Automatic multi-region failover",
+      icon: ShieldCheck,
     },
   ];
 
   return (
-    <section className="py-20 border-y border-border bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Sonivale-style Testimonial Bar */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pb-16 border-b border-border">
-          <div className="lg:col-span-4">
-            <span className="text-xs uppercase font-semibold tracking-wider text-secondary">
-              Product Philosophy
-            </span>
-            <h3 className="text-lg font-semibold text-foreground mt-1">
-              Engineered for Precision & Governance
-            </h3>
-            <div className="flex items-center gap-3 mt-4">
-              <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-violet-soft/30 border-2 border-white flex items-center justify-center text-[10px] font-bold text-violet-primary">
-                  ER
-                </div>
-                <div className="w-8 h-8 rounded-full bg-blue-soft/30 border-2 border-white flex items-center justify-center text-[10px] font-bold text-indigo-700">
-                  MV
-                </div>
-                <div className="w-8 h-8 rounded-full bg-emerald-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-emerald-700">
-                  SC
-                </div>
-              </div>
-              <p className="text-xs text-secondary">
-                Designed for engineering teams managing multi-model architectures.
-              </p>
-            </div>
-          </div>
+    <section className="py-20 border-b border-[#E2E2DA] bg-[#F6F6F3] select-none font-sans relative overflow-hidden">
+      {/* Subtle Ambient Sunset Glow under the metrics */}
+      <AnimatedSunsetMesh intensity="ambient" />
 
-          <div className="lg:col-span-8 relative pl-0 lg:pl-8 lg:border-l border-border">
-            <Quote className="w-10 h-10 text-border absolute -top-4 right-2 pointer-events-none opacity-40" />
-            <blockquote className="text-xl sm:text-2xl font-normal text-foreground leading-snug font-heritage">
-              &ldquo;NEXORA feels less like cumbersome cloud plumbing and more like a dedicated infrastructure copilot. We allocate tokens, configure scoped keys, and let engineering scale without unexpected cost spikes.&rdquo;
-            </blockquote>
-            <p className="text-xs text-secondary mt-3">
-              <span className="font-medium text-foreground">SaaS Infrastructure Architect</span> — Autonomous Workflow Labs (Simulated Benchmark)
-            </p>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* CAD Blueprint Callout Header */}
+        <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
+          <span className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            // TELEMETRY HUD: PERFORMANCE SPECIFICATIONS &amp; TOPOLOGY
+          </span>
+          <span>TOLERANCE: ±0.002MS • ZERO-DATA RETENTION</span>
         </div>
 
-        {/* Statistics Row (Sonivale oversized number styling) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 pt-16">
+        {/* 4 CAD Compartments with Animated Sunset Gradients and GSAP Stagger */}
+        <GsapReveal stagger={0.12} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {metrics.map((item, idx) => (
-            <div key={idx} className="flex flex-col">
-              <div className="text-4xl sm:text-6xl font-bold font-heritage tracking-tight text-foreground flex items-baseline">
-                {item.value}
-                <span className="text-violet-primary ml-0.5 text-2xl font-normal">*</span>
-              </div>
-              <span className="text-sm font-semibold text-foreground mt-2">
-                {item.label}
-              </span>
-              <span className="text-xs text-secondary mt-0.5">
-                {item.sublabel}
-              </span>
-            </div>
-          ))}
-        </div>
+            <AnimatedGradientCard
+              key={idx}
+              intensity="vibrant"
+              className="p-6 flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-baseline justify-between mb-2">
+                  <div className="text-3xl sm:text-4xl font-extrabold font-mono text-[#111111] flex items-baseline gap-1">
+                    <GsapCounter
+                      target={item.numeric}
+                      decimals={item.decimals}
+                      prefix={item.prefix}
+                      suffix={item.suffix}
+                      className="text-gradient-sunset"
+                    />
+                    <span className="text-xs font-mono font-bold text-[#111111] uppercase ml-1">
+                      {item.unit}
+                    </span>
+                  </div>
+                  <item.icon className="w-4 h-4 text-[#FF5722] opacity-75 group-hover:opacity-100 transition-opacity" />
+                </div>
 
-        <p className="text-[11px] text-secondary/60 text-center mt-10">
-          * Metrics displayed represent benchmark simulation and architectural capability capacity.
-        </p>
+                <h4 className="text-xs font-mono font-bold uppercase text-[#111111] mt-2 group-hover:text-[#FF5722] transition-colors">
+                  {item.label}
+                </h4>
+              </div>
+
+              <p className="text-[11px] font-mono text-[#777783] mt-3 pt-3 border-t border-[#E2E2DA]">
+                {item.sublabel}
+              </p>
+            </AnimatedGradientCard>
+          ))}
+        </GsapReveal>
       </div>
     </section>
   );

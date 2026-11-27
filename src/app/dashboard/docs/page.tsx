@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, BookOpen, Terminal, Code2, ShieldAlert } from "lucide-react";
+import { Copy, Check, Terminal, Code2, ShieldAlert } from "lucide-react";
 
 export default function DocsPage() {
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
@@ -14,140 +14,137 @@ export default function DocsPage() {
     setTimeout(() => setCopiedSnippet(null), 2000);
   };
 
+  const curlSnippet = `curl -X POST https://api.nexora.cloud/v1/chat/completions \\
+  -H "Authorization: Bearer nx_live_YOUR_KEY_HERE" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "model": "gemini-2.5-flash",
+    "messages": [
+      {"role": "user", "content": "Analyze our infrastructure architecture latency metrics."}
+    ]
+  }'`;
+
+  const pythonSnippet = `import os
+from openai import OpenAI
+
+# The Nexora Anycast Gateway is 100% OpenAI-SDK compatible
+client = OpenAI(
+    base_url="https://api.nexora.cloud/v1",
+    api_key=os.environ.get("NEXORA_API_KEY")
+)
+
+response = client.chat.completions.create(
+    model="gemini-2.5-flash", # Or "google-veo-video-2", "claude-3-5-sonnet", "gpt-4o"
+    messages=[
+        {"role": "user", "content": "Generate technical system architecture draft."}
+    ]
+)
+
+print(response.choices[0].message.content)`;
+
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#F6F6F3] font-sans">
       <DashboardHeader
-        title="Developer Documentation & API Quickstart"
-        subtitle="Step-by-step guidance to route requests through the Nexora Gateway"
-        
+        title="Developer Quickstart &amp; API Gateway Specification"
+        subtitle="Standardized HTTP and SDK integration routes for the Nexora Anycast Gateway"
       />
 
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-8 max-w-5xl">
-        {/* Quickstart 3 Steps */}
-        <section className="bg-white border border-border rounded-2xl p-6 sm:p-8 shadow-subtle space-y-6">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-violet-primary">
-              Quickstart Guide
-            </span>
-            <h2 className="text-xl font-semibold text-foreground mt-1">
-              Connect in 3 Simple Steps
-            </h2>
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 max-w-5xl">
+        {/* CAD Telemetry Marker */}
+        <div className="flex items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase px-1">
+          <span>// SPECIFICATION: OPENAI-COMPATIBLE API PROTOCOL</span>
+          <span>COMPLIANCE: RFC-8259 JSON</span>
+        </div>
+
+        {/* Quickstart 3-step section */}
+        <div className="bg-white border border-[#E2E2DA] p-6 relative">
+          <span className="absolute top-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute top-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+
+          <div className="pb-4 border-b border-[#E2E2DA]">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#111111]">
+              Rapid Edge Integration Protocol
+            </h3>
+            <p className="text-[11px] font-mono text-[#777783] mt-0.5">
+              Connect your production application to Gemini, Veo, Claude, and GPT in 3 steps
+            </p>
           </div>
 
-          <div className="space-y-6 text-xs sm:text-sm">
-            {/* Step 1 */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-violet-light text-violet-primary font-bold flex items-center justify-center text-xs">
-                  1
-                </span>
-                <h3 className="font-semibold text-foreground">Obtain your Nexora API Key</h3>
-              </div>
-              <p className="text-secondary pl-8">
-                Generate a scoped credential in the <span className="font-semibold text-foreground">API Keys</span> dashboard. Store your key securely in your environment variables as <code className="bg-surface px-1.5 py-0.5 rounded text-foreground">NEXORA_API_KEY</code>.
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 text-xs font-mono">
+            <div className="p-4 bg-[#F7F7F4] border border-[#E2E2DA]">
+              <span className="text-violet-primary font-bold block mb-1">01 // PROVISION KEY</span>
+              <p className="text-[#555562] text-[11px]">
+                Create a scoped API key from the API Keys tab. Rate limits and model permissions are enforced server-side.
               </p>
             </div>
 
-            {/* Step 2 */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-violet-light text-violet-primary font-bold flex items-center justify-center text-xs">
-                  2
-                </span>
-                <h3 className="font-semibold text-foreground">Point your Base URL to Nexora</h3>
-              </div>
-              <p className="text-secondary pl-8">
-                In your existing OpenAI SDK client initialization, configure <code className="bg-surface px-1.5 py-0.5 rounded text-foreground">baseURL</code> to <code className="bg-surface px-1.5 py-0.5 rounded text-foreground">https://api.nexora.cloud/v1</code>.
+            <div className="p-4 bg-[#F7F7F4] border border-[#E2E2DA]">
+              <span className="text-violet-primary font-bold block mb-1">02 // POINT BASE URL</span>
+              <p className="text-[#555562] text-[11px]">
+                Set your upstream client base URL to <code className="bg-[#EAEAE4] px-1 text-[#111111]">https://api.nexora.cloud/v1</code>.
               </p>
             </div>
 
-            {/* Step 3 */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-violet-light text-violet-primary font-bold flex items-center justify-center text-xs">
-                  3
-                </span>
-                <h3 className="font-semibold text-foreground">Specify the Provider Model</h3>
-              </div>
-              <p className="text-secondary pl-8">
-                Prefix the model name with the provider (e.g. <code className="bg-surface px-1.5 py-0.5 rounded text-foreground">anthropic/claude-3-5-sonnet</code> or <code className="bg-surface px-1.5 py-0.5 rounded text-foreground">openai/gpt-4o</code>).
+            <div className="p-4 bg-[#F7F7F4] border border-[#E2E2DA]">
+              <span className="text-violet-primary font-bold block mb-1">03 // ROUTE INFERENCE</span>
+              <p className="text-[#555562] text-[11px]">
+                Pass your desired model tag (e.g. <code className="bg-[#EAEAE4] px-1 text-[#111111]">gemini-2.5-flash</code>) in the payload.
               </p>
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* Code Snippet Box */}
-        <section className="bg-[#100E20] text-white rounded-2xl p-6 border border-white/10 shadow-2xl space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-white/10">
-            <span className="font-mono text-xs text-violet-soft">Node.js (TypeScript) Sample</span>
+        {/* Python SDK Example */}
+        <div className="bg-white border border-[#E2E2DA] p-6 relative">
+          <span className="absolute top-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute top-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+
+          <div className="flex items-center justify-between pb-3 border-b border-[#E2E2DA] mb-3">
+            <div className="flex items-center gap-2">
+              <Code2 className="w-4 h-4 text-violet-primary" />
+              <span className="text-xs font-mono font-bold uppercase text-[#111111]">
+                Python SDK (OpenAI SDK Drop-in)
+              </span>
+            </div>
             <button
-              onClick={() =>
-                copyToClipboard(
-                  "sampleCode",
-                  `import OpenAI from "openai";\n\nconst nexora = new OpenAI({\n  apiKey: process.env.NEXORA_API_KEY,\n  baseURL: "https://api.nexora.cloud/v1",\n});\n\nconst completion = await nexora.chat.completions.create({\n  model: "anthropic/claude-3-5-sonnet",\n  messages: [{ role: "user", content: "Synthesize this data." }],\n});\n\nconsole.log(completion.choices[0].message.content);`
-                )
-              }
-              className="text-xs text-white/60 hover:text-white flex items-center gap-1.5"
+              onClick={() => copyToClipboard("python", pythonSnippet)}
+              className="text-[11px] font-mono text-[#555562] hover:text-[#111111] flex items-center gap-1"
             >
-              {copiedSnippet === "sampleCode" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedSnippet === "sampleCode" ? "Copied" : "Copy"}</span>
+              {copiedSnippet === "python" ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copiedSnippet === "python" ? "Copied" : "Copy"}</span>
             </button>
           </div>
 
-          <pre className="text-xs sm:text-sm font-mono text-violet-soft/90 overflow-x-auto leading-relaxed">
-            {`import OpenAI from "openai";
-
-const nexora = new OpenAI({
-  apiKey: process.env.NEXORA_API_KEY,
-  baseURL: "https://api.nexora.cloud/v1",
-});
-
-const completion = await nexora.chat.completions.create({
-  model: "anthropic/claude-3-5-sonnet",
-  messages: [{ role: "user", content: "Synthesize this data." }],
-});
-
-console.log(completion.choices[0].message.content);`}
+          <pre className="p-4 bg-[#111111] text-[#EAEAEA] font-mono text-xs overflow-x-auto leading-relaxed border border-[#333333]">
+            {pythonSnippet}
           </pre>
-        </section>
+        </div>
 
-        {/* Headers and Quota Response Specifications */}
-        <section className="bg-white border border-border rounded-2xl p-6 shadow-subtle space-y-4">
-          <h3 className="text-base font-semibold text-foreground">
-            Gateway Telemetry HTTP Headers
-          </h3>
-          <p className="text-xs text-secondary leading-relaxed">
-            Every response from the Nexora proxy contains real-time quota telemetry in standard response headers:
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-surface/50 border-b border-border text-secondary">
-                <tr>
-                  <th className="py-2.5 px-3">Header Name</th>
-                  <th className="py-2.5 px-3">Description</th>
-                  <th className="py-2.5 px-3">Example</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60 text-secondary">
-                <tr>
-                  <td className="py-2.5 px-3 text-foreground font-semibold">x-nexora-tokens-consumed</td>
-                  <td className="py-2.5 px-3">Tokens consumed by this request</td>
-                  <td className="py-2.5 px-3">1420</td>
-                </tr>
-                <tr>
-                  <td className="py-2.5 px-3 text-foreground font-semibold">x-nexora-quota-remaining</td>
-                  <td className="py-2.5 px-3">Remaining monthly token balance</td>
-                  <td className="py-2.5 px-3">17549180</td>
-                </tr>
-                <tr>
-                  <td className="py-2.5 px-3 text-foreground font-semibold">x-nexora-upstream-latency</td>
-                  <td className="py-2.5 px-3">Upstream provider TTFT</td>
-                  <td className="py-2.5 px-3">340ms</td>
-                </tr>
-              </tbody>
-            </table>
+        {/* cURL Example */}
+        <div className="bg-white border border-[#E2E2DA] p-6 relative">
+          <span className="absolute top-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute top-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+
+          <div className="flex items-center justify-between pb-3 border-b border-[#E2E2DA] mb-3">
+            <div className="flex items-center gap-2">
+              <Terminal className="w-4 h-4 text-violet-primary" />
+              <span className="text-xs font-mono font-bold uppercase text-[#111111]">
+                cURL CLI Request
+              </span>
+            </div>
+            <button
+              onClick={() => copyToClipboard("curl", curlSnippet)}
+              className="text-[11px] font-mono text-[#555562] hover:text-[#111111] flex items-center gap-1"
+            >
+              {copiedSnippet === "curl" ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copiedSnippet === "curl" ? "Copied" : "Copy"}</span>
+            </button>
           </div>
-        </section>
+
+          <pre className="p-4 bg-[#111111] text-[#EAEAEA] font-mono text-xs overflow-x-auto leading-relaxed border border-[#333333]">
+            {curlSnippet}
+          </pre>
+        </div>
       </div>
     </div>
   );

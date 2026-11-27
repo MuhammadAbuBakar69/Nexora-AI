@@ -89,17 +89,12 @@ export default function LoginPage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-hero-glow blur-3xl pointer-events-none -z-10" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Link href="/" className="inline-flex items-center gap-3 mb-6 group">
-          <div className="w-10 h-10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-            <img
-              src={asset("/logo.png")}
-              alt="NEXORA Logo"
-              className="w-full h-full object-contain"
-            />
-          </div>
-          <span className="font-heritage text-2xl font-bold tracking-tight text-[#111111]">
-            NEXORA
-          </span>
+        <Link href="/" className="inline-flex items-center justify-center mb-6 group">
+          <img
+            src={asset("/logo-full.png")}
+            alt="nexora AI"
+            className="h-10 w-auto object-contain"
+          />
         </Link>
         <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
           Sign in to your console

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,20 +10,28 @@ import { Coins, Zap, ShieldAlert, ArrowRight } from "lucide-react";
 interface TokenAllocateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  customer: CustomerAccount;
-  onUpdateAllocation: (customerId: string, newTotalTokens: number) => void;
+  customer: CustomerAccount | null;
+  onAllocate?: (customerId: string, newTotalTokens: number) => void;
+  onUpdateAllocation?: (customerId: string, newTotalTokens: number) => void;
 }
 
 export function TokenAllocateModal({
   isOpen,
   onClose,
   customer,
+  onAllocate,
   onUpdateAllocation,
 }: TokenAllocateModalProps) {
-  const [allocationInput, setAllocationInput] = useState(
-    customer.allocatedTokens.toString()
-  );
+  const [allocationInput, setAllocationInput] = useState("100000000");
   const [quotaCeilingMode, setQuotaCeilingMode] = useState<"hard" | "soft">("hard");
+
+  useEffect(() => {
+    if (customer) {
+      setAllocationInput(customer.allocatedTokens.toString());
+    }
+  }, [customer, isOpen]);
+
+  if (!customer) return null;
 
   const currentAllocation = customer.allocatedTokens;
   const consumed = customer.consumedTokens;
@@ -32,7 +40,10 @@ export function TokenAllocateModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onUpdateAllocation(customer.id, newAllocationNumber);
+    const handler = onAllocate || onUpdateAllocation;
+    if (handler) {
+      handler(customer.id, newAllocationNumber);
+    }
     onClose();
   };
 
@@ -40,33 +51,27 @@ export function TokenAllocateModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Modify Customer Token Allocation"
-      description={`Adjust monthly allocation limits for ${customer.company} (${customer.name})`}
+      title="Adjust Tenant Token Quota"
+      description={`Configure edge token limits for ${customer.company} (${customer.name})`}
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 font-mono">
         {/* Previous vs New Allocation Summary */}
-        <div className="grid grid-cols-2 gap-3 p-3.5 bg-surface rounded-2xl border border-border text-xs">
+        <div className="grid grid-cols-2 gap-3 p-3.5 bg-[#F6F6F3] border border-[#E2E2DA] text-xs">
           <div>
-            <span className="text-secondary block">Current Allocation</span>
-            <span className="font-semibold text-foreground text-sm">
-              {(currentAllocation / 1_000_000).toFixed(1)}M tokens
-            </span>
-            <span className="text-[10px] text-secondary block mt-0.5">
-              {(consumed / 1_000_000).toFixed(1)}M consumed
+            <span className="text-[#777783] text-[10px] block uppercase">Current Quota</span>
+            <span className="font-bold text-[#111111] text-sm">
+              {(currentAllocation / 1_000_000).toFixed(1)}M Tokens
             </span>
           </div>
 
           <div>
-            <span className="text-secondary block">Projected Balance</span>
+            <span className="text-[#777783] text-[10px] block uppercase">Projected Balance</span>
             <span
-              className={`font-semibold text-sm ${
+              className={`font-bold text-sm ${
                 projectedRemaining >= 0 ? "text-emerald-700" : "text-rose-600"
               }`}
             >
-              {(projectedRemaining / 1_000_000).toFixed(1)}M remaining
-            </span>
-            <span className="text-[10px] text-secondary block mt-0.5">
-              After new allocation
+              {(projectedRemaining / 1_000_000).toFixed(1)}M Remaining
             </span>
           </div>
         </div>
@@ -74,8 +79,8 @@ export function TokenAllocateModal({
         <Input
           id="tokenAmount"
           type="number"
-          label="New Monthly Token Allocation"
-          placeholder="e.g. 150000000"
+          label="New Monthly Token Allowance"
+          placeholder="100000000"
           value={allocationInput}
           onChange={(e) => setAllocationInput(e.target.value)}
           required
@@ -83,7 +88,7 @@ export function TokenAllocateModal({
 
         {/* Quick adjustment buttons */}
         <div className="flex items-center gap-1.5 pt-1">
-          <span className="text-[11px] text-secondary mr-1">Quick Add:</span>
+          <span className="text-[10px] text-[#777783] uppercase mr-1">Quick Add:</span>
           {[25_000_000, 50_000_000, 100_000_000].map((inc) => (
             <button
               key={inc}
@@ -91,54 +96,20 @@ export function TokenAllocateModal({
               onClick={() =>
                 setAllocationInput((newAllocationNumber + inc).toString())
               }
-              className="text-[10px] px-2 py-1 rounded-lg bg-surface border border-border hover:bg-violet-light/40 hover:text-violet-primary font-mono transition-colors"
+              className="text-[10px] px-2 py-0.5 bg-white border border-[#E2E2DA] hover:border-[#111111] text-[#111111] font-mono transition-colors"
             >
               +{inc / 1_000_000}M
             </button>
           ))}
         </div>
 
-        <div className="space-y-1.5 pt-2">
-          <label className="block text-xs font-medium text-foreground tracking-wide">
-            Ceiling Enforcement Policy
-          </label>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <label className="p-2.5 rounded-xl border border-border bg-surface flex items-center gap-2 cursor-pointer hover:bg-white">
-              <input
-                type="radio"
-                name="quotaMode"
-                checked={quotaCeilingMode === "hard"}
-                onChange={() => setQuotaCeilingMode("hard")}
-                className="text-violet-primary"
-              />
-              <div>
-                <span className="font-semibold block text-[11px]">Hard Ceiling</span>
-                <span className="text-[10px] text-secondary">Block on limit</span>
-              </div>
-            </label>
-            <label className="p-2.5 rounded-xl border border-border bg-surface flex items-center gap-2 cursor-pointer hover:bg-white">
-              <input
-                type="radio"
-                name="quotaMode"
-                checked={quotaCeilingMode === "soft"}
-                onChange={() => setQuotaCeilingMode("soft")}
-                className="text-violet-primary"
-              />
-              <div>
-                <span className="font-semibold block text-[11px]">Soft Cap</span>
-                <span className="text-[10px] text-secondary">Overage billing</span>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-end gap-2 pt-4 border-t border-border mt-4">
+        <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#E2E2DA] mt-4">
           <Button type="button" variant="outline" size="sm" onClick={onClose}>
             Cancel
           </Button>
           <Button type="submit" size="sm" className="gap-1.5">
             <Coins className="w-3.5 h-3.5" />
-            Apply Token Update
+            Apply Quota
           </Button>
         </div>
       </form>

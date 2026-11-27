@@ -22,7 +22,7 @@ export function CustomerModal({
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
-  const [plan, setPlan] = useState<"Starter" | "Growth" | "Enterprise">("Growth");
+  const [plan, setPlan] = useState<"Starter" | "Growth" | "Enterprise">("Enterprise");
   const [tokensAllocated, setTokensAllocated] = useState("100000000");
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export function CustomerModal({
       setName("");
       setCompany("");
       setEmail("");
-      setPlan("Growth");
+      setPlan("Enterprise");
       setTokensAllocated("100000000");
     }
   }, [existingCustomer, isOpen]);
@@ -69,15 +69,15 @@ export function CustomerModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={existingCustomer ? "Edit Customer Account" : "Provision New Customer"}
+      title={existingCustomer ? "Edit Tenant Workspace" : "Provision New Tenant"}
       description="Create a tenant organization, configure monthly token allowances, and assign tier permissions."
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 font-mono">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input
             id="custName"
-            label="Primary Contact Name"
-            placeholder="e.g. Elena Rostova"
+            label="Primary Operator Name"
+            placeholder="Operator Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -85,8 +85,8 @@ export function CustomerModal({
           />
           <Input
             id="custCompany"
-            label="Company / Legal Entity"
-            placeholder="e.g. Aether Dynamics"
+            label="Organization / Entity"
+            placeholder="Company Name"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
             required
@@ -96,22 +96,22 @@ export function CustomerModal({
         <Input
           id="custEmail"
           type="email"
-          label="Corporate Email"
-          placeholder="contact@company.com"
+          label="Corporate Ingress Email"
+          placeholder="admin@organization.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-foreground tracking-wide">
-              Subscription Plan
+          <div className="space-y-1">
+            <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#777783]">
+              // Subscription Plan
             </label>
             <select
               value={plan}
               onChange={(e) => setPlan(e.target.value as any)}
-              className="w-full rounded-xl bg-surface border border-border px-3.5 py-2.5 text-xs text-foreground focus:outline-none focus:border-violet-primary"
+              className="w-full bg-white border border-[#E2E2DA] px-3 py-2 text-xs font-mono text-[#111111] focus:outline-none focus:border-[#111111]"
             >
               <option value="Starter">Starter Plan</option>
               <option value="Growth">Growth Plan</option>
@@ -122,19 +122,19 @@ export function CustomerModal({
           <Input
             id="custTokens"
             type="number"
-            label="Initial Token Allocation"
+            label="Initial Token Allowance"
             value={tokensAllocated}
             onChange={(e) => setTokensAllocated(e.target.value)}
             required
           />
         </div>
 
-        <div className="flex items-center justify-end gap-2 pt-4 border-t border-border mt-4">
+        <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#E2E2DA] mt-4">
           <Button type="button" variant="outline" size="sm" onClick={onClose}>
             Cancel
           </Button>
           <Button type="submit" size="sm">
-            {existingCustomer ? "Save Changes" : "Create Customer Workspace"}
+            {existingCustomer ? "Save Changes" : "Provision Tenant"}
           </Button>
         </div>
       </form>

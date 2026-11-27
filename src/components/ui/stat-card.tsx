@@ -23,40 +23,39 @@ export function StatCard({
   subtitle,
   change,
   icon,
-  variant = "default",
   className,
 }: StatCardProps) {
   return (
     <div
       className={cn(
-        "rounded-2xl p-5 border border-border bg-white transition-all duration-200 hover:shadow-subtle hover:border-violet-soft/40",
-        variant === "violet" && "bg-gradient-to-br from-violet-light/30 via-white to-white border-violet-soft/30",
-        variant === "subtle" && "bg-surface/60",
+        "relative bg-white border border-[#E2E2DA] p-5 font-sans transition-all",
+        "before:content-['+'] before:absolute before:-top-2 before:-left-2 before:text-[10px] before:font-mono before:text-[#999990] before:select-none",
+        "after:content-['+'] after:absolute after:-bottom-2 after:-right-2 after:text-[10px] after:font-mono after:text-[#999990] after:select-none",
         className
       )}
     >
-      <div className="flex items-center justify-between text-secondary mb-3">
-        <span className="text-xs font-medium uppercase tracking-wider text-secondary/90">
-          {title}
+      <div className="flex items-center justify-between mb-3 border-b border-[#E2E2DA]/60 pb-2">
+        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#777783]">
+          // {title}
         </span>
         {icon && (
-          <div className="p-2 rounded-xl bg-surface border border-border/80 text-foreground">
+          <div className="p-1.5 bg-[#F6F6F3] border border-[#E2E2DA] text-[#111111]">
             {icon}
           </div>
         )}
       </div>
 
       <div className="flex items-baseline gap-2">
-        <div className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+        <div className="text-2xl sm:text-3xl font-mono font-bold tracking-tight text-[#111111]">
           {value}
         </div>
         {change && (
           <span
             className={cn(
-              "inline-flex items-center text-xs font-medium px-1.5 py-0.5 rounded-md",
+              "inline-flex items-center text-[10px] font-mono font-bold px-1.5 py-0.5 border",
               change.isPositive
-                ? "text-emerald-700 bg-emerald-50"
-                : "text-rose-700 bg-rose-50"
+                ? "text-emerald-800 bg-emerald-50 border-emerald-300"
+                : "text-rose-800 bg-rose-50 border-rose-300"
             )}
           >
             {change.isPositive ? (
@@ -70,7 +69,9 @@ export function StatCard({
       </div>
 
       {subtitle && (
-        <p className="text-xs text-secondary mt-1.5 leading-normal">{subtitle}</p>
+        <p className="text-[11px] font-mono text-[#777783] mt-2 leading-normal">
+          {subtitle}
+        </p>
       )}
     </div>
   );

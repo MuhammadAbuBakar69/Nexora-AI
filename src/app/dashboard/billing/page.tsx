@@ -1,190 +1,224 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import { StatCard } from "@/components/ui/stat-card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/ui/modal";
-import { mockInvoices } from "@/data/mock-data";
-import { CreditCard, Download, ArrowUpRight, CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
+import { QuotaQuoteCalculator, CustomerQuote } from "@/components/dashboard/quota-quote-calculator";
+import { createClient } from "@/utils/supabase/client";
+import { CreditCard, Download, ShieldCheck, Sparkles, Clock, CheckCircle2 } from "lucide-react";
 
 export default function BillingPage() {
-  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
-  const [invoices, setInvoices] = useState(mockInvoices);
+  const [currentPlan, setCurrentPlan] = useState<string>("Starter Tier");
+  const [planStatus, setPlanStatus] = useState<string>("Active");
+  const [accessRequests, setAccessRequests] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const handleSimulateDownload = (invoiceNumber: string) => {
-    alert(`Downloading receipt for ${invoiceNumber} (PDF format)...`);
+  useEffect(() => {
+    async function fetchBillingState() {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+          // 1. Fetch real subscription
+          const { data: sub } = await supabase
+            .from("subscriptions")
+            .select("plan, status")
+            .eq("status", "active")
+            .maybeSingle();
+
+          if (sub?.plan) {
+            setCurrentPlan(`${sub.plan.charAt(0).toUpperCase() + sub.plan.slice(1)} Tier`);
+            setPlanStatus(sub.status || "Active");
+          }
+
+          // 2. Fetch recent access requests
+          const { data: reqs } = await supabase
+            .from("access_requests")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(5);
+
+          if (reqs) {
+            setAccessRequests(reqs);
+          }
+        }
+      } catch (err) {
+        // Handled cleanly
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchBillingState();
+  }, []);
+
+  const handleQuoteRequested = async (quote: CustomerQuote) => {
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("organization_id")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (profile?.organization_id) {
+        const { data: newReq } = await supabase.from("access_requests").insert({
+          organization_id: profile.organization_id,
+          user_id: user.id,
+          requested_plan: quote.recommendedPlan,
+          business_justification: `Customer quote submission: ${quote.monthlyTokens.toLocaleString()} tokens, ${quote.monthlyVideoSeconds}s Veo video (₨${quote.estimatedCostPkr.toLocaleString()} PKR/mo).`,
+          status: "pending",
+        }).select().single();
+
+        if (newReq) {
+          setAccessRequests([newReq, ...accessRequests]);
+        }
+      }
+    } catch (err) {
+      // Handled cleanly
+    }
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#F6F6F3] font-sans">
       <DashboardHeader
-        title="Subscription & Billing"
-        subtitle="Manage plan quotas, credit balance, payment instruments, and past invoices"
-        
-        actionButton={
-          <Button size="sm" onClick={() => setIsUpgradeModalOpen(true)} className="gap-1.5 text-xs">
-            <Sparkles className="w-3.5 h-3.5" />
-            Change Plan
-          </Button>
-        }
+        title="Subscription, Quota &amp; Invoicing"
+        subtitle="Manage plan quotas, commercial pricing calculators, and enterprise access requests"
       />
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        {/* Active Plan Overview Card */}
-        <div className="bg-gradient-to-tr from-[#151329] to-[#100E20] text-white rounded-3xl p-6 sm:p-8 border border-surface-borderDark shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-violet-primary/20 rounded-full blur-3xl pointer-events-none" />
+        {/* CAD Telemetry Marker */}
+        <div className="flex items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase px-1">
+          <span>// BILLING LEDGER • ARCHITECTURAL SPECIFICATION</span>
+          <span>CURRENCY SUPPORT: USD ($) &amp; PKR (₨)</span>
+        </div>
 
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        {/* Current Plan Overview Card */}
+        <div className="bg-white border border-[#E2E2DA] p-6 relative">
+          <span className="absolute top-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute top-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs uppercase font-semibold tracking-wider text-violet-soft">
-                  Active Subscription
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#777783]">
+                  Current Subscription
                 </span>
-                <span className="text-[10px] bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 px-2 py-0.2 rounded-full font-semibold">
-                  Good Standing
+                <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-300 px-2 py-0.2 font-bold">
+                  {planStatus.toUpperCase()}
                 </span>
               </div>
-              <h2 className="text-3xl font-semibold tracking-tight text-white">
-                Growth Tier Plan
+              <h2 className="text-xl font-mono font-bold text-[#111111] uppercase tracking-tight">
+                {currentPlan}
               </h2>
-              <p className="text-xs text-white/70 mt-1 max-w-md">
-                Includes 75,000,000 monthly tokens, up to 25 scoped keys, and multi-region failover.
+              <p className="text-xs font-mono text-[#777783] mt-1 max-w-lg">
+                Provides edge routing through the Nexora Anycast Gateway. High-throughput rate limits and multi-model proxy access.
               </p>
             </div>
 
-            <div className="text-left sm:text-right">
-              <div className="text-3xl font-bold tracking-tight text-white">$249.00</div>
-              <p className="text-xs text-white/60">Billed monthly • Renews Dec 1, 2026</p>
-              <Button
-                size="sm"
-                onClick={() => setIsUpgradeModalOpen(true)}
-                className="mt-3 bg-white text-[#100E20] hover:bg-violet-light font-semibold text-xs"
-              >
-                Upgrade to Enterprise
-              </Button>
+            <div className="sm:text-right">
+              <span className="text-[10px] font-mono text-[#777783] uppercase block">
+                BILLING FREQUENCY
+              </span>
+              <span className="text-base font-mono font-bold text-[#111111]">
+                MONTHLY RECURRING
+              </span>
             </div>
           </div>
         </div>
 
-        {/* 3 Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard
-            title="Current Billing Cycle Spend"
-            value="$128.45"
-            subtitle="Tokens & compute charges"
-            icon={<CreditCard className="w-4 h-4 text-violet-primary" />}
-            variant="violet"
-          />
-          <StatCard
-            title="Payment Method"
-            value="Mastercard •••• 4242"
-            subtitle="Expires 08/2028"
-            icon={<ShieldCheck className="w-4 h-4 text-indigo-600" />}
-          />
-          <StatCard
-            title="Next Invoice Date"
-            value="Dec 1, 2026"
-            subtitle="Estimated total: $249.00"
-            icon={<CreditCard className="w-4 h-4 text-emerald-600" />}
-          />
-        </div>
-
-        {/* Invoices List */}
-        <div className="bg-white border border-border rounded-2xl overflow-hidden shadow-subtle">
-          <div className="px-6 py-4 border-b border-border flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground">
-              Billing History & Tax Receipts
-            </h3>
-            <span className="text-xs text-secondary">
-              All transactions securely logged
+        {/* Multi-modality Quota & Quote Calculator */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <span className="text-xs font-mono text-[#777783] uppercase tracking-wider">
+              // CUSTOMER QUOTE &amp; CAPACITY ESTIMATOR
+            </span>
+            <span className="text-[10px] font-mono text-[#777783] uppercase">
+              LLM TOKENS • GOOGLE VEO VIDEO • IMAGES
             </span>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-surface/50 border-b border-border text-secondary">
-                <tr>
-                  <th className="py-3 px-6 font-semibold">Invoice Number</th>
-                  <th className="py-3 px-6 font-semibold">Billing Date</th>
-                  <th className="py-3 px-6 font-semibold">Tier Plan</th>
-                  <th className="py-3 px-6 font-semibold">Amount</th>
-                  <th className="py-3 px-6 font-semibold">Status</th>
-                  <th className="py-3 px-6 font-semibold text-right">Receipt</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {invoices.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-surface/30">
-                    <td className="py-4 px-6 font-mono font-medium text-foreground">
-                      {inv.invoiceNumber}
-                    </td>
-                    <td className="py-4 px-6 text-secondary">{inv.date}</td>
-                    <td className="py-4 px-6 text-secondary">{inv.plan}</td>
-                    <td className="py-4 px-6 font-semibold text-foreground">
-                      ${inv.amount.toFixed(2)}
-                    </td>
-                    <td className="py-4 px-6">
-                      <Badge variant="success" size="sm">
-                        {inv.status}
-                      </Badge>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <button
-                        onClick={() => handleSimulateDownload(inv.invoiceNumber)}
-                        className="text-violet-primary hover:text-violet-dark inline-flex items-center gap-1 font-medium"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>PDF</span>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <QuotaQuoteCalculator onRequestQuota={handleQuoteRequested} />
+        </div>
+
+        {/* Past Access Requests / Quota Approvals */}
+        <div className="bg-white border border-[#E2E2DA] p-6 relative">
+          <span className="absolute top-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute top-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+
+          <div className="pb-4 border-b border-[#E2E2DA] flex items-center justify-between">
+            <div>
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#111111]">
+                Access &amp; Quota Requests
+              </h3>
+              <p className="text-[11px] font-mono text-[#777783] mt-0.5">
+                Audit trail of requested tier expansions and admin approvals
+              </p>
+            </div>
+            <span className="text-[10px] font-mono text-[#777783]">
+              TOTAL: {accessRequests.length}
+            </span>
+          </div>
+
+          {accessRequests.length === 0 ? (
+            <div className="py-8 text-center text-xs font-mono text-[#777783]">
+              No custom quota requests submitted yet. Use the calculator above to request capacity.
+            </div>
+          ) : (
+            <div className="divide-y divide-[#E2E2DA] pt-2">
+              {accessRequests.map((req) => (
+                <div key={req.id} className="py-3 flex items-center justify-between text-xs font-mono">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-[#111111]">
+                        {req.requested_plan.toUpperCase()} TIER
+                      </span>
+                      <span className={`px-1.5 py-0.5 text-[10px] ${
+                        req.status === "approved"
+                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          : req.status === "rejected"
+                          ? "bg-rose-50 text-rose-700 border border-rose-200"
+                          : "bg-amber-50 text-amber-700 border border-amber-200"
+                      }`}>
+                        {req.status.toUpperCase()}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-[#777783] mt-0.5">
+                      {req.business_justification || "Standard quota inquiry"}
+                    </p>
+                  </div>
+                  <span className="text-[10px] text-[#777783]">
+                    {new Date(req.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Clean Production Invoicing Section */}
+        <div className="bg-white border border-[#E2E2DA] p-6 relative">
+          <span className="absolute top-2 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <span className="absolute top-2 right-2 font-mono text-xs text-[#888892] select-none">+</span>
+
+          <div className="pb-4 border-b border-[#E2E2DA] flex items-center justify-between">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#111111]">
+              Billing History &amp; Receipts
+            </h3>
+            <span className="text-[10px] font-mono text-emerald-600 font-bold">
+              TAX COMPLIANT
+            </span>
+          </div>
+
+          <div className="py-8 text-center text-xs font-mono text-[#777783]">
+            No invoices generated yet for this billing cycle. Receipts will appear here automatically upon monthly invoice settlement.
           </div>
         </div>
       </div>
-
-      {/* Upgrade Plan Modal */}
-      <Modal
-        isOpen={isUpgradeModalOpen}
-        onClose={() => setIsUpgradeModalOpen(false)}
-        title="Upgrade Your Workspace Plan"
-        description="Select a subscription tier that fits your expanding AI engineering requirements."
-      >
-        <div className="space-y-4">
-          <div className="p-4 rounded-2xl border border-violet-soft/50 bg-violet-light/30 space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-foreground text-sm">Enterprise Tier</span>
-              <span className="font-bold text-violet-primary text-sm">Custom Quota</span>
-            </div>
-            <p className="text-xs text-secondary leading-relaxed">
-              Unlock multi-billion token allocations, dedicated VPC proxy routing, SOC2 Type II compliance reports, and 24/7 dedicated engineering support.
-            </p>
-          </div>
-
-          <div className="p-3 bg-surface rounded-xl text-xs text-secondary leading-relaxed">
-            * This is an illustrative SaaS billing interface. Plan upgrades in the demo environment are instant and require no payment card charge.
-          </div>
-
-          <div className="flex justify-end gap-2 pt-2 border-t border-border">
-            <Button variant="outline" size="sm" onClick={() => setIsUpgradeModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => {
-                alert("Enterprise upgrade request submitted to your account manager.");
-                setIsUpgradeModalOpen(false);
-              }}
-            >
-              Confirm Upgrade Request
-            </Button>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }

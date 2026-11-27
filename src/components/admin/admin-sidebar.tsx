@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { asset } from "@/lib/asset";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,6 +20,7 @@ import {
   Server,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/utils/supabase/client";
 
 interface AdminSidebarProps {
   onCloseMobile?: () => void;
@@ -27,6 +28,22 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
   const pathname = usePathname();
+  const [adminEmail, setAdminEmail] = useState<string>("admin@nexora.cloud");
+
+  useEffect(() => {
+    async function loadAdminUser() {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user?.email) {
+          setAdminEmail(user.email);
+        }
+      } catch (err) {
+        // Safe fallback
+      }
+    }
+    loadAdminUser();
+  }, []);
 
   const navigation = [
     { name: "Overview", href: "/admin", icon: LayoutDashboard },
@@ -42,42 +59,35 @@ export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
   ];
 
   return (
-    <aside className="w-64 bg-[#100E20] text-white border-r border-white/10 h-full flex flex-col justify-between select-none">
+    <aside className="w-64 bg-[#0E0E14] text-white border-r border-[#22222E] h-full flex flex-col justify-between select-none font-mono text-xs">
       <div>
-        {/* Brand Logo & Admin Badge */}
-        <div className="h-16 flex items-center justify-between px-6 border-b border-white/10">
-          <Link href="/admin" className="flex items-center gap-3">
-            <div className="w-8 h-8 flex items-center justify-center shrink-0">
-              <img
-                src={asset("/logo.png")}
-                alt="NEXORA Logo"
-                className="w-full h-full object-contain drop-shadow-[0_4px_12px_rgba(117,87,255,0.4)]"
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heritage font-bold text-base tracking-tight text-white">
-                NEXORA
-              </span>
-              <span className="text-[10px] text-violet-soft font-mono font-bold tracking-wider uppercase">
-                Admin Control
-              </span>
-            </div>
+        {/* Brand Logo & Admin Badge in CAD Drafting Style */}
+        <div className="h-16 flex items-center justify-between px-5 border-b border-[#22222E] bg-[#14141C]">
+          <Link href="/admin" className="flex items-center">
+            <img
+              src={asset("/logo-full.png")}
+              alt="nexora AI"
+              className="h-7 w-auto object-contain brightness-125"
+            />
           </Link>
+          <span className="px-1.5 py-0.5 text-[8px] font-bold uppercase bg-rose-950 text-rose-300 border border-rose-800">
+            ROOT
+          </span>
         </div>
 
         {/* Status Pill */}
-        <div className="px-4 py-3 border-b border-white/5">
-          <div className="p-2 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-white/80 font-medium">Gateway Supercluster</span>
+        <div className="px-4 py-2.5 border-b border-[#22222E] bg-[#101018] text-[10px]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[#AAAAAA]">CLUSTER: US-WEST</span>
             </div>
-            <span className="text-[10px] text-emerald-400 font-mono">99.98%</span>
+            <span className="text-emerald-400 font-bold">99.99%</span>
           </div>
         </div>
 
         {/* Navigation Links */}
-        <nav className="p-3 space-y-1">
+        <nav className="p-2.5 space-y-0.5">
           {navigation.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -87,13 +97,13 @@ export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
                 href={item.href}
                 onClick={onCloseMobile}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors",
+                  "flex items-center gap-2.5 px-3 py-2 text-xs transition-colors",
                   isActive
-                    ? "bg-violet-primary text-white font-semibold shadow-sm"
-                    : "text-white/60 hover:text-white hover:bg-white/5"
+                    ? "bg-[#222230] text-white font-bold border-l-2 border-[#FF5722]"
+                    : "text-[#888899] hover:text-white hover:bg-[#181822]"
                 )}
               >
-                <Icon className={cn("w-4 h-4", isActive ? "text-white" : "text-white/50")} />
+                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-[#FFA726]" : "text-[#666677]")} />
                 <span>{item.name}</span>
               </Link>
             );
@@ -101,22 +111,22 @@ export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
         </nav>
       </div>
 
-      {/* Switch back to Customer Portal */}
-      <div className="p-3 border-t border-white/10 space-y-2">
+      {/* Admin User Status & Switch to Customer Portal */}
+      <div className="p-3 border-t border-[#22222E] bg-[#12121A] space-y-2">
         <Link
           href="/dashboard"
-          className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-xs text-white group"
+          className="flex items-center justify-between p-2 bg-[#1A1A24] hover:bg-[#242432] border border-[#2E2E3E] transition-colors text-xs text-white"
         >
           <div className="flex items-center gap-2">
-            <ArrowLeft className="w-3.5 h-3.5 text-violet-soft group-hover:-translate-x-0.5 transition-transform" />
-            <span>Customer Portal</span>
+            <ArrowLeft className="w-3.5 h-3.5 text-[#FFA726]" />
+            <span className="font-bold">Customer Portal</span>
           </div>
-          <span className="text-[10px] text-white/40">Exit Admin</span>
+          <span className="text-[9px] text-[#777788] uppercase">Exit Admin</span>
         </Link>
 
-        <div className="px-3 py-1.5 flex items-center justify-between text-[11px] text-white/40">
-          <span>Signed in as Superadmin</span>
-          <span className="font-mono text-emerald-400">2FA Active</span>
+        <div className="px-2 py-1 text-[10px] text-[#777788] truncate">
+          <span className="block text-[#555566] text-[8px] uppercase">OPERATOR IDENTITY</span>
+          <span className="text-white truncate font-mono">{adminEmail}</span>
         </div>
       </div>
     </aside>

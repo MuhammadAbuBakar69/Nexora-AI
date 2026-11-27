@@ -1,198 +1,169 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
-import { mockCustomerApiKeys, mockCustomersList } from "@/data/mock-data";
+import { createClient } from "@/utils/supabase/client";
 import { ApiKey } from "@/types";
 import { Key, Plus, ShieldCheck, Trash2, CheckCircle2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 export default function AdminApiManagementPage() {
-  const [keys, setKeys] = useState<(ApiKey & { tenantName: string })[]>([
-    { ...mockCustomerApiKeys[0], tenantName: "Aether Dynamics Inc." },
-    { ...mockCustomerApiKeys[1], tenantName: "Cognitive Synthetics" },
-    { ...mockCustomerApiKeys[2], tenantName: "NeuralPulse Labs" },
-    { ...mockCustomerApiKeys[3], tenantName: "HyperScale Vector" },
-  ]);
-
+  const [keys, setKeys] = useState<(ApiKey & { tenantName: string })[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTenant, setSelectedTenant] = useState(mockCustomersList[0].company);
   const [keyName, setKeyName] = useState("");
   const [rateLimit, setRateLimit] = useState("2500");
 
-  const handleGenerateForTenant = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!keyName) return;
+  useEffect(() => {
+    async function loadAllKeys() {
+      setIsLoading(true);
+      try {
+        const supabase = createClient();
+        const { data: dbKeys } = await supabase
+          .from("api_keys")
+          .select("*, organizations(name)")
+          .order("created_at", { ascending: false });
 
-    const randomHex = Math.random().toString(36).substring(2, 8);
-    const newKey: ApiKey & { tenantName: string } = {
-      id: `key_${Date.now()}`,
-      name: keyName,
-      prefix: `nx_live_${randomHex}`,
-      maskedKey: `nx_live_${randomHex}••••••••••••••••88`,
-      permissions: ["read", "write", "models:chat"],
-      createdAt: new Date().toISOString(),
-      lastUsedAt: null,
-      status: "active",
-      rateLimitRpm: parseInt(rateLimit, 10) || 1500,
-      totalRequests: 0,
-      tenantName: selectedTenant,
-    };
+        if (dbKeys && dbKeys.length > 0) {
+          setKeys(
+            dbKeys.map((k) => ({
+              id: k.id,
+              name: k.name,
+              prefix: k.prefix,
+              maskedKey: `${k.prefix}••••••••••••••••${k.last_four}`,
+              permissions: k.permissions || [],
+              createdAt: k.created_at,
+              lastUsedAt: k.last_used_at,
+              status: k.status,
+              rateLimitRpm: k.rate_limit_rpm,
+              totalRequests: 0,
+              tenantName: k.organizations?.name || "Global Workspace",
+            }))
+          );
+        } else {
+          setKeys([]);
+        }
+      } catch (err) {
+        // Safe fallback
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
-    setKeys([newKey, ...keys]);
-    setIsModalOpen(false);
-    setKeyName("");
-  };
+    loadAllKeys();
+  }, []);
 
-  const handleRevoke = (id: string) => {
-    if (confirm("Revoke this tenant API credential immediately?")) {
-      setKeys(
-        keys.map((k) => (k.id === id ? { ...k, status: "revoked" as const } : k))
-      );
+  const handleRevokeKey = async (id: string) => {
+    try {
+      const supabase = createClient();
+      await supabase.from("api_keys").update({ status: "revoked" }).eq("id", id);
+      setKeys(keys.map((k) => (k.id === id ? { ...k, status: "revoked" } : k)));
+    } catch (err) {
+      // Safe fallback
     }
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#F6F6F3] font-sans">
       <AdminHeader
-        title="Gateway API Credential Provisioning"
-        subtitle="Manage active customer keys, enforce rate limits, and execute emergency revocations"
-        
-        actionButton={
-          <Button
-            size="sm"
-            onClick={() => setIsModalOpen(true)}
-            className="gap-1.5 text-xs bg-violet-primary hover:bg-violet-dark text-white"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            Provision Tenant Key
-          </Button>
-        }
+        title="Edge API Credentials &amp; Rate Governance"
+        subtitle="Manage global routing keys, rate ceilings, SHA-256 validation hashes, and revocations"
       />
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        <div className="bg-white border border-border rounded-2xl overflow-hidden shadow-subtle">
-          <div className="px-6 py-4 border-b border-border flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground">
-              Tenant Gateway Credentials ({keys.length})
+        {/* Security Notice */}
+        <div className="p-4 bg-white border border-[#E2E2DA] flex items-center justify-between text-xs font-mono">
+          <div className="flex items-center gap-3">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div>
+              <span className="font-bold text-[#111111] uppercase tracking-wider block">
+                // HARDENED CRYPTOGRAPHIC STORAGE ENFORCED
+              </span>
+              <p className="text-[11px] text-[#777783] mt-0.5">
+                Secret keys are hashed with SHA-256 upon generation. Edge gateway validates signatures at layer 7.
+              </p>
+            </div>
+          </div>
+          <Badge variant="success" size="sm">
+            TLS 1.3 / E2E
+          </Badge>
+        </div>
+
+        {/* Global Keys Table */}
+        <div className="bg-white border border-[#E2E2DA] relative">
+          <span className="absolute top-1.5 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <div className="px-6 py-4 border-b border-[#E2E2DA] flex items-center justify-between">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#111111]">
+              // Active Credentials ({keys.length})
             </h3>
-            <span className="text-xs text-secondary">
-              Centralized Secret Store
+            <span className="text-[10px] font-mono text-[#777783] uppercase">
+              ANYCAST EDGE ROUTING
             </span>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-surface/50 border-b border-border text-secondary">
-                <tr>
-                  <th className="py-3 px-6 font-semibold">Tenant Organization</th>
-                  <th className="py-3 px-6 font-semibold">Key Identifier</th>
-                  <th className="py-3 px-6 font-semibold">Masked Hash</th>
-                  <th className="py-3 px-6 font-semibold">Rate Limit</th>
-                  <th className="py-3 px-6 font-semibold">Created</th>
-                  <th className="py-3 px-6 font-semibold">Status</th>
-                  <th className="py-3 px-6 font-semibold text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {keys.map((k) => (
-                  <tr key={k.id} className="hover:bg-surface/30">
-                    <td className="py-4 px-6 font-semibold text-foreground">
-                      {k.tenantName}
-                    </td>
-                    <td className="py-4 px-6 text-secondary">{k.name}</td>
-                    <td className="py-4 px-6 font-mono text-secondary">{k.maskedKey}</td>
-                    <td className="py-4 px-6 text-secondary">{k.rateLimitRpm} RPM</td>
-                    <td className="py-4 px-6 text-secondary">{formatDate(k.createdAt)}</td>
-                    <td className="py-4 px-6">
-                      <Badge variant={k.status === "active" ? "success" : "danger"} size="sm">
-                        {k.status}
-                      </Badge>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      {k.status === "active" ? (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRevoke(k.id)}
-                          className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 text-[11px] h-7"
-                        >
-                          Revoke Key
-                        </Button>
-                      ) : (
-                        <span className="text-secondary/50 italic text-[11px]">Revoked</span>
-                      )}
-                    </td>
+            {keys.length === 0 ? (
+              <div className="py-12 text-center font-mono">
+                <p className="text-xs text-[#777783] uppercase tracking-wider">
+                  No active API keys found in directory
+                </p>
+              </div>
+            ) : (
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-[#F6F6F3] border-b border-[#E2E2DA] text-[#777783] uppercase text-[10px] tracking-wider">
+                  <tr>
+                    <th className="py-3 px-6 font-bold">Key Identifier</th>
+                    <th className="py-3 px-6 font-bold">Tenant Workspace</th>
+                    <th className="py-3 px-6 font-bold">Masked Fingerprint</th>
+                    <th className="py-3 px-6 font-bold">Rate Ceiling</th>
+                    <th className="py-3 px-6 font-bold">Status</th>
+                    <th className="py-3 px-6 font-bold text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-[#E2E2DA]">
+                  {keys.map((k) => (
+                    <tr key={k.id} className="hover:bg-[#F6F6F3]/50">
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-2">
+                          <Key className="w-3.5 h-3.5 text-[#777783]" />
+                          <span className="font-bold text-[#111111]">{k.name}</span>
+                        </div>
+                        <span className="text-[10px] text-[#777783] block mt-0.5">
+                          Created {formatDate(k.createdAt)}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 font-bold text-[#111111]">{k.tenantName}</td>
+                      <td className="py-4 px-6 text-[#777783]">{k.maskedKey}</td>
+                      <td className="py-4 px-6 text-[#111111] font-bold">{k.rateLimitRpm} RPM</td>
+                      <td className="py-4 px-6">
+                        <Badge variant={k.status === "active" ? "success" : "danger"} size="sm">
+                          {k.status}
+                        </Badge>
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        {k.status === "active" && (
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleRevokeKey(k.id)}
+                            className="text-[10px] h-7 px-2.5"
+                          >
+                            Revoke
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Provision Key for Customer Tenant"
-        description="Issue a new gateway credential with tenant-level rate ceiling and permission scopes."
-      >
-        <form onSubmit={handleGenerateForTenant} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-foreground tracking-wide">
-              Assign to Tenant Organization
-            </label>
-            <select
-              value={selectedTenant}
-              onChange={(e) => setSelectedTenant(e.target.value)}
-              className="w-full rounded-xl bg-surface border border-border px-3.5 py-2.5 text-xs text-foreground focus:outline-none focus:border-violet-primary"
-            >
-              {mockCustomersList.map((c) => (
-                <option key={c.id} value={c.company}>
-                  {c.company} ({c.name})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <Input
-            id="adminKeyName"
-            label="Key Identifier"
-            placeholder="e.g. Primary Production Gateway"
-            value={keyName}
-            onChange={(e) => setKeyName(e.target.value)}
-            required
-            autoFocus
-          />
-
-          <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-foreground tracking-wide">
-              Rate Limit (RPM)
-            </label>
-            <Input
-              id="adminRpm"
-              type="number"
-              value={rateLimit}
-              onChange={(e) => setRateLimit(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="flex items-center justify-end gap-2 pt-4 border-t border-border mt-4">
-            <Button type="button" variant="outline" size="sm" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" size="sm">
-              Generate & Assign
-            </Button>
-          </div>
-        </form>
-      </Modal>
     </div>
   );
 }

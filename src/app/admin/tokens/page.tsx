@@ -1,19 +1,67 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TokenAllocateModal } from "@/components/admin/token-allocate-modal";
-import { mockCustomersList } from "@/data/mock-data";
+import { createClient } from "@/utils/supabase/client";
 import { CustomerAccount } from "@/types";
 import { Coins, Zap, Edit3, ArrowRight, ShieldCheck, Check } from "lucide-react";
 
 export default function AdminTokenAllocationPage() {
-  const [customers, setCustomers] = useState<CustomerAccount[]>(mockCustomersList);
+  const [customers, setCustomers] = useState<CustomerAccount[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerAccount | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [totalProvisioned, setTotalProvisioned] = useState<number>(0);
+
+  useEffect(() => {
+    async function loadTokenAllocations() {
+      try {
+        const supabase = createClient();
+        const { data: orgs } = await supabase
+          .from("organizations")
+          .select("id, name, slug, created_at");
+
+        const { data: quotas } = await supabase
+          .from("quota_allocations")
+          .select("id, organization_id, tokens_allocated");
+
+        const total = quotas?.reduce((acc, q) => acc + (Number(q.tokens_allocated) || 0), 0) || 0;
+        setTotalProvisioned(total);
+
+        if (orgs && orgs.length > 0) {
+          const mapped: CustomerAccount[] = orgs.map((org) => {
+            const orgQuotas = quotas?.filter((q) => q.organization_id === org.id) || [];
+            const orgAlloc = orgQuotas.reduce((acc, q) => acc + (Number(q.tokens_allocated) || 0), 0);
+            return {
+              id: org.id,
+              name: org.name,
+              email: `${org.slug || "admin"}@workspace.internal`,
+              company: org.name,
+              plan: "Enterprise",
+              status: "active",
+              allocatedTokens: orgAlloc,
+              consumedTokens: 0,
+              activeApiKeysCount: 0,
+              storageUsageBytes: 0,
+              monthlySpend: 0,
+              joinedDate: org.created_at || new Date().toISOString(),
+              lastActive: "Active",
+            };
+          });
+          setCustomers(mapped);
+        } else {
+          setCustomers([]);
+        }
+      } catch (err) {
+        // Safe fallback
+      }
+    }
+
+    loadTokenAllocations();
+  }, []);
 
   const handleUpdateAllocation = (customerId: string, newTotalTokens: number) => {
     setCustomers(
@@ -31,143 +79,120 @@ export default function AdminTokenAllocationPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#F6F6F3] font-sans">
       <AdminHeader
-        title="Token Quota & Allocation Engine"
+        title="Token Quota &amp; Allocation Engine"
         subtitle="Manage computational token balances, hard quota ceilings, and emergency overrides"
-        
       />
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
         {successToast && (
-          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2 animate-in fade-in duration-200">
+          <div className="p-3 bg-emerald-50 border border-emerald-300 text-xs font-mono text-emerald-800 flex items-center gap-2">
             <Check className="w-4 h-4 text-emerald-600" />
             <span>{successToast}</span>
           </div>
         )}
 
         {/* Overview Banner */}
-        <div className="p-6 rounded-3xl bg-white border border-border flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-subtle">
+        <div className="p-6 bg-white border border-[#E2E2DA] flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
+          <span className="absolute top-1.5 left-2 font-mono text-xs text-[#888892] select-none">+</span>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-violet-primary" />
-              <span className="text-xs uppercase font-semibold tracking-wider text-violet-primary">
-                Global Token Ceiling Pool
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#777783] font-bold">
+                // Global Token Ceiling Pool
               </span>
             </div>
-            <h2 className="text-2xl font-bold text-foreground">
-              2,450,000,000 Tokens Provisioned
+            <h2 className="text-2xl font-mono font-bold text-[#111111]">
+              {totalProvisioned > 0 ? `${totalProvisioned.toLocaleString()} Tokens Provisioned` : "0.0M Tokens Provisioned"}
             </h2>
-            <p className="text-xs text-secondary mt-1">
-              Across 124 tenant organizations. 1,689,420,110 tokens consumed this cycle (68.9%).
+            <p className="text-xs font-mono text-[#777783] mt-1">
+              Aggregated quota balance active across all tenant clusters.
             </p>
           </div>
 
-          <div className="w-full md:w-64 space-y-1.5">
-            <div className="flex justify-between text-xs">
-              <span className="text-secondary">Global Utilization</span>
-              <span className="font-semibold text-foreground">68.9%</span>
+          <div className="flex items-center gap-4 border-t md:border-t-0 md:border-l border-[#E2E2DA] pt-4 md:pt-0 md:pl-6 text-xs font-mono">
+            <div>
+              <p className="text-[10px] uppercase text-[#777783] font-bold">Total Tenants</p>
+              <p className="text-lg font-bold text-[#111111]">{customers.length}</p>
             </div>
-            <div className="w-full bg-border rounded-full h-2.5 overflow-hidden">
-              <div className="bg-gradient-to-r from-violet-primary to-blue-soft h-full w-[68.9%]" />
+            <div>
+              <p className="text-[10px] uppercase text-[#777783] font-bold">Zero-Overdraft</p>
+              <p className="text-lg font-bold text-emerald-700">ENFORCED</p>
             </div>
           </div>
         </div>
 
-        {/* Customer Allocations Table */}
-        <div className="bg-white border border-border rounded-2xl overflow-hidden shadow-subtle">
-          <div className="px-6 py-4 border-b border-border flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground">
-              Tenant Quota Allocations
+        {/* Tenant Token Allocation Table */}
+        <div className="bg-white border border-[#E2E2DA] relative">
+          <span className="absolute top-1.5 left-2 font-mono text-xs text-[#888892] select-none">+</span>
+          <div className="px-6 py-4 border-b border-[#E2E2DA] flex items-center justify-between">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#111111]">
+              // Active Tenant Quotas
             </h3>
-            <span className="text-xs text-secondary">
-              Click &quot;Modify Quota&quot; to adjust monthly ceilings
+            <span className="text-[10px] font-mono text-[#777783] uppercase">
+              HARD LIMIT CEILING ENFORCEMENT
             </span>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-surface/50 border-b border-border text-secondary">
-                <tr>
-                  <th className="py-3 px-6 font-semibold">Tenant Organization</th>
-                  <th className="py-3 px-6 font-semibold">Allocated Tokens</th>
-                  <th className="py-3 px-6 font-semibold">Consumed Tokens</th>
-                  <th className="py-3 px-6 font-semibold">Remaining Balance</th>
-                  <th className="py-3 px-6 font-semibold">Utilization</th>
-                  <th className="py-3 px-6 font-semibold text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {customers.map((c) => {
-                  const remaining = c.allocatedTokens - c.consumedTokens;
-                  const pct = Math.min(100, (c.consumedTokens / c.allocatedTokens) * 100).toFixed(1);
-                  return (
-                    <tr key={c.id} className="hover:bg-surface/30">
+            {customers.length === 0 ? (
+              <div className="py-12 text-center font-mono">
+                <p className="text-xs text-[#777783] uppercase tracking-wider">
+                  No tenant organizations to allocate tokens
+                </p>
+              </div>
+            ) : (
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-[#F6F6F3] border-b border-[#E2E2DA] text-[#777783] uppercase text-[10px] tracking-wider">
+                  <tr>
+                    <th className="py-3 px-6 font-bold">Tenant Organization</th>
+                    <th className="py-3 px-6 font-bold">Allocated Quota</th>
+                    <th className="py-3 px-6 font-bold">Status</th>
+                    <th className="py-3 px-6 font-bold text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E2DA]">
+                  {customers.map((c) => (
+                    <tr key={c.id} className="hover:bg-[#F6F6F3]/50">
                       <td className="py-4 px-6">
-                        <p className="font-semibold text-foreground">{c.company}</p>
-                        <p className="text-secondary text-[11px]">{c.name} • {c.plan}</p>
+                        <p className="font-bold text-[#111111]">{c.company}</p>
+                        <p className="text-[#777783] text-[10px] mt-0.5">{c.email}</p>
                       </td>
-
-                      <td className="py-4 px-6 font-mono font-semibold text-foreground">
-                        {(c.allocatedTokens / 1_000_000).toFixed(0)}M
+                      <td className="py-4 px-6 font-bold text-[#111111]">
+                        {(c.allocatedTokens / 1_000_000).toFixed(1)}M Tokens
                       </td>
-
-                      <td className="py-4 px-6 font-mono text-secondary">
-                        {(c.consumedTokens / 1_000_000).toFixed(1)}M
-                      </td>
-
-                      <td className="py-4 px-6 font-mono">
-                        <span
-                          className={`font-semibold ${
-                            remaining > 0 ? "text-emerald-700" : "text-rose-600"
-                          }`}
-                        >
-                          {(remaining / 1_000_000).toFixed(1)}M
-                        </span>
-                      </td>
-
                       <td className="py-4 px-6">
-                        <div className="space-y-1 w-28">
-                          <span className="text-[10px] text-secondary font-mono">{pct}%</span>
-                          <div className="w-full bg-border rounded-full h-1.5 overflow-hidden">
-                            <div
-                              className={`h-full rounded-full ${
-                                Number(pct) > 85 ? "bg-rose-500" : "bg-violet-primary"
-                              }`}
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
-                        </div>
+                        <Badge variant="success" size="sm">
+                          ACTIVE
+                        </Badge>
                       </td>
-
                       <td className="py-4 px-6 text-right">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => openAllocateModal(c)}
-                          className="text-xs h-8 gap-1.5"
+                          className="text-[10px] h-7 px-3 gap-1"
                         >
-                          <Edit3 className="w-3.5 h-3.5 text-violet-primary" />
-                          Modify Quota
+                          <Edit3 className="w-3 h-3" />
+                          Adjust Quota
                         </Button>
                       </td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
 
-      {selectedCustomer && (
-        <TokenAllocateModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          customer={selectedCustomer}
-          onUpdateAllocation={handleUpdateAllocation}
-        />
-      )}
+      <TokenAllocateModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        customer={selectedCustomer}
+        onAllocate={handleUpdateAllocation}
+      />
     </div>
   );
 }
