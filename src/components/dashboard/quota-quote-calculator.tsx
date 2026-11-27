@@ -123,10 +123,10 @@ export function QuotaQuoteCalculator({ onQuoteGenerated, onRequestQuota }: Quota
           <div className="p-4 bg-white border border-[#E2E2DA]">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <Coins className="w-4 h-4 text-[#FF5722]" />
+                <Coins className="w-4 h-4 text-violet-primary" />
                 <span className="text-xs font-bold text-[#111111] uppercase">LLM Text Tokens</span>
               </div>
-              <span className="text-xs font-mono font-bold text-[#FF5722] bg-[#FF5722]/10 px-2 py-0.5 border border-[#FF5722]/30">
+              <span className="text-xs font-mono font-bold text-violet-primary bg-violet-50 px-2 py-0.5 border border-violet-200">
                 {tokenMillions}M Tokens / Mo
               </span>
             </div>
@@ -140,7 +140,7 @@ export function QuotaQuoteCalculator({ onQuoteGenerated, onRequestQuota }: Quota
               step="1"
               value={tokenMillions}
               onChange={(e) => setTokenMillions(parseInt(e.target.value, 10))}
-              className="w-full h-1.5 bg-[#EAEAE2] rounded-none appearance-none cursor-pointer accent-[#FF5722]"
+              className="w-full h-1.5 bg-[#EAEAE2] rounded-none appearance-none cursor-pointer accent-violet-600"
             />
             <div className="flex justify-between text-[10px] font-mono text-[#888892] mt-1.5">
               <span>1M ($2.50)</span>
@@ -254,7 +254,7 @@ export function QuotaQuoteCalculator({ onQuoteGenerated, onRequestQuota }: Quota
                 Estimated Monthly Commitment
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl sm:text-4xl font-extrabold font-mono text-gradient-sunset tracking-tight">
+                <span className="text-3xl sm:text-4xl font-extrabold font-mono text-[#111111] tracking-tight">
                   {currency === "PKR" 
                     ? `₨${totalPkr.toLocaleString()}` 
                     : `$${totalUsd.toFixed(2)}`}
@@ -297,7 +297,7 @@ export function QuotaQuoteCalculator({ onQuoteGenerated, onRequestQuota }: Quota
             {/* Recommended Tier Pill */}
             <div className="p-3 bg-[#F7F7F4] border border-[#E2E2DA] flex items-center justify-between text-xs">
               <span className="text-[11px] font-mono uppercase text-[#777783]">Recommended Tier:</span>
-              <span className="font-mono font-bold text-[#FF5722] uppercase bg-[#FF5722]/10 px-2 py-0.5 border border-[#FF5722]/30">
+              <span className="font-mono font-bold text-[#111111] uppercase bg-[#111111]/5 px-2 py-0.5 border border-[#111111]/20">
                 {recommendedPlan} Package
               </span>
             </div>

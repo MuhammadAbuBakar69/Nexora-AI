@@ -12,17 +12,9 @@ import { AnimatedSunsetMesh } from "@/components/ui/animated-sunset-mesh";
 function IsometricWireframeN() {
   return (
     <div className="relative flex flex-col items-center justify-center p-6 h-full w-full select-none overflow-hidden">
-      {/* Subtle Ambient Glowing Sunset Orange Radial Aura */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-40 filter blur-2xl"
-        style={{
-          background: "radial-gradient(circle at 50% 50%, rgba(255, 87, 34, 0.35) 0%, rgba(255, 167, 38, 0.20) 45%, transparent 70%)",
-        }}
-      />
-
       <svg
         viewBox="0 0 170 190"
-        className="w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 drop-shadow-[0_12px_24px_rgba(255,87,34,0.08)] relative z-10"
+        className="w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 drop-shadow-[0_12px_24px_rgba(17,17,17,0.04)] relative z-10"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -101,19 +93,19 @@ function IsometricWireframeN() {
           strokeLinejoin="round"
         />
 
-        {/* Technical drafting anchor vertex dots in warm sunset orange */}
+        {/* Technical drafting anchor vertex dots */}
         <circle cx="68" cy="26" r="2.5" fill="#111111" />
         <circle cx="140" cy="66" r="2.5" fill="#111111" />
         <circle cx="50" cy="132" r="2.5" fill="#111111" />
         <circle cx="122" cy="172" r="2.5" fill="#111111" />
-        <circle cx="86" cy="36" r="2.5" fill="#FF5722" />
-        <circle cx="104" cy="162" r="2.5" fill="#FF5722" />
+        <circle cx="86" cy="36" r="2.5" fill="#111111" />
+        <circle cx="104" cy="162" r="2.5" fill="#111111" />
       </svg>
 
       {/* Coordinate & CAD annotations */}
       <div className="mt-3 flex items-center justify-between w-full max-w-[170px] text-[9px] font-mono tracking-widest text-[#777783] uppercase relative z-10">
         <span>ISO-30° // NX</span>
-        <span className="text-[#FF5722] font-bold">NODE: EDGE-01</span>
+        <span className="text-[#111111] font-bold">NODE: EDGE-01</span>
       </div>
     </div>
   );
@@ -122,14 +114,11 @@ function IsometricWireframeN() {
 /**
  * Technical Blueprint Wordmark "NEXORA"
  * Full vector drafting typography with corner crosshairs, construction lines,
- * anchor vertices, precision dimension callouts, and warm sunset orange mesh gradient.
+ * anchor vertices, and precision dimension callouts.
  */
 function ArchitecturalBlueprintWordmark() {
   return (
     <div className="relative w-full py-12 sm:py-16 px-4 sm:px-8 overflow-hidden select-none bg-[#F7F7F4]">
-      {/* Warm Sunset Orange Ambient Mesh Flowing Behind Blueprint */}
-      <AnimatedSunsetMesh intensity="subtle" />
-
       {/* CAD Millimeter Graph Paper Texture */}
       <div
         className="absolute inset-0 pointer-events-none opacity-50 mix-blend-multiply z-[1]"
@@ -150,11 +139,11 @@ function ArchitecturalBlueprintWordmark() {
       {/* Blueprint Header Metadata Callout */}
       <div className="relative z-10 flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] font-mono tracking-widest text-[#777783] uppercase mb-4 sm:mb-8 px-2 border-b border-[#E2E2DA]/80 pb-2">
         <span className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722] animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           DWG: NX-AI-GATEWAY // ARCHITECTURAL DRAFT
         </span>
         <span className="hidden md:inline">SCALE: 1:1 • TOLERANCE: ±0.002MS • PROJECTION: VECTOR AXIS</span>
-        <span className="text-[#FF5722] font-semibold bg-[#FF5722]/10 px-2 py-0.5 border border-[#FF5722]/30">
+        <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 border border-emerald-300">
           STATUS: 99.99% UPSTREAM MESH
         </span>
       </div>
@@ -163,21 +152,15 @@ function ArchitecturalBlueprintWordmark() {
       <div className="relative z-10 max-w-6xl mx-auto flex items-center justify-center">
         <svg
           viewBox="0 0 1120 200"
-          className="w-full h-auto text-[#111111] drop-shadow-[0_8px_20px_rgba(255,87,34,0.06)]"
+          className="w-full h-auto text-[#111111]"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Subtle Orange Gradient Wash Definition for Letter Polygons */}
+          {/* Crisp Monochromatic Wash Definition for Letter Polygons */}
           <defs>
             <linearGradient id="blueprintSunsetWash" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
-              <stop offset="50%" stopColor="#FFF2EA" stopOpacity="0.90" />
-              <stop offset="100%" stopColor="#FFE6D6" stopOpacity="0.85" />
-            </linearGradient>
-            <linearGradient id="sunsetAccentGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#C22B2B" />
-              <stop offset="50%" stopColor="#FF5722" />
-              <stop offset="100%" stopColor="#FFA726" />
+              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.98" />
+              <stop offset="100%" stopColor="#F7F7F4" stopOpacity="0.95" />
             </linearGradient>
           </defs>
 
@@ -249,9 +232,9 @@ function ArchitecturalBlueprintWordmark() {
             strokeWidth="1.8"
             fill="url(#blueprintSunsetWash)"
           />
-          {/* Center intersection crosshair in glowing sunset orange */}
-          <line x1="462" y1="100" x2="482" y2="100" stroke="#FF5722" strokeWidth="1.4" />
-          <line x1="472" y1="90" x2="472" y2="110" stroke="#FF5722" strokeWidth="1.4" />
+          {/* Center intersection crosshair in neutral drafting dark */}
+          <line x1="462" y1="100" x2="482" y2="100" stroke="#111111" strokeWidth="1.4" />
+          <line x1="472" y1="90" x2="472" y2="110" stroke="#111111" strokeWidth="1.4" />
           {/* Anchor dots */}
           <circle cx="405" cy="25" r="2.5" fill="white" stroke="#111111" strokeWidth="1.2" />
           <circle cx="540" cy="25" r="2.5" fill="white" stroke="#111111" strokeWidth="1.2" />
@@ -262,10 +245,10 @@ function ArchitecturalBlueprintWordmark() {
           {/* Architectural Octagonal Precision Outline */}
           <line x1="565" y1="100" x2="735" y2="100" stroke="#9A9AA4" strokeWidth="0.8" strokeDasharray="3 3" />
           <line x1="650" y1="10" x2="650" y2="190" stroke="#9A9AA4" strokeWidth="0.8" strokeDasharray="3 3" />
-          {/* Center Crosshair in glowing sunset orange */}
-          <line x1="640" y1="100" x2="660" y2="100" stroke="#FF5722" strokeWidth="1.4" />
-          <line x1="650" y1="90" x2="650" y2="110" stroke="#FF5722" strokeWidth="1.4" />
-          <circle cx="650" cy="100" r="3.5" fill="none" stroke="#FF5722" strokeWidth="1.2" />
+          {/* Center Crosshair in neutral drafting dark */}
+          <line x1="640" y1="100" x2="660" y2="100" stroke="#111111" strokeWidth="1.4" />
+          <line x1="650" y1="90" x2="650" y2="110" stroke="#111111" strokeWidth="1.4" />
+          <circle cx="650" cy="100" r="3.5" fill="none" stroke="#111111" strokeWidth="1.2" />
           {/* Outer Octagon */}
           <polygon
             points="610,25 690,25 725,60 725,140 690,175 610,175 575,140 575,60"
@@ -343,8 +326,8 @@ function ArchitecturalBlueprintWordmark() {
             strokeWidth="1.8"
             fill="#F7F7F4"
           />
-          {/* Apex Crosshair in glowing sunset orange */}
-          <line x1="980" y1="25" x2="1000" y2="25" stroke="#FF5722" strokeWidth="1.4" />
+          {/* Apex Crosshair in neutral drafting dark */}
+          <line x1="980" y1="25" x2="1000" y2="25" stroke="#111111" strokeWidth="1.4" />
           {/* Anchor dots */}
           <circle cx="970" cy="25" r="2.5" fill="white" stroke="#111111" strokeWidth="1.2" />
           <circle cx="1010" cy="25" r="2.5" fill="white" stroke="#111111" strokeWidth="1.2" />
@@ -355,8 +338,8 @@ function ArchitecturalBlueprintWordmark() {
 
       {/* Blueprint Coordinates Footer Bar */}
       <div className="relative z-10 flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mt-4 sm:mt-6 px-2">
-        <span>GRID: 24MM • AXIS: <strong className="text-[#FF5722]">X: 1120 Y: 200</strong></span>
-        <span>LAT: 37.7749° N, LONG: 122.4194° W (<strong className="text-[#FF5722]">GLOBAL MESH</strong>)</span>
+        <span>GRID: 24MM • AXIS: <strong className="text-[#111111]">X: 1120 Y: 200</strong></span>
+        <span>LAT: 37.7749° N, LONG: 122.4194° W (<strong className="text-[#111111]">GLOBAL MESH</strong>)</span>
       </div>
     </div>
   );
@@ -384,25 +367,17 @@ export function Footer() {
 
           {/* Cell 1: Big Editorial Bold Headline (Spans 4 cols on desktop) */}
           <div className="md:col-span-12 lg:col-span-4 p-6 sm:p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-[#E2E2DA] flex flex-col justify-between relative overflow-hidden">
-            {/* Subtle Sunset Orange Gradient Ambience */}
-            <div
-              className="absolute -top-[20%] -left-[20%] w-[320px] h-[320px] pointer-events-none opacity-20 filter blur-3xl rounded-full"
-              style={{
-                background: "radial-gradient(circle, #FF5722 0%, #FFA726 60%, transparent 80%)",
-              }}
-            />
-
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-4">
-                <span className="w-2 h-2 rounded-full bg-[#FF5722] animate-pulse" />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#FF5722] font-bold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#777783] font-bold">
                   ANYCAST EDGE ROUTER v2.4
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold uppercase tracking-tight text-[#111111] leading-[1.08] font-mono">
                 AN INTELLIGENT
                 <br />
-                <span className="text-gradient-sunset drop-shadow-xs">AI GATEWAY</span> THAT
+                <span className="text-violet-primary">AI GATEWAY</span> THAT
                 <br />
                 POWERS YOUR CLOUD
                 <br />
@@ -411,7 +386,7 @@ export function Footer() {
             </div>
 
             <div className="mt-8 pt-6 border-t border-[#EAEAE2] flex items-center justify-between text-xs text-[#777783] relative z-10">
-              <span className="font-mono text-[11px] text-[#FF5722] font-semibold bg-[#FF5722]/5 px-2 py-0.5 border border-[#FF5722]/20">
+              <span className="font-mono text-[11px] text-[#555562] font-semibold bg-[#EAEAE2]/50 px-2 py-0.5 border border-[#E2E2DA]">
                 // ENTERPRISE AI INFERENCE
               </span>
               <span className="inline-flex items-center gap-1 text-emerald-700 font-mono font-bold text-[11px] bg-emerald-50 px-2 py-0.5 border border-emerald-300">
@@ -430,29 +405,29 @@ export function Footer() {
               <li>
                 <Link
                   href="/"
-                  className="font-bold text-[#FF5722] hover:text-[#FFA726] transition-colors flex items-center gap-1.5"
+                  className="font-bold text-[#111111] hover:text-black transition-colors flex items-center gap-1.5"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#111111]" />
                   Overview
                 </Link>
               </li>
               <li>
-                <Link href="/platform" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/platform" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Architecture
                 </Link>
               </li>
               <li>
-                <Link href="/solutions" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/solutions" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Solutions
                 </Link>
               </li>
               <li>
-                <Link href="/developers" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/developers" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Developers
                 </Link>
               </li>
               <li>
-                <Link href="/resources" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/resources" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Compliance
                 </Link>
               </li>
@@ -466,27 +441,27 @@ export function Footer() {
             </span>
             <ul className="space-y-3 text-xs sm:text-sm">
               <li>
-                <Link href="/platform#gateway" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/platform#gateway" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Proxy Gateway
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/tokens" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/dashboard/tokens" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Token Governance
                 </Link>
               </li>
               <li>
-                <Link href="/platform#caching" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/platform#caching" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Vector Caching
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/storage" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/dashboard/storage" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Cloud Storage
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/pricing" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Pricing Plans
                 </Link>
               </li>
@@ -500,27 +475,27 @@ export function Footer() {
             </span>
             <ul className="space-y-3 text-xs sm:text-sm">
               <li>
-                <Link href="/resources" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/resources" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Latency Radar
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/docs" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/dashboard/docs" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   SDK Quickstarts
                 </Link>
               </li>
               <li>
-                <Link href="/resources" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/resources" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Whitepapers
                 </Link>
               </li>
               <li>
-                <Link href="/#sandbox" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/#sandbox" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   Live Simulator
                 </Link>
               </li>
               <li>
-                <Link href="/developers" className="text-[#33333F] hover:text-[#FF5722] transition-colors">
+                <Link href="/developers" className="text-[#33333F] hover:text-[#111111] transition-colors">
                   API Reference
                 </Link>
               </li>
@@ -557,7 +532,7 @@ export function Footer() {
                   <span>Subscribed to engineering dispatch.</span>
                 </div>
               ) : (
-                <div className="flex items-center border border-[#D5D5CD] bg-white transition-colors focus-within:border-[#FF5722]">
+                <div className="flex items-center border border-[#D5D5CD] bg-white transition-colors focus-within:border-[#111111]">
                   <input
                     type="email"
                     value={email}
@@ -569,7 +544,7 @@ export function Footer() {
                   <button
                     type="submit"
                     aria-label="Submit newsletter subscription"
-                    className="px-4 py-2.5 border-l border-[#D5D5CD] bg-white hover:bg-[#FF5722] hover:text-white transition-all text-xs flex items-center justify-center shrink-0 font-medium cursor-pointer"
+                    className="px-4 py-2.5 border-l border-[#D5D5CD] bg-white hover:bg-[#111111] hover:text-white transition-all text-xs flex items-center justify-center shrink-0 font-medium cursor-pointer"
                   >
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
@@ -596,10 +571,10 @@ export function Footer() {
             <div className="mt-6 pt-4 border-t border-[#EAEAE2]">
               <Link
                 href="/platform"
-                className="text-xs font-semibold text-[#111111] hover:text-[#FF5722] transition-colors flex items-center gap-1 group"
+                className="text-xs font-semibold text-[#111111] hover:text-[#111111] transition-colors flex items-center gap-1 group"
               >
                 <span>Anycast Edge Topology (32 PoPs)</span>
-                <span className="group-hover:translate-x-1 transition-transform text-[#FF5722]">→</span>
+                <span className="group-hover:translate-x-1 transition-transform text-[#111111]">→</span>
               </Link>
             </div>
           </div>
@@ -612,7 +587,7 @@ export function Footer() {
               </span>
               <a
                 href="mailto:enterprise@nexora.cloud"
-                className="text-xs sm:text-sm text-[#111111] hover:text-[#FF5722] transition-colors font-medium break-all"
+                className="text-xs sm:text-sm text-[#111111] hover:text-[#111111] transition-colors font-medium break-all"
               >
                 enterprise@nexora.cloud
               </a>
@@ -624,7 +599,7 @@ export function Footer() {
               </span>
               <a
                 href="mailto:support@nexora.cloud"
-                className="text-xs sm:text-sm text-[#111111] hover:text-[#FF5722] transition-colors font-medium break-all"
+                className="text-xs sm:text-sm text-[#111111] hover:text-[#111111] transition-colors font-medium break-all"
               >
                 support@nexora.cloud
               </a>
@@ -643,13 +618,13 @@ export function Footer() {
                     href="https://github.com"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#33333F] hover:text-[#FF5722] transition-colors block"
+                    className="text-[#33333F] hover:text-[#111111] transition-colors block"
                   >
                     GitHub
                   </a>
                 </div>
                 <div>
-                  <Link href="/resources" className="text-[#33333F] hover:text-[#FF5722] transition-colors block">
+                  <Link href="/resources" className="text-[#33333F] hover:text-[#111111] transition-colors block">
                     Status
                   </Link>
                 </div>
@@ -658,13 +633,13 @@ export function Footer() {
                     href="https://discord.com"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#33333F] hover:text-[#FF5722] transition-colors block"
+                    className="text-[#33333F] hover:text-[#111111] transition-colors block"
                   >
                     Discord
                   </a>
                 </div>
                 <div>
-                  <Link href="/dashboard/docs" className="text-[#33333F] hover:text-[#FF5722] transition-colors block">
+                  <Link href="/dashboard/docs" className="text-[#33333F] hover:text-[#111111] transition-colors block">
                     Docs
                   </Link>
                 </div>
@@ -673,7 +648,7 @@ export function Footer() {
                     href="https://x.com"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#33333F] hover:text-[#FF5722] transition-colors block"
+                    className="text-[#33333F] hover:text-[#111111] transition-colors block"
                   >
                     X / Twitter
                   </a>
@@ -683,7 +658,7 @@ export function Footer() {
                     href="https://linkedin.com"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#33333F] hover:text-[#FF5722] transition-colors block"
+                    className="text-[#33333F] hover:text-[#111111] transition-colors block"
                   >
                     LinkedIn
                   </a>
@@ -693,7 +668,7 @@ export function Footer() {
 
             <div className="mt-6 pt-4 border-t border-[#EAEAE2] text-[10px] font-mono text-[#777783] space-y-1">
               <div>
-                UPSTREAM: <span className="text-[#FF5722] font-semibold">OPENAI</span> • <span className="text-[#FFA726] font-semibold">ANTHROPIC</span> • <span className="text-[#FF5722] font-semibold">GOOGLE</span>
+                UPSTREAM: <span className="text-[#111111] font-semibold">OPENAI</span> • <span className="text-[#111111] font-semibold">ANTHROPIC</span> • <span className="text-[#111111] font-semibold">GOOGLE</span>
               </div>
               <div>
                 SETTLEMENT: <span className="text-[#02AAB0] font-semibold">SADAPAY</span> • <span className="text-[#111111] font-semibold">RAAST</span> • <span className="text-[#111111] font-semibold">MASTERCARD</span>
@@ -723,19 +698,19 @@ export function Footer() {
 
           {/* Legal Links (each separated with a clean vertical grid line) */}
           <div className="md:col-span-2 lg:col-span-2 p-4 flex items-center justify-center border-b sm:border-b-0 border-r border-[#E2E2DA]">
-            <Link href="/resources" className="text-[11px] text-[#444450] hover:text-[#FF5722] transition-colors uppercase tracking-wider">
+            <Link href="/resources" className="text-[11px] text-[#444450] hover:text-[#111111] transition-colors uppercase tracking-wider">
               Privacy Policy
             </Link>
           </div>
 
           <div className="md:col-span-2 lg:col-span-2 p-4 flex items-center justify-center border-b sm:border-b-0 border-r border-[#E2E2DA]">
-            <Link href="/resources" className="text-[11px] text-[#444450] hover:text-[#FF5722] transition-colors uppercase tracking-wider">
+            <Link href="/resources" className="text-[11px] text-[#444450] hover:text-[#111111] transition-colors uppercase tracking-wider">
               Terms &amp; Conditions
             </Link>
           </div>
 
           <div className="md:col-span-2 lg:col-span-1 p-4 flex items-center justify-center">
-            <Link href="/resources" className="text-[11px] text-[#444450] hover:text-[#FF5722] transition-colors uppercase tracking-wider">
+            <Link href="/resources" className="text-[11px] text-[#444450] hover:text-[#111111] transition-colors uppercase tracking-wider">
               Cookies
             </Link>
           </div>

@@ -10,9 +10,8 @@ export function CtaBanner() {
     <section className="py-20 bg-[#F6F6F3] border-b border-[#E2E2DA] select-none font-sans relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#111111] text-white p-8 sm:p-14 relative border border-[#282828] font-mono overflow-hidden">
-          {/* Ambient Sunset Mesh Glow */}
-          <div className="absolute -top-[30%] -right-[20%] w-[550px] h-[550px] bg-gradient-sunset opacity-25 filter blur-[100px] rounded-full pointer-events-none animate-mesh-2" />
-          <div className="absolute -bottom-[30%] -left-[20%] w-[450px] h-[450px] bg-[#C22B2B] opacity-15 filter blur-[90px] rounded-full pointer-events-none animate-mesh-1" />
+          {/* Subtle Ambient Indigo Mesh Glow */}
+          <div className="absolute -top-[30%] -right-[20%] w-[550px] h-[550px] bg-indigo-600/10 opacity-30 filter blur-[100px] rounded-full pointer-events-none" />
 
           {/* Corner Crosshairs */}
           <span className="absolute top-2 left-3 text-xs text-[#666666] select-none">+</span>
@@ -30,12 +29,12 @@ export function CtaBanner() {
           </div>
 
           <div className="max-w-3xl relative z-10">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#FFA726] bg-[#FF5722]/15 px-2.5 py-1 border border-[#FF5722]/40 mb-4 inline-block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-violet-300 bg-violet-950/60 px-2.5 py-1 border border-violet-800/60 mb-4 inline-block">
               // UNIFIED CONTROL PLANE
             </span>
 
             <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-tight text-white mb-5 leading-[1.12]">
-              EXPERIENCE TOTAL GOVERNANCE OVER YOUR <span className="text-gradient-sunset">AI INFRASTRUCTURE</span>
+              EXPERIENCE TOTAL GOVERNANCE OVER YOUR <span className="text-violet-400">AI INFRASTRUCTURE</span>
             </h2>
 
             <p className="text-xs sm:text-sm text-[#AAAAAA] leading-relaxed mb-8 max-w-2xl font-sans">

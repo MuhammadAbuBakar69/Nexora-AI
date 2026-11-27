@@ -107,7 +107,7 @@ export function Navbar() {
               href="/dashboard"
               variant="outline"
               size="sm"
-              className="text-xs font-bold uppercase tracking-wider border-[#E2E2DA] bg-white hover:bg-[#F2F2EE] h-9 text-[#FF5722]"
+              className="text-xs font-bold uppercase tracking-wider border-[#E2E2DA] bg-white hover:bg-[#F2F2EE] h-9 text-[#111111]"
             >
               Console
             </Button>
@@ -119,7 +119,7 @@ export function Navbar() {
               href="/dashboard"
               variant="outline"
               size="sm"
-              className="text-xs px-2.5 py-1 h-7 text-[#FF5722] border-[#E2E2DA]"
+              className="text-xs px-2.5 py-1 h-7 text-[#111111] border-[#E2E2DA]"
             >
               Console
             </Button>
@@ -151,7 +151,7 @@ export function Navbar() {
             <Link
               href="/admin"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-4 py-2.5 text-xs font-bold uppercase text-[#FF5722] bg-[#FF5722]/10"
+              className="px-4 py-2.5 text-xs font-bold uppercase text-violet-primary bg-violet-50"
             >
               Admin Console
             </Link>

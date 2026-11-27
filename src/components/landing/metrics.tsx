@@ -79,16 +79,16 @@ export function MetricsSection() {
                       decimals={item.decimals}
                       prefix={item.prefix}
                       suffix={item.suffix}
-                      className="text-gradient-sunset"
+                      className="text-[#111111]"
                     />
                     <span className="text-xs font-mono font-bold text-[#111111] uppercase ml-1">
                       {item.unit}
                     </span>
                   </div>
-                  <item.icon className="w-4 h-4 text-[#FF5722] opacity-75 group-hover:opacity-100 transition-opacity" />
+                  <item.icon className="w-4 h-4 text-violet-primary opacity-75 group-hover:opacity-100 transition-opacity" />
                 </div>
 
-                <h4 className="text-xs font-mono font-bold uppercase text-[#111111] mt-2 group-hover:text-[#FF5722] transition-colors">
+                <h4 className="text-xs font-mono font-bold uppercase text-[#111111] mt-2 group-hover:text-black transition-colors">
                   {item.label}
                 </h4>
               </div>

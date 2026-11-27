@@ -234,34 +234,34 @@ export function InteractiveTiltCard({
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className={`relative will-change-transform group transition-shadow duration-500 hover:shadow-[0_20px_50px_-15px_rgba(255,87,34,0.25)] ${className}`}
+      className={`relative will-change-transform group transition-shadow duration-500 hover:shadow-[0_20px_50px_-15px_rgba(17,17,17,0.12)] ${className}`}
     >
-      {/* 1. Continuous Animated Flowing Sunset Gradient Border */}
+      {/* 1. Continuous Animated Flowing Architectural Gradient Border */}
       <div
         className="absolute -inset-[1.5px] rounded-none opacity-45 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
-          background: "linear-gradient(135deg, #FF5722 0%, #FFA726 40%, #FF7043 70%, #C22B2B 100%)",
+          background: "linear-gradient(135deg, #111111 0%, #4F46E5 50%, #7C3AED 100%)",
           backgroundSize: "200% 200%",
           animation: "cardGradientFlow 5s ease infinite",
         }}
       />
 
-      {/* 2. Ambient Radiant Sunset Aura behind card on hover */}
+      {/* 2. Ambient Radiant Aura behind card on hover */}
       <div
-        className="absolute -inset-4 rounded-none opacity-0 group-hover:opacity-35 filter blur-2xl transition-opacity duration-700 pointer-events-none"
+        className="absolute -inset-4 rounded-none opacity-0 group-hover:opacity-25 filter blur-2xl transition-opacity duration-700 pointer-events-none"
         style={{
-          background: "radial-gradient(circle at 50% 50%, #FF5722 0%, #FFA726 60%, transparent 80%)",
+          background: "radial-gradient(circle at 50% 50%, rgba(79,70,229,0.15) 0%, rgba(124,58,237,0.06) 60%, transparent 80%)",
         }}
       />
 
       {/* 3. Internal Card Body with Dynamic Cursor Spotlight */}
       <div className="relative z-10 w-full h-full bg-[#FFFFFF]/98 backdrop-blur-xs overflow-hidden">
-        {/* Dynamic Cursor Sunset Spotlight */}
+        {/* Dynamic Cursor Spotlight */}
         <div
-          className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-500 rounded-none mix-blend-color-burn"
+          className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-500 rounded-none mix-blend-multiply"
           style={{
             opacity: mousePos.opacity,
-            background: `radial-gradient(450px circle at ${mousePos.x}% ${mousePos.y}%, rgba(255, 87, 34, 0.45), rgba(255, 167, 38, 0.18), transparent 70%)`,
+            background: `radial-gradient(450px circle at ${mousePos.x}% ${mousePos.y}%, rgba(99, 102, 241, 0.12), rgba(124, 58, 237, 0.05), transparent 70%)`,
           }}
         />
 

@@ -63,14 +63,14 @@ export function EdgeTopologySection() {
         {/* CAD Blueprint Header */}
         <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
           <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             // TOPOLOGY SPECIFICATION: ANYCAST GLOBAL INGRESS RADAR
           </span>
           <span>MESH NODES: 32 ACTIVE EDGE PoPs</span>
         </div>
 
         <div className="max-w-3xl mb-12">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30 inline-block mb-3">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-violet-primary bg-violet-50 px-2.5 py-1 border border-violet-200 inline-block mb-3">
             DISTRIBUTED EDGE TOPOLOGY
           </span>
           <GsapHeadline
@@ -95,7 +95,7 @@ export function EdgeTopologySection() {
                 transition={{ type: "spring", stiffness: 350, damping: 25 }}
                 className={`p-5 text-left border relative transition-all ${
                   isSelected
-                    ? "bg-white border-[#FF5722] ring-1 ring-[#FF5722] shadow-sm"
+                    ? "bg-white border-[#111111] ring-1 ring-[#111111] shadow-sm"
                     : "bg-[#F7F7F4]/90 hover:bg-white border-[#E2E2DA] hover:border-[#111111]"
                 }`}
               >
@@ -104,7 +104,7 @@ export function EdgeTopologySection() {
 
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] text-[#777783] uppercase tracking-wider">{reg.code}</span>
-                  <span className={`w-2 h-2 rounded-full ${isSelected ? "bg-[#FF5722] animate-ping" : "bg-emerald-500"}`} />
+                  <span className={`w-2 h-2 rounded-full ${isSelected ? "bg-emerald-500 animate-ping" : "bg-emerald-500"}`} />
                 </div>
 
                 <div className="text-sm font-bold text-[#111111] uppercase mb-1">

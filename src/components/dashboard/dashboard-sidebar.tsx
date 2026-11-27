@@ -132,7 +132,7 @@ export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
                     : "border-transparent text-[#555562] hover:text-[#111111] hover:bg-white/60"
                 )}
               >
-                <Icon className={cn("w-4 h-4", isActive ? "text-[#FF5722]" : "text-[#777783]")} />
+                <Icon className={cn("w-4 h-4", isActive ? "text-[#111111]" : "text-[#777783]")} />
                 <span>{item.name}</span>
               </Link>
             );
@@ -147,10 +147,10 @@ export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
           className="flex items-center justify-between p-2.5 bg-white hover:bg-[#111111] hover:text-white border border-[#E2E2DA] transition-all text-xs text-[#111111] group"
         >
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#FF5722] group-hover:text-white" />
+            <ShieldCheck className="w-4 h-4 text-[#111111] group-hover:text-white" />
             <span className="font-bold text-[11px] uppercase tracking-wider">Admin Console</span>
           </div>
-          <span className="text-[10px] font-mono font-bold text-[#FF5722] group-hover:text-white">
+          <span className="text-[10px] font-mono font-bold text-[#111111] group-hover:text-white">
             Switch →
           </span>
         </Link>

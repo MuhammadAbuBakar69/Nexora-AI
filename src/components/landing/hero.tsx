@@ -115,9 +115,6 @@ export function Hero() {
 
   return (
     <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-32 overflow-hidden bg-[#F6F6F3] select-none border-b border-[#E2E2DA]">
-      {/* Animated Sunset Coral & Amber Mesh Gradient */}
-      <AnimatedSunsetMesh intensity="vibrant" />
-
       {/* Millimeter CAD Graph Paper Texture */}
       <div
         className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply z-[1]"
@@ -146,7 +143,7 @@ export function Hero() {
           <div className="hidden md:flex items-center gap-4 text-[#777783]">
             <span>LAT: 37.7749° N, LONG: 122.4194° W</span>
             <span>•</span>
-            <span className="text-[#FF5722] font-bold">PROJECTION: VECTOR AXIS</span>
+            <span className="text-[#111111] font-bold">PROJECTION: VECTOR AXIS</span>
           </div>
           <div className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 border border-emerald-300">
             STATUS: 99.99% UPSTREAM MESH
@@ -156,7 +153,7 @@ export function Hero() {
         {/* Editorial Architectural Headline */}
         <div className="max-w-4xl text-left sm:text-center sm:mx-auto mb-8">
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#111111] uppercase leading-[1.08] font-mono mb-6">
-            AN INTELLIGENT <span className="text-gradient-sunset drop-shadow-xs">AI GATEWAY</span> THAT POWERS YOUR CLOUD INFRASTRUCTURE
+            AN INTELLIGENT <span className="text-violet-primary">AI GATEWAY</span> THAT POWERS YOUR CLOUD INFRASTRUCTURE
           </h1>
 
           <div className="flex flex-wrap items-center sm:justify-center gap-4 text-xs font-mono text-[#555562] mb-6">
@@ -166,7 +163,7 @@ export function Hero() {
             <span className="px-2.5 py-1 bg-white/95 backdrop-blur-xs border border-[#E2E2DA] text-emerald-700 font-bold shadow-xs">
               ◎ SOC2 / HIPAA READY
             </span>
-            <span className="px-2.5 py-1 bg-white/95 backdrop-blur-xs border border-[#E2E2DA] text-[#FF5722] font-bold shadow-xs">
+            <span className="px-2.5 py-1 bg-white/95 backdrop-blur-xs border border-[#E2E2DA] text-violet-primary font-bold shadow-xs">
               ⚡ ZERO-DATA RETENTION
             </span>
           </div>
@@ -201,9 +198,6 @@ export function Hero() {
         {/* HYPER-PROFESSIONAL CAD TELEMETRY TERMINAL & LIVE INFERENCE HUD            */}
         {/* ========================================================================= */}
         <div className="mt-12 max-w-4xl mx-auto rounded-none border border-[#22222E] bg-[#0E0E14] text-[#E0E0EA] shadow-2xl relative font-mono overflow-hidden">
-          {/* Subtle Ambient Sunset Glow Under Terminal Frame */}
-          <div className="absolute -top-[50%] -right-[30%] w-[400px] h-[400px] bg-[#FF5722] opacity-15 filter blur-[90px] rounded-full pointer-events-none" />
-
           {/* 4 Corner Crosshairs */}
           <span className="absolute top-2 left-2 text-xs text-[#555566] select-none z-20">+</span>
           <span className="absolute top-2 right-2 text-xs text-[#555566] select-none z-20">+</span>
@@ -293,7 +287,7 @@ export function Hero() {
                         <span className="text-[10px] text-[#666677] font-mono">{log.time}</span>
                         <span className="text-emerald-400 font-bold font-mono">{log.method}</span>
                         <span className="text-white font-bold">{log.endpoint}</span>
-                        <span className="text-[#FFA726] font-mono text-[11px]">→ {log.target}</span>
+                        <span className="text-violet-300 font-mono text-[11px]">→ {log.target}</span>
                       </div>
 
                       <div className="flex items-center gap-2.5 text-[11px] text-[#888899]">
@@ -312,7 +306,7 @@ export function Hero() {
 
                 {/* Prompt Cursor */}
                 <div className="pt-2 flex items-center gap-2 text-[11px] text-[#777788]">
-                  <span className="text-[#FF5722] font-bold">nx-gateway:~$</span>
+                  <span className="text-emerald-400 font-bold">nx-gateway:~$</span>
                   <span>listening on Anycast BGP interface (TLS 1.3 0-RTT)...</span>
                   <span className="w-2 h-3.5 bg-emerald-400 animate-pulse inline-block" />
                 </div>
@@ -333,7 +327,7 @@ export function Hero() {
                 <div className="p-3 bg-[#14141E] border border-[#222232] space-y-1.5">
                   <div className="flex items-center justify-between text-[#888899] text-[10px]">
                     <span>KMS KEY ROTATION: HOURLY</span>
-                    <span className="text-[#FFA726] font-bold">NEXT IN 24M</span>
+                    <span className="text-emerald-400 font-bold">NEXT IN 24M</span>
                   </div>
                   <p className="text-[11px] text-[#CCCCCC]">
                     AES-256 GCM hardware encryption with automatic HSM master rotation and SOC2 Type II cryptographic nonces.

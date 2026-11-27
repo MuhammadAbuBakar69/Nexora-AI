@@ -31,9 +31,6 @@ export default function PricingPage() {
       <main className="flex-1 pt-24">
         {/* CAD Blueprint Pricing Hero */}
         <section className="relative py-20 sm:py-28 overflow-hidden bg-[#F6F6F3] border-b border-[#E2E2DA]">
-          {/* Animated Sunset Mesh Gradient */}
-          <AnimatedSunsetMesh intensity="subtle" />
-
           <div
             className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply z-[1]"
             style={{
@@ -51,13 +48,13 @@ export default function PricingPage() {
 
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center font-mono">
             <div className="flex items-center justify-center gap-2 mb-6">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-violet-primary bg-violet-50 px-2.5 py-1 border border-violet-200">
                 DWG: SPEC-PRICING-01 // COMMERCIAL LEDGER
               </span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold uppercase tracking-tight text-[#111111] mb-6 leading-[1.08]">
-              TRANSPARENT PRICING FOR <span className="text-gradient-sunset">TEAMS AT ANY SCALE</span>
+              TRANSPARENT PRICING FOR <span className="text-violet-primary">TEAMS AT ANY SCALE</span>
             </h1>
 
             <p className="text-xs sm:text-sm text-[#444452] max-w-2xl mx-auto mb-8 leading-relaxed font-sans">

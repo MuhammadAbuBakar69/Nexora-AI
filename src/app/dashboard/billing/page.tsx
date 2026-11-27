@@ -177,7 +177,7 @@ export default function BillingPage() {
               <span>Mastercard 3D Secure Protection</span>
             </div>
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#FF5722] shrink-0" />
+              <Sparkles className="w-4 h-4 text-violet-primary shrink-0" />
               <span>Instant Token Quota Allocation</span>
             </div>
           </div>

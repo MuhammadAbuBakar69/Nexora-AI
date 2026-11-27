@@ -72,7 +72,7 @@ export function DesignerShowcase() {
         {/* CAD Blueprint Section Header */}
         <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
           <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             // SPATIAL ARCHITECTURE &amp; INTERACTIVE UI/UX ENGINE
           </span>
           <span>DWG: NX-SPATIAL-HUD // REVISION: 2026.4</span>
@@ -80,7 +80,7 @@ export function DesignerShowcase() {
 
         {/* Editorial Headline */}
         <div className="max-w-3xl mb-12">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30 inline-block mb-3">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-violet-primary bg-violet-50 px-2.5 py-1 border border-violet-200 inline-block mb-3">
             NEXT-GEN EXPERIENCE CANVAS
           </span>
           <GsapHeadline
@@ -114,7 +114,7 @@ export function DesignerShowcase() {
                       : "bg-[#F7F7F4] text-[#555562] border-[#E2E2DA] hover:text-[#111111]"
                   }`}
                 >
-                  <Cpu className="w-3.5 h-3.5 text-[#FF5722]" />
+                  <Cpu className="w-3.5 h-3.5 text-violet-primary" />
                   <span>01. Dynamic Failover Engine</span>
                 </button>
                 <button
@@ -170,7 +170,7 @@ export function DesignerShowcase() {
                     <div className="lg:col-span-8 p-6 sm:p-8 bg-[#F7F7F4] border border-[#E2E2DA] relative">
                       <div className="flex items-center justify-between text-[10px] text-[#777783] mb-6 pb-2 border-b border-[#E2E2DA]">
                         <span>CIRCUIT TOPOLOGY // MULTI-PROVIDER AUTOMATIC ROUTER</span>
-                        <span className="text-[#FF5722] font-bold">
+                        <span className="text-[#111111] font-bold">
                           {isSimulatingFailover ? "ROUTE REDIRECT ACTIVE" : "PRIMARY INGRESS"}
                         </span>
                       </div>
@@ -188,7 +188,7 @@ export function DesignerShowcase() {
                         <div className="flex flex-col items-center justify-center">
                           <div className="w-full h-0.5 bg-[#E2E2DA] relative overflow-hidden">
                             <motion.div
-                              className="absolute top-0 left-0 bottom-0 w-8 bg-gradient-to-r from-transparent via-[#FF5722] to-transparent"
+                              className="absolute top-0 left-0 bottom-0 w-8 bg-gradient-to-r from-transparent via-[#111111] to-transparent"
                               animate={{ x: ["-100%", "200%"] }}
                               transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
                             />
@@ -198,7 +198,7 @@ export function DesignerShowcase() {
 
                         {/* Node 2: Nexora Edge Gateway */}
                         <div className="p-4 bg-[#111111] text-white border border-[#111111] text-center shadow-sm relative">
-                          <span className="text-[9px] uppercase tracking-wider text-[#FFA726] block">INTERCEPTOR</span>
+                          <span className="text-[9px] uppercase tracking-wider text-violet-300 block">INTERCEPTOR</span>
                           <span className="text-xs font-bold block mt-1">Nexora Gateway</span>
                           <span className="text-[9px] text-[#AAAAAA] block mt-1">Token Quota &amp; Cache</span>
                           <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
@@ -295,13 +295,13 @@ export function DesignerShowcase() {
                         className="w-full bg-[#111111] hover:bg-black text-white font-bold uppercase tracking-wider text-xs h-11 border border-[#111111]"
                       >
                         {isSimulatingFailover ? (
-                          <span className="flex items-center gap-2 text-[#FFA726]">
+                          <span className="flex items-center gap-2 text-violet-300">
                             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                             Simulating Failover Event...
                           </span>
                         ) : (
                           <span className="flex items-center gap-2">
-                            <Zap className="w-3.5 h-3.5 text-[#FF5722]" />
+                            <Zap className="w-3.5 h-3.5 text-violet-400" />
                             Simulate Provider Latency Spike
                           </span>
                         )}
@@ -348,8 +348,8 @@ export function DesignerShowcase() {
                           </div>
 
                           <div className="p-4 bg-[#111111] text-white border border-[#111111]">
-                            <Cpu className="w-5 h-5 text-[#FFA726] mx-auto mb-2 animate-pulse" />
-                            <span className="text-[10px] uppercase font-bold text-[#FFA726] block">RAM ENCLAVE</span>
+                            <Cpu className="w-5 h-5 text-violet-300 mx-auto mb-2 animate-pulse" />
+                            <span className="text-[10px] uppercase font-bold text-violet-300 block">RAM ENCLAVE</span>
                             <span className="text-xs font-bold block mt-1">Volatile Processing</span>
                             <span className="text-[9px] text-[#AAAAAA] font-mono mt-1 block">Zero Disk Write</span>
                           </div>
@@ -439,7 +439,7 @@ export function DesignerShowcase() {
                     <div className="lg:col-span-8 p-6 sm:p-8 bg-[#F7F7F4] border border-[#E2E2DA] relative">
                       <div className="flex items-center justify-between text-[10px] text-[#777783] mb-6 pb-2 border-b border-[#E2E2DA]">
                         <span>GLOBAL ANYCAST RADAR // ACTIVE INGRESS MESH</span>
-                        <span className="text-[#FF5722] font-bold">32 EDGE PoPs CONFIGURED</span>
+                        <span className="text-[#111111] font-bold">32 EDGE PoPs CONFIGURED</span>
                       </div>
 
                       {/* 4 Interactive Global Hub Cards */}
@@ -458,13 +458,13 @@ export function DesignerShowcase() {
                               onClick={() => setActivePoP(pop.id)}
                               className={`p-4 text-left border relative transition-all ${
                                 isSelected
-                                  ? "bg-white border-[#FF5722] ring-1 ring-[#FF5722] shadow-sm"
+                                  ? "bg-white border-[#111111] ring-1 ring-[#111111] shadow-sm"
                                   : "bg-white/80 border-[#E2E2DA] hover:border-[#111111]"
                               }`}
                             >
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-[#111111] uppercase">{pop.city}</span>
-                                <span className="text-[10px] font-bold text-[#FF5722] font-mono">{pop.ping}</span>
+                                <span className="text-[10px] font-bold text-[#111111] font-mono">{pop.ping}</span>
                               </div>
                               <span className="text-[10px] text-[#777783] font-mono block mt-1">{pop.node}</span>
                               <div className="mt-3 pt-2 border-t border-[#EAEAE2] flex items-center justify-between text-[9px] text-[#555562]">
@@ -480,7 +480,7 @@ export function DesignerShowcase() {
                         <span className="text-[#555562]">
                           Selected Ingress: <strong className="text-[#111111] uppercase">{activePoP.toUpperCase()} ANYCAST ROUTER</strong>
                         </span>
-                        <span className="text-[#FF5722] font-bold">MEDIAN TTFT: 16.4 MS</span>
+                        <span className="text-emerald-700 font-bold">MEDIAN TTFT: 16.4 MS</span>
                       </div>
                     </div>
 

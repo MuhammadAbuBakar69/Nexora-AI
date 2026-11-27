@@ -99,11 +99,11 @@ export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
                 className={cn(
                   "flex items-center gap-2.5 px-3 py-2 text-xs transition-colors",
                   isActive
-                    ? "bg-[#222230] text-white font-bold border-l-2 border-[#FF5722]"
+                    ? "bg-[#222230] text-white font-bold border-l-2 border-white"
                     : "text-[#888899] hover:text-white hover:bg-[#181822]"
                 )}
               >
-                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-[#FFA726]" : "text-[#666677]")} />
+                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-white" : "text-[#666677]")} />
                 <span>{item.name}</span>
               </Link>
             );
@@ -118,7 +118,7 @@ export function AdminSidebar({ onCloseMobile }: AdminSidebarProps) {
           className="flex items-center justify-between p-2 bg-[#1A1A24] hover:bg-[#242432] border border-[#2E2E3E] transition-colors text-xs text-white"
         >
           <div className="flex items-center gap-2">
-            <ArrowLeft className="w-3.5 h-3.5 text-[#FFA726]" />
+            <ArrowLeft className="w-3.5 h-3.5 text-[#888899]" />
             <span className="font-bold">Customer Portal</span>
           </div>
           <span className="text-[9px] text-[#777788] uppercase">Exit Admin</span>

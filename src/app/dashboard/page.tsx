@@ -151,14 +151,14 @@ export default function CustomerDashboardOverview() {
         {/* Top Blueprint Status Banner */}
         <div className="p-4 bg-white border border-[#E2E2DA] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#FF5722]/10 border border-[#FF5722]/30 flex items-center justify-center text-[#FF5722] shrink-0">
+            <div className="w-8 h-8 bg-[#111111]/5 border border-[#111111]/20 flex items-center justify-center text-[#111111] shrink-0">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <p className="text-xs font-bold text-[#111111] uppercase tracking-wide">
-                  Active Workload: <span className="text-[#FF5722] font-bold">{currentPlan}</span>
+                  Active Workload: <span className="text-[#111111] font-bold">{currentPlan}</span>
                 </p>
               </div>
               <p className="text-[11px] font-mono text-[#777783] mt-0.5">
@@ -262,7 +262,7 @@ export default function CustomerDashboardOverview() {
                     API keys authorized to route inference requests via Nexora Gateway
                   </p>
                 </div>
-                <Button href="/dashboard/api-keys" variant="ghost" size="sm" className="text-xs text-[#FF5722] font-bold">
+                <Button href="/dashboard/api-keys" variant="ghost" size="sm" className="text-xs text-[#111111] font-bold hover:underline">
                   View All ({keysList.length})
                 </Button>
               </div>

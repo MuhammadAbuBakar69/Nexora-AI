@@ -19,8 +19,8 @@ interface AnimatedGradientCardProps {
  * Features:
  * - Continuous flowing animated sunset gradient border (via multi-stop linear/conic mesh)
  * - Interactive cursor-follow sunset spotlight with spring coordinates
- * - Ambient warm coral (#FF5722) to amber (#FFA726) glowing mesh aura on hover
- * - CAD architectural corner crosshairs (+) that glow orange on hover
+ * - Ambient subtle indigo to dark mesh glow on hover
+ * - CAD architectural corner crosshairs (+) that highlight on hover
  * - Smooth GPU-accelerated lift & drop shadow
  */
 export function AnimatedGradientCard({
@@ -69,8 +69,8 @@ export function AnimatedGradientCard({
       transition={{ type: "spring", stiffness: 350, damping: 26 }}
       className={`relative group rounded-none select-none transition-shadow duration-500 ${
         isFeatured
-          ? "shadow-[0_12px_36px_-10px_rgba(255,87,34,0.22)]"
-          : "hover:shadow-[0_12px_32px_-12px_rgba(255,87,34,0.18)]"
+          ? "shadow-[0_12px_36px_-10px_rgba(17,17,17,0.14)]"
+          : "hover:shadow-[0_12px_32px_-12px_rgba(17,17,17,0.10)]"
       } ${containerClassName}`}
     >
       {/* 1. CONTINUOUS ANIMATED GRADIENT BORDER FRAME */}
@@ -82,8 +82,8 @@ export function AnimatedGradientCard({
         }`}
         style={{
           background: isFeatured
-            ? "linear-gradient(135deg, #FF5722 0%, #FFA726 50%, #FF7043 100%)"
-            : "linear-gradient(135deg, rgba(255,87,34,0.8) 0%, rgba(255,167,38,0.6) 50%, rgba(226,226,218,0.9) 100%)",
+            ? "linear-gradient(135deg, #111111 0%, #4F46E5 50%, #7C3AED 100%)"
+            : "linear-gradient(135deg, #111111 0%, #6366F1 50%, #E2E2DA 100%)",
           backgroundSize: "200% 200%",
           animation: "cardGradientFlow 6s ease infinite",
         }}
@@ -93,11 +93,11 @@ export function AnimatedGradientCard({
       <div
         className={`absolute -inset-2 rounded-none filter blur-xl transition-opacity duration-700 pointer-events-none ${
           isFeatured
-            ? "opacity-30 group-hover:opacity-50"
-            : "opacity-0 group-hover:opacity-35"
+            ? "opacity-20 group-hover:opacity-35"
+            : "opacity-0 group-hover:opacity-20"
         }`}
         style={{
-          background: "radial-gradient(circle at 50% 50%, rgba(255,87,34,0.45) 0%, rgba(255,167,38,0.25) 50%, transparent 80%)",
+          background: "radial-gradient(circle at 50% 50%, rgba(79,70,229,0.18) 0%, rgba(124,58,237,0.08) 50%, transparent 80%)",
         }}
       />
 
@@ -107,20 +107,12 @@ export function AnimatedGradientCard({
           isFeatured ? "bg-white" : "group-hover:border-transparent"
         } ${className}`}
       >
-        {/* Dynamic Cursor-Tracking Sunset Spotlight */}
+        {/* Dynamic Cursor-Tracking Ambient Spotlight */}
         <div
           className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-300"
           style={{
             opacity: spotlightOpacity,
-            background: `radial-gradient(380px circle at ${mousePos.x}% ${mousePos.y}%, rgba(255, 87, 34, 0.45) 0%, rgba(255, 167, 38, 0.22) 40%, transparent 75%)`,
-          }}
-        />
-
-        {/* Subtle Internal Animated Floating Mesh Blob */}
-        <div
-          className="pointer-events-none absolute -bottom-16 -right-16 w-44 h-44 rounded-full filter blur-2xl transition-opacity duration-700 opacity-20 group-hover:opacity-40"
-          style={{
-            background: "radial-gradient(circle, rgba(255,167,38,0.35) 0%, rgba(255,87,34,0.15) 60%, transparent 80%)",
+            background: `radial-gradient(380px circle at ${mousePos.x}% ${mousePos.y}%, rgba(99, 102, 241, 0.12) 0%, rgba(124, 58, 237, 0.05) 40%, transparent 75%)`,
           }}
         />
 
@@ -134,16 +126,16 @@ export function AnimatedGradientCard({
         {/* 4 CAD Precision Corner Crosshairs */}
         {showCrosshairs && (
           <>
-            <span className="absolute top-2 left-2.5 font-mono text-xs text-[#888892] group-hover:text-[#FF5722] transition-colors duration-300 select-none z-30">
+            <span className="absolute top-2 left-2.5 font-mono text-xs text-[#888892] group-hover:text-[#111111] transition-colors duration-300 select-none z-30">
               +
             </span>
-            <span className="absolute top-2 right-2.5 font-mono text-xs text-[#888892] group-hover:text-[#FF5722] transition-colors duration-300 select-none z-30">
+            <span className="absolute top-2 right-2.5 font-mono text-xs text-[#888892] group-hover:text-[#111111] transition-colors duration-300 select-none z-30">
               +
             </span>
-            <span className="absolute bottom-2 left-2.5 font-mono text-xs text-[#888892] group-hover:text-[#FF5722] transition-colors duration-300 select-none z-30">
+            <span className="absolute bottom-2 left-2.5 font-mono text-xs text-[#888892] group-hover:text-[#111111] transition-colors duration-300 select-none z-30">
               +
             </span>
-            <span className="absolute bottom-2 right-2.5 font-mono text-xs text-[#888892] group-hover:text-[#FF5722] transition-colors duration-300 select-none z-30">
+            <span className="absolute bottom-2 right-2.5 font-mono text-xs text-[#888892] group-hover:text-[#111111] transition-colors duration-300 select-none z-30">
               +
             </span>
           </>

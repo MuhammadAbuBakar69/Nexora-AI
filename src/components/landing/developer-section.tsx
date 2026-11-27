@@ -82,14 +82,14 @@ print(response.choices[0].message.content)`,
         {/* CAD Blueprint Header */}
         <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
           <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             // DEVELOPER INTEGRATION SPECIFICATION: DROP-IN SDK TERMINAL
           </span>
           <span>PROTOCOL: RFC-8259 JSON OVER HTTP/2 &amp; HTTP/3</span>
         </div>
 
         <div className="max-w-3xl mb-12">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30 inline-block mb-3">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-violet-primary bg-violet-50 px-2.5 py-1 border border-violet-200 inline-block mb-3">
             RAPID INTEGRATION
           </span>
           <GsapHeadline
@@ -185,7 +185,7 @@ print(response.choices[0].message.content)`,
             </div>
             <Link
               href="/developers"
-              className="text-[#FF5722] hover:text-[#FFA726] flex items-center gap-1 font-bold transition-colors"
+              className="text-violet-primary hover:text-violet-700 flex items-center gap-1 font-bold transition-colors"
             >
               <span>Explore SDK Reference</span>
               <ArrowRight className="w-3 h-3" />

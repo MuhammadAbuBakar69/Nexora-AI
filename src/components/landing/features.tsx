@@ -81,7 +81,7 @@ export function Features() {
         </div>
 
         <div className="max-w-3xl mb-12">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-violet-primary bg-violet-50 px-2.5 py-1 border border-violet-200">
             ENTERPRISE CAPABILITIES
           </span>
           <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-[#111111] font-mono mt-4 mb-3">
@@ -92,7 +92,7 @@ export function Features() {
           </p>
         </div>
 
-        {/* 6 CAD Grid Compartments with Animated Sunset Gradients */}
+        {/* 6 CAD Grid Compartments */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feat, idx) => {
             const Icon = feat.icon;
@@ -104,7 +104,7 @@ export function Features() {
               >
                 <div>
                   <div className="flex items-center justify-between pb-3 border-b border-[#E2E2DA] mb-4">
-                    <span className="text-[10px] text-[#FF5722] font-bold">
+                    <span className="text-[10px] text-violet-primary font-bold">
                       // {feat.num}
                     </span>
                     <span className="text-[9px] uppercase px-1.5 py-0.2 bg-[#F7F7F4] border border-[#E2E2DA] text-[#555562]">
@@ -113,10 +113,10 @@ export function Features() {
                   </div>
 
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 bg-[#F7F7F4] border border-[#E2E2DA] flex items-center justify-center text-[#111111] group-hover:text-[#FF5722] group-hover:border-[#FF5722]/40 transition-colors shrink-0">
+                    <div className="w-8 h-8 bg-[#F7F7F4] border border-[#E2E2DA] flex items-center justify-center text-[#111111] group-hover:text-violet-primary group-hover:border-violet-300 transition-colors shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
-                    <h3 className="text-xs font-bold text-[#111111] group-hover:text-[#FF5722] uppercase tracking-tight transition-colors">
+                    <h3 className="text-xs font-bold text-[#111111] group-hover:text-black uppercase tracking-tight transition-colors">
                       {feat.title}
                     </h3>
                   </div>

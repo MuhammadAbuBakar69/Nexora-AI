@@ -250,7 +250,7 @@ p, .prose p {
 }
 
 /* ============================================================================
-   ANIMATED SUNSET CORAL & AMBER MESH GRADIENT SYSTEM
+   ARCHITECTURAL MONOCHROME & DEEP INDIGO UTILITY SYSTEM
    ============================================================================ */
 
 @keyframes meshShift1 {
@@ -307,27 +307,27 @@ p, .prose p {
   transform: translate3d(0, 0, 0);
 }
 
-/* Sunset Amber & Coral Utilities */
+/* Precision Architectural Accent Utilities (Refined Monochrome & Deep Violet) */
 .bg-gradient-sunset {
-  background: linear-gradient(135deg, #C22B2B 0%, #FF5722 45%, #FFA726 100%);
+  background: linear-gradient(135deg, #111111 0%, #4F46E5 50%, #7C3AED 100%);
 }
 
 .bg-gradient-sunset-soft {
-  background: linear-gradient(135deg, rgba(194, 43, 43, 0.08) 0%, rgba(255, 87, 34, 0.12) 50%, rgba(255, 167, 38, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.06) 0%, rgba(124, 58, 237, 0.08) 50%, rgba(17, 17, 17, 0.04) 100%);
 }
 
 .text-gradient-sunset {
-  background: linear-gradient(135deg, #C22B2B 0%, #FF5722 50%, #FFA726 100%);
+  background: linear-gradient(135deg, #111111 0%, #4F46E5 60%, #7C3AED 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .glow-sunset {
-  box-shadow: 0 10px 30px -10px rgba(255, 87, 34, 0.35);
+  box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.15);
 }
 
 .glow-sunset-lg {
-  box-shadow: 0 20px 60px -15px rgba(255, 87, 34, 0.4);
+  box-shadow: 0 20px 60px -15px rgba(79, 70, 229, 0.2);
 }
 
 @keyframes cardGradientFlow {

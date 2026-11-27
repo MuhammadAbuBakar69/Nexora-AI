@@ -168,7 +168,7 @@ export function SadaPayCheckoutModal({
                 <div className="text-right">
                   <span className="text-[10px] uppercase text-[#777783] block">TOTAL AMOUNT PAYABLE</span>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-xl font-extrabold text-gradient-sunset font-mono">
+                    <span className="text-xl font-extrabold text-[#111111] font-mono">
                       ₨{amountPkr.toLocaleString()} PKR
                     </span>
                     {amountUsd && (
@@ -203,7 +203,7 @@ export function SadaPayCheckoutModal({
                       : "text-[#777783] hover:text-[#111111]"
                   }`}
                 >
-                  <Building className="w-3.5 h-3.5 text-[#FF5722]" />
+                  <Building className="w-3.5 h-3.5 text-[#111111]" />
                   <span>SadaPay IBAN / Raast Transfer</span>
                 </button>
               </div>
@@ -396,7 +396,7 @@ export function SadaPayCheckoutModal({
                     <Button
                       type="submit"
                       disabled={isProcessing}
-                      className="w-full h-11 text-xs font-bold uppercase tracking-wider bg-[#FF5722] hover:bg-[#E64A19] text-white shadow-md border-transparent"
+                      className="w-full h-11 text-xs font-bold uppercase tracking-wider bg-[#111111] hover:bg-black text-white shadow-md border-transparent"
                     >
                       {isProcessing ? (
                         <span>Validating Wire Transfer...</span>

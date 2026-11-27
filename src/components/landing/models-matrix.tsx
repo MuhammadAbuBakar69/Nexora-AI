@@ -114,7 +114,7 @@ export function ModelsMatrixSection() {
         {/* CAD Blueprint Header */}
         <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
           <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             // ENDPOINT REGISTRY: MULTI-PROVIDER FRONTIER MODEL MATRIX
           </span>
           <span>ROUTING: ZERO-DATA RETENTION ANYCAST</span>
@@ -122,7 +122,7 @@ export function ModelsMatrixSection() {
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div className="max-w-2xl">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30 inline-block mb-3">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-violet-primary bg-violet-50 px-2.5 py-1 border border-violet-200 inline-block mb-3">
               UNIFIED INFERENCE CATALOG
             </span>
             <GsapHeadline
@@ -153,7 +153,7 @@ export function ModelsMatrixSection() {
           </div>
         </div>
 
-        {/* CAD Blueprint Model Cards Grid with Animated Sunset Gradients */}
+        {/* CAD Blueprint Model Cards Grid with Animated Gradients */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((m) => (
             <AnimatedGradientCard
@@ -166,12 +166,12 @@ export function ModelsMatrixSection() {
                   <span className="text-[10px] uppercase bg-[#F7F7F4] border border-[#E2E2DA] px-2 py-0.5 text-[#555562] font-bold">
                     {m.provider}
                   </span>
-                  <span className="text-[10px] text-[#FF5722] font-bold bg-[#FF5722]/10 px-2 py-0.5 border border-[#FF5722]/30">
+                  <span className="text-[10px] text-violet-primary font-bold bg-violet-50 px-2 py-0.5 border border-violet-200">
                     {m.badge}
                   </span>
                 </div>
 
-                <h3 className="text-sm font-bold text-[#111111] uppercase tracking-tight group-hover:text-[#FF5722] transition-colors">
+                <h3 className="text-sm font-bold text-[#111111] uppercase tracking-tight group-hover:text-black transition-colors">
                   {m.name}
                 </h3>
                 <div className="flex items-center gap-2 text-[11px] text-[#777783] mt-1 mb-3">

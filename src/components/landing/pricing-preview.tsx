@@ -107,21 +107,19 @@ export function PricingPreview() {
           <div className="inline-flex items-center p-1 bg-white border border-[#E2E2DA] mt-6 font-mono text-xs">
             <button
               onClick={() => setActiveTab("calculator")}
-              className={`px-4 py-1.5 font-bold uppercase transition-all ${
-                activeTab === "calculator"
-                  ? "bg-[#111111] text-white"
-                  : "text-[#555562] hover:text-[#111111]"
-              }`}
+              className={`px-4 py-1.5 font-bold uppercase transition-all ${activeTab === "calculator"
+                ? "bg-[#111111] text-white"
+                : "text-[#555562] hover:text-[#111111]"
+                }`}
             >
               Interactive Quota Calculator
             </button>
             <button
               onClick={() => setActiveTab("tiers")}
-              className={`px-4 py-1.5 font-bold uppercase transition-all ${
-                activeTab === "tiers"
-                  ? "bg-[#111111] text-white"
-                  : "text-[#555562] hover:text-[#111111]"
-              }`}
+              className={`px-4 py-1.5 font-bold uppercase transition-all ${activeTab === "tiers"
+                ? "bg-[#111111] text-white"
+                : "text-[#555562] hover:text-[#111111]"
+                }`}
             >
               Standard Tier Matrix
             </button>
@@ -154,11 +152,10 @@ export function PricingPreview() {
                       {plan.name}
                     </h3>
                     <span
-                      className={`text-[10px] font-mono uppercase px-2 py-0.5 border font-semibold ${
-                        plan.isPopular
-                          ? "bg-gradient-sunset text-white border-transparent shadow-xs"
-                          : "bg-[#F7F7F4] border-[#E2E2DA] text-[#555562]"
-                      }`}
+                      className={`text-[10px] font-mono uppercase px-2 py-0.5 border font-semibold ${plan.isPopular
+                        ? "bg-[#111111] text-white border-transparent shadow-xs"
+                        : "bg-[#F7F7F4] border-[#E2E2DA] text-[#555562]"
+                        }`}
                     >
                       {plan.badge}
                     </span>
@@ -190,7 +187,7 @@ export function PricingPreview() {
                     </span>
                     {plan.features.map((feature, fIdx) => (
                       <div key={fIdx} className="flex items-start gap-2">
-                        <Check className="w-3.5 h-3.5 text-[#FF5722] shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-violet-primary shrink-0 mt-0.5" />
                         <span className="text-[11px]">{feature}</span>
                       </div>
                     ))}

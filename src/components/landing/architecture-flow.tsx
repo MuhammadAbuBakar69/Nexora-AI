@@ -89,14 +89,14 @@ upstream_skipped: true`,
         {/* CAD Blueprint Header */}
         <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
           <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             // PROTOCOL ARCHITECTURE: REQUEST LIFECYCLE &amp; ROUTING PIPELINE
           </span>
           <span>DWG: ARCH-FLOW-01 • SCALE: 1:1</span>
         </div>
 
         <div className="max-w-3xl mb-12">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30 inline-block mb-3">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-violet-primary bg-violet-50 px-2.5 py-1 border border-violet-200 inline-block mb-3">
             INGRESS TO COMPLETION
           </span>
           <GsapHeadline
@@ -122,7 +122,7 @@ upstream_skipped: true`,
                 transition={{ type: "spring", stiffness: 350, damping: 25 }}
                 className={`p-5 text-left transition-all border relative flex flex-col justify-between ${
                   isSelected
-                    ? "bg-white border-[#FF5722] ring-1 ring-[#FF5722] shadow-sm"
+                    ? "bg-white border-[#111111] ring-1 ring-[#111111] shadow-sm"
                     : "bg-[#F7F7F4]/90 hover:bg-white border-[#E2E2DA] hover:border-[#111111]"
                 }`}
               >
@@ -131,10 +131,10 @@ upstream_skipped: true`,
 
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className={`font-mono text-xs font-bold ${isSelected ? "text-[#FF5722]" : "text-[#777783]"}`}>
+                    <span className={`font-mono text-xs font-bold ${isSelected ? "text-violet-primary" : "text-[#777783]"}`}>
                       PHASE // {s.num}
                     </span>
-                    <Icon className={`w-4 h-4 ${isSelected ? "text-[#FF5722]" : "text-[#111111]"}`} />
+                    <Icon className={`w-4 h-4 ${isSelected ? "text-violet-primary" : "text-[#111111]"}`} />
                   </div>
                   <h3 className="text-xs font-mono font-bold uppercase text-[#111111] mb-1.5">
                     {s.title}
@@ -171,7 +171,7 @@ upstream_skipped: true`,
             >
               <div className="lg:col-span-6 space-y-4 font-mono">
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 text-[10px] font-bold uppercase bg-[#FF5722]/10 text-[#FF5722] border border-[#FF5722]/30">
+                  <span className="px-2 py-0.5 text-[10px] font-bold uppercase bg-violet-50 text-violet-primary border border-violet-200">
                     PHASE {current.num} SPECIFICATION
                   </span>
                   <span className="text-[11px] text-[#777783]">•</span>
@@ -199,7 +199,7 @@ upstream_skipped: true`,
               <div className="lg:col-span-6 flex flex-col justify-between">
                 <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E2E2DA] text-[11px] font-mono text-[#777783]">
                   <span>PAYLOAD PROTOCOL VERIFICATION</span>
-                  <span className="text-[#FF5722] font-bold">RFC-8259 JSON</span>
+                  <span className="text-violet-primary font-bold">RFC-8259 JSON</span>
                 </div>
 
                 <pre className="p-4 bg-[#111111] text-[#EAEAEA] font-mono text-xs overflow-x-auto leading-relaxed border border-[#333333] h-full flex items-center">

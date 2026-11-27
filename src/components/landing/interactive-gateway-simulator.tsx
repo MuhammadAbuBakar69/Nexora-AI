@@ -15,7 +15,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AnimatedSunsetMesh } from "@/components/ui/animated-sunset-mesh";
 import { GsapHeadline } from "@/components/animations/gsap-animator";
 
 export function InteractiveGatewaySimulator() {
@@ -76,21 +75,18 @@ export function InteractiveGatewaySimulator() {
 
   return (
     <section id="sandbox" className="py-20 bg-[#F6F6F3] border-b border-[#E2E2DA] select-none font-sans relative overflow-hidden">
-      {/* Subtle Ambient Sunset Glow */}
-      <AnimatedSunsetMesh intensity="subtle" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* CAD Blueprint Header */}
         <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">
           <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             // RUNTIME BENCHMARK: INTERACTIVE GATEWAY SIMULATOR TERMINAL
           </span>
           <span>EMULATION: PROXY INTERCEPTOR</span>
         </div>
 
         <div className="max-w-3xl mb-12">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 border border-[#FF5722]/30 inline-block mb-3">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-violet-primary bg-violet-50 px-2.5 py-1 border border-violet-200 inline-block mb-3">
             INTERACTIVE RUNTIME
           </span>
           <GsapHeadline
@@ -137,7 +133,7 @@ export function InteractiveGatewaySimulator() {
               <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
-                className="w-full bg-[#181824] border border-[#2B2B3D] px-3 py-2 text-xs text-white font-bold focus:outline-none focus:border-[#FF5722]"
+                className="w-full bg-[#181824] border border-[#2B2B3D] px-3 py-2 text-xs text-white font-bold focus:outline-none focus:border-[#111111]"
               >
                 <option value="google/gemini-2.5-flash">google/gemini-2.5-flash (Fastest LLM)</option>
                 <option value="google/veo-video-2">google/veo-video-2 (Generative Video)</option>
@@ -174,7 +170,7 @@ export function InteractiveGatewaySimulator() {
               <Button
                 onClick={() => handleExecute(false)}
                 disabled={status === "loading"}
-                className="w-full bg-[#FF5722] hover:bg-[#E64A19] text-white font-bold uppercase text-xs h-9 px-4 border border-[#FF5722] shadow-sm transition-all"
+                className="w-full bg-[#111111] hover:bg-neutral-800 text-white font-bold uppercase text-xs h-9 px-4 border border-[#111111] shadow-sm transition-all"
               >
                 {status === "loading" ? (
                   <RotateCw className="w-3.5 h-3.5 animate-spin mr-1.5" />
@@ -202,7 +198,7 @@ export function InteractiveGatewaySimulator() {
                 </button>
               </div>
               <div className="p-4 bg-[#14141E] border border-[#222232] text-xs leading-relaxed text-[#D0D0E0] min-h-[110px]">
-                <p className="font-mono text-[#FFA726]">{current.prompt}</p>
+                <p className="font-mono text-emerald-300">{current.prompt}</p>
               </div>
             </div>
 
@@ -223,7 +219,7 @@ export function InteractiveGatewaySimulator() {
                   <span className="text-[#666677]">Standing by. Click &quot;Run Payload&quot; to test real-time proxying.</span>
                 )}
                 {status === "loading" && (
-                  <span className="text-[#FFA726] flex items-center gap-2">
+                  <span className="text-emerald-400 flex items-center gap-2">
                     <RotateCw className="w-3.5 h-3.5 animate-spin" />
                     Proxying request to {selectedModel}...
                   </span>
