@@ -1,10 +1,8 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import { ShieldCheck, Cpu, Activity, Zap } from "lucide-react";
 import { GsapCounter, GsapReveal } from "@/components/animations/gsap-animator";
-import { AnimatedSunsetMesh } from "@/components/ui/animated-sunset-mesh";
 import { AnimatedGradientCard } from "@/components/ui/animated-gradient-card";
 
 export function MetricsSection() {
@@ -50,9 +48,6 @@ export function MetricsSection() {
 
   return (
     <section className="py-20 border-b border-[#E2E2DA] bg-[#F6F6F3] select-none font-sans relative overflow-hidden">
-      {/* Subtle Ambient Sunset Glow under the metrics */}
-      <AnimatedSunsetMesh intensity="ambient" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* CAD Blueprint Callout Header */}
         <div className="flex flex-wrap items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase mb-8 pb-2 border-b border-[#E2E2DA]">

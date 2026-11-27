@@ -173,13 +173,12 @@ export function GsapReveal({
 }
 
 /**
- * Interactive 3D Perspective Tilt Card with Animated Sunset Gradient Border & Spotlight
- * Tilts with mouse coordinates and casts an animated warm sunset gradient sheen & border.
+ * Interactive 3D Perspective Tilt Card with Clean Architectural Hover Effect
  */
 export function InteractiveTiltCard({
   children,
   className = "",
-  maxTilt = 8,
+  maxTilt = 6,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -194,8 +193,6 @@ export function InteractiveTiltCard({
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [maxTilt, -maxTilt]), springConfig);
   const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-maxTilt, maxTilt]), springConfig);
 
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50, opacity: 0 });
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -205,23 +202,13 @@ export function InteractiveTiltCard({
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-
-    x.set(xPct);
-    y.set(yPct);
-
-    setMousePos({
-      x: (mouseX / width) * 100,
-      y: (mouseY / height) * 100,
-      opacity: 0.22,
-    });
+    x.set(mouseX / width - 0.5);
+    y.set(mouseY / height - 0.5);
   };
 
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
-    setMousePos((prev) => ({ ...prev, opacity: 0 }));
   };
 
   return (
@@ -234,42 +221,9 @@ export function InteractiveTiltCard({
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className={`relative will-change-transform group transition-shadow duration-500 hover:shadow-[0_20px_50px_-15px_rgba(17,17,17,0.12)] ${className}`}
+      className={`relative will-change-transform group bg-white border border-[#E2E2DA] hover:border-[#111111] hover:shadow-lg transition-all duration-300 ${className}`}
     >
-      {/* 1. Continuous Animated Flowing Architectural Gradient Border */}
-      <div
-        className="absolute -inset-[1.5px] rounded-none opacity-45 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{
-          background: "linear-gradient(135deg, #111111 0%, #4F46E5 50%, #7C3AED 100%)",
-          backgroundSize: "200% 200%",
-          animation: "cardGradientFlow 5s ease infinite",
-        }}
-      />
-
-      {/* 2. Ambient Radiant Aura behind card on hover */}
-      <div
-        className="absolute -inset-4 rounded-none opacity-0 group-hover:opacity-25 filter blur-2xl transition-opacity duration-700 pointer-events-none"
-        style={{
-          background: "radial-gradient(circle at 50% 50%, rgba(79,70,229,0.15) 0%, rgba(124,58,237,0.06) 60%, transparent 80%)",
-        }}
-      />
-
-      {/* 3. Internal Card Body with Dynamic Cursor Spotlight */}
-      <div className="relative z-10 w-full h-full bg-[#FFFFFF]/98 backdrop-blur-xs overflow-hidden">
-        {/* Dynamic Cursor Spotlight */}
-        <div
-          className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-500 rounded-none mix-blend-multiply"
-          style={{
-            opacity: mousePos.opacity,
-            background: `radial-gradient(450px circle at ${mousePos.x}% ${mousePos.y}%, rgba(99, 102, 241, 0.12), rgba(124, 58, 237, 0.05), transparent 70%)`,
-          }}
-        />
-
-        {/* Specular Shimmer Sweep on Hover */}
-        <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-          <div className="w-1/2 h-[200%] absolute -top-1/2 -left-full bg-gradient-to-r from-transparent via-white/40 to-transparent transform rotate-25 transition-transform duration-1000 ease-out group-hover:translate-x-[400%]" />
-        </div>
-
+      <div className="relative z-10 w-full h-full">
         {children}
       </div>
     </motion.div>
