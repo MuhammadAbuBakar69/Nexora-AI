@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, Check, AlertTriangle, ShieldCheck, Key } from "lucide-react";
+import { Copy, Check, AlertTriangle, Key } from "lucide-react";
 import { ApiKey } from "@/types";
 
 interface ApiKeyModalProps {
@@ -25,33 +25,41 @@ export function ApiKeyModal({ isOpen, onClose, onKeyCreated }: ApiKeyModalProps)
   const [generatedSecret, setGeneratedSecret] = useState("");
   const [copied, setCopied] = useState(false);
   const [hasConfirmedSaved, setHasConfirmedSaved] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleGenerate = (e: React.FormEvent) => {
+  const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name) return;
+    if (!name.trim()) return;
 
-    // Generate secure random key
-    const randomHex = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
-    const secret = `nx_live_${randomHex}98b4fae01`;
-    const prefix = `nx_live_${randomHex.substring(0, 4)}`;
-    const masked = `${prefix}••••••••••••••••01`;
+    setError("");
+    setIsSubmitting(true);
 
-    const newKeyObject: ApiKey = {
-      id: `key_${Date.now()}`,
-      name: name,
-      prefix: prefix,
-      maskedKey: masked,
-      permissions: selectedPermissions as any,
-      createdAt: new Date().toISOString(),
-      lastUsedAt: null,
-      status: "active",
-      rateLimitRpm: parseInt(rateLimit, 10) || 1000,
-      totalRequests: 0,
-    };
+    try {
+      const response = await fetch("/api/keys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          rateLimitRpm: parseInt(rateLimit, 10) || 1000,
+          permissions: selectedPermissions,
+        }),
+      });
 
-    setGeneratedSecret(secret);
-    setStep("reveal");
-    onKeyCreated(newKeyObject);
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.key) {
+        setError(payload.error || "Failed to generate API key.");
+        return;
+      }
+
+      setGeneratedSecret(payload.key.fullSecret);
+      setStep("reveal");
+      onKeyCreated(payload.key);
+    } catch {
+      setError("Network error while creating API key.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCopy = () => {
@@ -65,6 +73,7 @@ export function ApiKeyModal({ isOpen, onClose, onKeyCreated }: ApiKeyModalProps)
     setName("");
     setGeneratedSecret("");
     setHasConfirmedSaved(false);
+    setError("");
     onClose();
   };
 
@@ -89,6 +98,12 @@ export function ApiKeyModal({ isOpen, onClose, onKeyCreated }: ApiKeyModalProps)
     >
       {step === "configure" ? (
         <form onSubmit={handleGenerate} className="space-y-4 font-mono">
+          {error && (
+            <div className="p-3 bg-rose-50 border border-rose-200 text-xs text-rose-700">
+              {error}
+            </div>
+          )}
+
           <Input
             id="keyName"
             label="Credential Identifier Name"
@@ -110,6 +125,7 @@ export function ApiKeyModal({ isOpen, onClose, onKeyCreated }: ApiKeyModalProps)
             >
               <option value="300">300 Requests / min (Testing)</option>
               <option value="600">600 Requests / min (Standard)</option>
+              <option value="1000">1,000 Requests / min (Production)</option>
               <option value="1500">1,500 Requests / min (High throughput)</option>
               <option value="3000">3,000 Requests / min (Enterprise)</option>
             </select>
@@ -146,7 +162,7 @@ export function ApiKeyModal({ isOpen, onClose, onKeyCreated }: ApiKeyModalProps)
             <Button type="button" variant="outline" size="sm" onClick={handleFinish}>
               Cancel
             </Button>
-            <Button type="submit" size="sm" className="gap-1.5 font-bold uppercase tracking-wider">
+            <Button type="submit" size="sm" isLoading={isSubmitting} className="gap-1.5 font-bold uppercase tracking-wider">
               <Key className="w-3.5 h-3.5" />
               Generate API Secret
             </Button>

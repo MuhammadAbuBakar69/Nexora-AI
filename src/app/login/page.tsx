@@ -14,7 +14,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -158,16 +157,8 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-1">
-              <label className="flex items-center gap-2 text-xs text-secondary cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-border text-violet-primary focus:ring-violet-primary/20"
-                />
-                Remember me for 30 days
-              </label>
+            <div className="flex items-center justify-between pt-1 text-[11px] text-secondary">
+              <span>Sessions are protected by encrypted HTTP-only cookies.</span>
             </div>
 
             <Button

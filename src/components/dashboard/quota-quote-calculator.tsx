@@ -340,16 +340,14 @@ export function QuotaQuoteCalculator({ onQuoteGenerated, onRequestQuota }: Quota
         </div>
       </div>
 
-      {/* SadaPay Interactive Checkout Modal */}
+      {/* SadaPay / Safepay / PayFast Interactive Checkout Modal */}
       <SadaPayCheckoutModal
         isOpen={isSadaPayOpen}
         onClose={() => setIsSadaPayOpen(false)}
         planName={`${recommendedPlan.toUpperCase()} Tier (${tokenMillions}M Tokens)`}
         amountPkr={totalPkr}
         amountUsd={totalUsd}
-        onPaymentSuccess={() => {
-          handleRequestAllocation();
-        }}
+        tokensAllocated={tokenMillions * 1_000_000}
       />
     </div>
   );

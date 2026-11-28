@@ -32,6 +32,7 @@ export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
   const [workspaceName, setWorkspaceName] = useState<string>("Production Workspace");
   const [planName, setPlanName] = useState<string>("Commercial Gateway");
   const [initials, setInitials] = useState<string>("NX");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
     async function loadUserData() {
@@ -44,12 +45,21 @@ export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
           setInitials(namePart.slice(0, 2).toUpperCase());
           setWorkspaceName(`${namePart.charAt(0).toUpperCase() + namePart.slice(1)}'s Workspace`);
 
-          // Attempt to read real profile & organization if tables exist
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("organization_id, full_name")
-            .eq("id", user.id)
-            .maybeSingle();
+          const [{ data: profile }, { data: adminRole }] = await Promise.all([
+            supabase
+              .from("profiles")
+              .select("organization_id, full_name")
+              .eq("id", user.id)
+              .maybeSingle(),
+            supabase
+              .from("user_roles")
+              .select("role")
+              .eq("user_id", user.id)
+              .eq("role", "admin")
+              .maybeSingle(),
+          ]);
+
+          setIsAdmin(Boolean(adminRole));
 
           if (profile?.full_name) {
             const parts = profile.full_name.trim().split(" ");
@@ -66,7 +76,7 @@ export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
             if (org?.plan) setPlanName(`${org.plan.charAt(0).toUpperCase() + org.plan.slice(1)} Plan`);
           }
         }
-      } catch (err) {
+      } catch {
         // Fallback safely to production defaults
       }
     }
@@ -140,20 +150,22 @@ export function DashboardSidebar({ onCloseMobile }: DashboardSidebarProps) {
         </nav>
       </div>
 
-      {/* Bottom Section: Admin Switch & Real User Account */}
+      {/* Bottom Section: Admin Switch (admins only) & Real User Account */}
       <div className="p-3 border-t border-[#E2E2DA] space-y-2 bg-[#F2F2EE]/50">
-        <Link
-          href="/admin"
-          className="flex items-center justify-between p-2.5 bg-white hover:bg-[#111111] hover:text-white border border-[#E2E2DA] transition-all text-xs text-[#111111] group"
-        >
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#111111] group-hover:text-white" />
-            <span className="font-bold text-[11px] uppercase tracking-wider">Admin Console</span>
-          </div>
-          <span className="text-[10px] font-mono font-bold text-[#111111] group-hover:text-white">
-            Switch →
-          </span>
-        </Link>
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className="flex items-center justify-between p-2.5 bg-white hover:bg-[#111111] hover:text-white border border-[#E2E2DA] transition-all text-xs text-[#111111] group"
+          >
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#111111] group-hover:text-white" />
+              <span className="font-bold text-[11px] uppercase tracking-wider">Admin Console</span>
+            </div>
+            <span className="text-[10px] font-mono font-bold text-[#111111] group-hover:text-white">
+              Switch →
+            </span>
+          </Link>
+        )}
 
         {/* Real Authenticated User */}
         <div className="flex items-center justify-between px-2 py-1.5 text-xs text-[#555562]">

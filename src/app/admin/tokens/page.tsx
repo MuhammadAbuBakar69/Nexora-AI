@@ -14,6 +14,7 @@ export default function AdminTokenAllocationPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerAccount | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [errorToast, setErrorToast] = useState<string | null>(null);
   const [totalProvisioned, setTotalProvisioned] = useState<number>(0);
 
   useEffect(() => {
@@ -63,14 +64,57 @@ export default function AdminTokenAllocationPage() {
     loadTokenAllocations();
   }, []);
 
-  const handleUpdateAllocation = (customerId: string, newTotalTokens: number) => {
-    setCustomers(
-      customers.map((c) =>
+  const handleUpdateAllocation = async (customerId: string, newTotalTokens: number) => {
+    setErrorToast(null);
+    setSuccessToast(null);
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      const now = new Date();
+      const periodStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0));
+      const periodEnd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1, 0, 0, 0));
+
+      const { error } = await supabase.from("quota_allocations").upsert(
+        {
+          organization_id: customerId,
+          period_start: periodStart.toISOString(),
+          period_end: periodEnd.toISOString(),
+          tokens_allocated: newTotalTokens,
+          note: "Admin manual quota allocation",
+          created_by: user?.id ?? null,
+        },
+        { onConflict: "organization_id,period_start" }
+      );
+
+      if (error) {
+        setErrorToast(`Failed to persist quota: ${error.message}`);
+        return;
+      }
+
+      if (user) {
+        await supabase.from("audit_logs").insert({
+          organization_id: customerId,
+          actor_id: user.id,
+          action: "quota.allocated",
+          target_type: "quota_allocations",
+          target_id: customerId,
+          metadata: { tokens_allocated: newTotalTokens },
+        });
+      }
+
+      const updated = customers.map((c) =>
         c.id === customerId ? { ...c, allocatedTokens: newTotalTokens } : c
-      )
-    );
-    setSuccessToast(`Token allocation successfully updated to ${(newTotalTokens / 1_000_000).toFixed(0)}M tokens.`);
-    setTimeout(() => setSuccessToast(null), 3000);
+      );
+      setCustomers(updated);
+      setTotalProvisioned(updated.reduce((acc, c) => acc + c.allocatedTokens, 0));
+      setSuccessToast(`Token allocation persisted to database: ${(newTotalTokens / 1_000_000).toFixed(1)}M tokens.`);
+      setTimeout(() => setSuccessToast(null), 4000);
+    } catch {
+      setErrorToast("Unexpected error saving quota allocation.");
+    }
   };
 
   const openAllocateModal = (customer: CustomerAccount) => {
@@ -86,6 +130,11 @@ export default function AdminTokenAllocationPage() {
       />
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {errorToast && (
+          <div className="p-3 bg-rose-50 border border-rose-300 text-xs font-mono text-rose-800">
+            {errorToast}
+          </div>
+        )}
         {successToast && (
           <div className="p-3 bg-emerald-50 border border-emerald-300 text-xs font-mono text-emerald-800 flex items-center gap-2">
             <Check className="w-4 h-4 text-emerald-600" />

@@ -57,13 +57,25 @@ export default function AdminApiManagementPage() {
     loadAllKeys();
   }, []);
 
+  const [actionError, setActionError] = useState<string | null>(null);
+
   const handleRevokeKey = async (id: string) => {
+    setActionError(null);
     try {
       const supabase = createClient();
-      await supabase.from("api_keys").update({ status: "revoked" }).eq("id", id);
+      const { error } = await supabase
+        .from("api_keys")
+        .update({ status: "revoked" })
+        .eq("id", id);
+
+      if (error) {
+        setActionError(error.message);
+        return;
+      }
+
       setKeys(keys.map((k) => (k.id === id ? { ...k, status: "revoked" } : k)));
-    } catch (err) {
-      // Safe fallback
+    } catch {
+      setActionError("Failed to revoke API key.");
     }
   };
 
@@ -75,6 +87,11 @@ export default function AdminApiManagementPage() {
       />
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {actionError && (
+          <div className="p-3 bg-rose-50 border border-rose-200 text-xs font-mono text-rose-700">
+            {actionError}
+          </div>
+        )}
         {/* Security Notice */}
         <div className="p-4 bg-white border border-[#E2E2DA] flex items-center justify-between text-xs font-mono">
           <div className="flex items-center gap-3">

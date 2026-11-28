@@ -14,7 +14,15 @@ export default function DocsPage() {
     setTimeout(() => setCopiedSnippet(null), 2000);
   };
 
-  const curlSnippet = `curl -X POST https://api.nexora.cloud/v1/chat/completions \\
+  const [origin, setOrigin] = useState("https://your-domain.com");
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
+
+  const curlSnippet = `curl -X POST ${origin}/api/v1/chat/completions \\
   -H "Authorization: Bearer nx_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -29,7 +37,7 @@ from openai import OpenAI
 
 # The Nexora Anycast Gateway is 100% OpenAI-SDK compatible
 client = OpenAI(
-    base_url="https://api.nexora.cloud/v1",
+    base_url="${origin}/api/v1",
     api_key=os.environ.get("NEXORA_API_KEY")
 )
 
@@ -81,7 +89,7 @@ print(response.choices[0].message.content)`;
             <div className="p-4 bg-[#F7F7F4] border border-[#E2E2DA]">
               <span className="text-violet-primary font-bold block mb-1">02 // POINT BASE URL</span>
               <p className="text-[#555562] text-[11px]">
-                Set your upstream client base URL to <code className="bg-[#EAEAE4] px-1 text-[#111111]">https://api.nexora.cloud/v1</code>.
+                Set your upstream client base URL to <code className="bg-[#EAEAE4] px-1 text-[#111111]">{origin}/api/v1</code>.
               </p>
             </div>
 

@@ -11,8 +11,18 @@ export default function SettingsPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
+  const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [profileError, setProfileError] = useState("");
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
 
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [weeklyDigest, setWeeklyDigest] = useState(true);
@@ -41,6 +51,7 @@ export default function SettingsPage() {
           }
 
           if (profile?.organization_id) {
+            setOrganizationId(profile.organization_id);
             const { data: org } = await supabase
               .from("organizations")
               .select("name")
@@ -49,8 +60,8 @@ export default function SettingsPage() {
             if (org?.name) setCompany(org.name);
           }
         }
-      } catch (err) {
-        // Fallback cleanly
+      } catch {
+        setProfileError("Unable to load profile details from Supabase.");
       } finally {
         setIsLoading(false);
       }
@@ -61,20 +72,100 @@ export default function SettingsPage() {
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    setProfileError("");
+    setSaved(false);
+    setIsSavingProfile(true);
+
     try {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from("profiles")
-          .update({ full_name: name })
-          .eq("id", user.id);
+      if (!user) {
+        setProfileError("Your session has expired. Please sign in again.");
+        return;
       }
+
+      const { error: profErr } = await supabase
+        .from("profiles")
+        .update({ full_name: name.trim() })
+        .eq("id", user.id);
+
+      if (profErr) {
+        setProfileError(profErr.message);
+        return;
+      }
+
+      if (organizationId && company.trim()) {
+        const { error: orgErr } = await supabase
+          .from("organizations")
+          .update({ name: company.trim() })
+          .eq("id", organizationId);
+
+        if (orgErr) {
+          setProfileError(orgErr.message);
+          return;
+        }
+      }
+
       setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    } catch (err) {
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      setTimeout(() => setSaved(false), 2500);
+    } catch {
+      setProfileError("Unexpected error while saving profile.");
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      setPasswordError("Please fill in your current and new password.");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPasswordError("New password must be at least 8 characters long.");
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setPasswordError("New passwords do not match.");
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    try {
+      const supabase = createClient();
+
+      // Re-authenticate with current password before changing credentials.
+      const { error: verifyError } = await supabase.auth.signInWithPassword({
+        email,
+        password: currentPassword,
+      });
+
+      if (verifyError) {
+        setPasswordError("Current password is incorrect.");
+        return;
+      }
+
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (updateError) {
+        setPasswordError(updateError.message);
+        return;
+      }
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setPasswordSuccess("Password updated successfully.");
+      setTimeout(() => setPasswordSuccess(""), 4000);
+    } catch {
+      setPasswordError("Unable to update password right now.");
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -164,8 +255,14 @@ export default function SettingsPage() {
               </p>
             </div>
 
+            {profileError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 text-xs font-mono text-rose-700">
+                {profileError}
+              </div>
+            )}
+
             <div className="flex justify-end pt-2">
-              <Button type="submit" size="sm" className="text-xs font-mono font-bold uppercase tracking-wider">
+              <Button type="submit" size="sm" isLoading={isSavingProfile} className="text-xs font-mono font-bold uppercase tracking-wider">
                 {saved ? "Saved Changes ✓" : "Update Profile"}
               </Button>
             </div>
@@ -186,7 +283,18 @@ export default function SettingsPage() {
             </p>
           </div>
 
-          <div className="space-y-4 max-w-md">
+          <form onSubmit={handleUpdatePassword} className="space-y-4 max-w-md">
+            {passwordError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 text-xs font-mono text-rose-700">
+                {passwordError}
+              </div>
+            )}
+            {passwordSuccess && (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 text-xs font-mono text-emerald-700">
+                {passwordSuccess}
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-mono font-bold uppercase text-[#111111] mb-1">
                 Current Password
@@ -196,6 +304,9 @@ export default function SettingsPage() {
                 <input
                   type="password"
                   placeholder="••••••••••••"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
                   className="w-full pl-9 pr-3 py-2 text-xs bg-[#F7F7F4] border border-[#E2E2DA] focus:border-[#111111] focus:outline-none font-mono"
                 />
               </div>
@@ -210,20 +321,43 @@ export default function SettingsPage() {
                 <input
                   type="password"
                   placeholder="Minimum 8 characters"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  className="w-full pl-9 pr-3 py-2 text-xs bg-[#F7F7F4] border border-[#E2E2DA] focus:border-[#111111] focus:outline-none font-mono"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono font-bold uppercase text-[#111111] mb-1">
+                Confirm New Password
+              </label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-[#777783] absolute left-3 top-2.5" />
+                <input
+                  type="password"
+                  placeholder="Re-enter new password"
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  required
+                  minLength={8}
                   className="w-full pl-9 pr-3 py-2 text-xs bg-[#F7F7F4] border border-[#E2E2DA] focus:border-[#111111] focus:outline-none font-mono"
                 />
               </div>
             </div>
 
             <Button
+              type="submit"
               size="sm"
               variant="outline"
-              onClick={() => alert("Password update request dispatched to Supabase Auth.")}
+              isLoading={isUpdatingPassword}
               className="text-xs font-mono font-bold uppercase border-[#E2E2DA]"
             >
               Update Password
             </Button>
-          </div>
+          </form>
         </div>
 
         {/* Notification Preferences */}

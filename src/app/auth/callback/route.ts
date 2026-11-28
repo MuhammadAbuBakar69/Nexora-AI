@@ -9,6 +9,11 @@ import { createClient } from "@/utils/supabase/server";
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const forwardedProto = request.headers.get("x-forwarded-proto") ?? "https";
+  const isLocal = process.env.NODE_ENV === "development";
+  const baseUrl =
+    !isLocal && forwardedHost ? `${forwardedProto}://${forwardedHost}` : origin;
 
   const code = searchParams.get("code");
   const tokenHash = searchParams.get("token_hash");
@@ -23,7 +28,7 @@ export async function GET(request: NextRequest) {
 
   const failureRedirect = (reason: string) =>
     NextResponse.redirect(
-      `${origin}/login?auth_error=${encodeURIComponent(reason)}`
+      `${baseUrl}/login?auth_error=${encodeURIComponent(reason)}`
     );
 
   const providerError =
@@ -38,7 +43,7 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) return failureRedirect(error.message);
-    return NextResponse.redirect(`${origin}${next}`);
+    return NextResponse.redirect(`${baseUrl}${next}`);
   }
 
   // Token-hash links (email OTP / recovery) can be verified directly.
@@ -48,7 +53,7 @@ export async function GET(request: NextRequest) {
       type: type as "signup" | "recovery" | "email" | "magiclink" | "invite" | "email_change",
     });
     if (error) return failureRedirect(error.message);
-    return NextResponse.redirect(`${origin}${next}`);
+    return NextResponse.redirect(`${baseUrl}${next}`);
   }
 
   return failureRedirect("The link is missing its verification code.");

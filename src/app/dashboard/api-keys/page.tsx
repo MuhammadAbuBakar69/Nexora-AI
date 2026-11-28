@@ -15,6 +15,7 @@ export default function ApiKeysPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadKeys() {
@@ -64,22 +65,24 @@ export default function ApiKeysPage() {
 
   const handleRevoke = async (id: string) => {
     if (confirm("Are you sure you want to revoke this API key? This action is immediate and cannot be undone.")) {
+      setActionError(null);
       try {
         const supabase = createClient();
-        // Update status in database
-        await supabase
+        const { error } = await supabase
           .from("api_keys")
           .update({ status: "revoked", updated_at: new Date().toISOString() })
           .eq("id", id);
 
+        if (error) {
+          setActionError(error.message);
+          return;
+        }
+
         setKeys(
           keys.map((k) => (k.id === id ? { ...k, status: "revoked" as const } : k))
         );
-      } catch (err) {
-        // Optimistic UI update
-        setKeys(
-          keys.map((k) => (k.id === id ? { ...k, status: "revoked" as const } : k))
-        );
+      } catch {
+        setActionError("Failed to revoke API key. Please try again.");
       }
     }
   };
@@ -104,6 +107,11 @@ export default function ApiKeysPage() {
       />
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {actionError && (
+          <div className="p-3 bg-rose-50 border border-rose-200 text-xs font-mono text-rose-700">
+            {actionError}
+          </div>
+        )}
         {/* Security Standard Blueprint Notice */}
         <div className="p-4 bg-white border border-[#E2E2DA] flex items-start gap-3.5">
           <div className="w-8 h-8 bg-violet-light/60 border border-violet-soft/30 text-violet-primary flex items-center justify-center shrink-0 mt-0.5">

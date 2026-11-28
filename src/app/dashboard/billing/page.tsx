@@ -12,50 +12,69 @@ export default function BillingPage() {
   const [currentPlan, setCurrentPlan] = useState<string>("Starter Tier");
   const [planStatus, setPlanStatus] = useState<string>("Active");
   const [accessRequests, setAccessRequests] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [billingNotice, setBillingNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSadaPayModalOpen, setIsSadaPayModalOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    async function fetchBillingState() {
-      try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+  const fetchBillingState = async () => {
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
 
-        if (user) {
-          // 1. Fetch real subscription
-          const { data: sub } = await supabase
+      if (user) {
+        const [{ data: sub }, { data: reqs }, { data: txs }] = await Promise.all([
+          supabase
             .from("subscriptions")
             .select("plan, status")
             .eq("status", "active")
-            .maybeSingle();
-
-          if (sub?.plan) {
-            setCurrentPlan(`${sub.plan.charAt(0).toUpperCase() + sub.plan.slice(1)} Tier`);
-            setPlanStatus(sub.status || "Active");
-          }
-
-          // 2. Fetch recent access requests
-          const { data: reqs } = await supabase
+            .maybeSingle(),
+          supabase
             .from("access_requests")
             .select("*")
             .order("created_at", { ascending: false })
-            .limit(5);
+            .limit(10),
+          supabase
+            .from("payment_transactions")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(20),
+        ]);
 
-          if (reqs) {
-            setAccessRequests(reqs);
-          }
+        if (sub?.plan) {
+          setCurrentPlan(`${sub.plan.charAt(0).toUpperCase() + sub.plan.slice(1)} Tier`);
+          setPlanStatus(sub.status || "Active");
         }
-      } catch (err) {
-        // Handled cleanly
-      } finally {
-        setIsLoading(false);
+        if (reqs) setAccessRequests(reqs);
+        if (txs) setTransactions(txs);
       }
+    } catch {
+      // Handled cleanly
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paymentParam = params.get("payment");
+    if (paymentParam === "success") {
+      setBillingNotice({
+        type: "success",
+        text: "Checkout completed. Payment confirmation and quota activation update automatically via gateway webhook.",
+      });
+    } else if (paymentParam === "canceled" || paymentParam === "failed") {
+      setBillingNotice({
+        type: "error",
+        text: `Payment was ${paymentParam}. No funds were settled.`,
+      });
     }
 
     fetchBillingState();
   }, []);
 
   const handleQuoteRequested = async (quote: CustomerQuote) => {
+    setBillingNotice(null);
     try {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -68,20 +87,41 @@ export default function BillingPage() {
         .maybeSingle();
 
       if (profile?.organization_id) {
-        const { data: newReq } = await supabase.from("access_requests").insert({
-          organization_id: profile.organization_id,
-          user_id: user.id,
-          requested_plan: quote.recommendedPlan,
-          business_justification: `Customer quote submission: ${quote.monthlyTokens.toLocaleString()} tokens, ${quote.monthlyVideoSeconds}s Veo video (₨${quote.estimatedCostPkr.toLocaleString()} PKR/mo).`,
-          status: "pending",
-        }).select().single();
+        const { data: newReq, error } = await supabase
+          .from("access_requests")
+          .insert({
+            organization_id: profile.organization_id,
+            user_id: user.id,
+            requested_plan: quote.recommendedPlan,
+            requested_tokens: quote.monthlyTokens,
+            estimated_cost_pkr: quote.estimatedCostPkr,
+            business_justification: `Customer quote submission: ${quote.monthlyTokens.toLocaleString()} tokens, ${quote.monthlyVideoSeconds}s Veo video (₨${quote.estimatedCostPkr.toLocaleString()} PKR/mo).`,
+            status: "pending",
+          })
+          .select()
+          .single();
+
+        if (error) {
+          setBillingNotice({
+            type: "error",
+            text: `Could not submit quote request: ${error.message}`,
+          });
+          return;
+        }
 
         if (newReq) {
           setAccessRequests([newReq, ...accessRequests]);
+          setBillingNotice({
+            type: "success",
+            text: "Quota & tier request submitted for admin review.",
+          });
         }
       }
-    } catch (err) {
-      // Handled cleanly
+    } catch {
+      setBillingNotice({
+        type: "error",
+        text: "Unexpected error submitting quota request.",
+      });
     }
   };
 
@@ -93,6 +133,17 @@ export default function BillingPage() {
       />
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {billingNotice && (
+          <div
+            className={`p-3 border text-xs font-mono ${
+              billingNotice.type === "success"
+                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                : "bg-rose-50 border-rose-200 text-rose-700"
+            }`}
+          >
+            {billingNotice.text}
+          </div>
+        )}
         {/* CAD Telemetry Marker */}
         <div className="flex items-center justify-between text-[10px] font-mono tracking-widest text-[#777783] uppercase px-1">
           <span>// BILLING LEDGER • ARCHITECTURAL SPECIFICATION</span>
@@ -262,25 +313,64 @@ export default function BillingPage() {
               Billing History &amp; Receipts
             </h3>
             <span className="text-[10px] font-mono text-emerald-600 font-bold">
-              TAX COMPLIANT
+              TAX COMPLIANT ({transactions.length})
             </span>
           </div>
 
-          <div className="py-8 text-center text-xs font-mono text-[#777783]">
-            No invoices generated yet for this billing cycle. Receipts will appear here automatically upon monthly invoice settlement.
-          </div>
+          {transactions.length === 0 ? (
+            <div className="py-8 text-center text-xs font-mono text-[#777783]">
+              No invoices or payment transactions recorded yet for this billing cycle.
+            </div>
+          ) : (
+            <div className="divide-y divide-[#E2E2DA] pt-2">
+              {transactions.map((tx) => (
+                <div key={tx.id} className="py-3 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-[#111111]">{tx.plan}</span>
+                      <span
+                        className={`px-1.5 py-0.5 text-[10px] border ${
+                          tx.status === "paid"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : tx.status === "pending_verification"
+                            ? "bg-amber-50 text-amber-700 border-amber-200"
+                            : tx.status === "failed" || tx.status === "canceled"
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : "bg-[#F7F7F4] text-[#555562] border-[#E2E2DA]"
+                        }`}
+                      >
+                        {String(tx.status).replace("_", " ").toUpperCase()}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-[#777783] mt-0.5">
+                      {tx.method} • Ref: {tx.reference_code || tx.tracker_id || tx.id.slice(0, 8)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-[#111111]">
+                      ₨{Number(tx.amount_pkr).toLocaleString()} PKR
+                    </p>
+                    <p className="text-[10px] text-[#777783]">
+                      {new Date(tx.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* SadaPay Checkout Modal */}
+      {/* Pakistan Commercial Checkout Modal */}
       <SadaPayCheckoutModal
         isOpen={isSadaPayModalOpen}
         onClose={() => setIsSadaPayModalOpen(false)}
         planName={currentPlan}
         amountPkr={currentPlan.toLowerCase().includes("growth") ? 69720 : 13720}
         amountUsd={currentPlan.toLowerCase().includes("growth") ? 249 : 49}
-        onPaymentSuccess={(details) => {
-          setPlanStatus("Active");
+        tokensAllocated={currentPlan.toLowerCase().includes("growth") ? 75_000_000 : 10_000_000}
+        onPaymentSuccess={() => {
+          fetchBillingState();
         }}
       />
     </div>
